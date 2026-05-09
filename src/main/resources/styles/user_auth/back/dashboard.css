@@ -1080,3 +1080,54 @@
     -fx-background-color: rgba(99,102,241,0.28);
     -fx-border-color:     rgba(165,180,252,0.40);
 }
+
+.notif-counter-badge {
+    -fx-background-color: #EF4444;
+    -fx-text-fill: white;
+    -fx-font-size: 9px;
+    -fx-font-weight: 800;
+    -fx-padding: 1 5;
+    -fx-background-radius: 999;
+    -fx-translate-x: 8;
+    -fx-translate-y: -8;
+}
+
+.notif-center-wrap {
+    -fx-padding: 6 0 0 0;
+}
+
+.notif-center-list {
+    -fx-background-color: transparent;
+    -fx-border-color: -inp-b;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+.notif-center-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 8 10;
+}
+
+.notif-center-list .list-cell:filled:hover {
+    -fx-background-color: rgba(99,102,241,0.10);
+}
+
+.notif-center-item {
+    -fx-padding: 2 0 2 0;
+}
+
+.notif-center-title {
+    -fx-text-fill: -t1;
+    -fx-font-size: 13px;
+    -fx-font-weight: 800;
+}
+
+.notif-center-message {
+    -fx-text-fill: -t3;
+    -fx-font-size: 12px;
+}
+
+.notif-center-time {
+    -fx-text-fill: -t4;
+    -fx-font-size: 10px;
+}

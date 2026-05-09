@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<!--
+  PopupDetailCommande.fxml
+  Popup plein écran pour la visualisation complète d'une commande.
+  Accessible depuis l'acheteur ET le vendeur.
+  Controller : controllers.PopupDetailCommandeController
+-->
+<StackPane xmlns="http://javafx.com/javafx"
+           xmlns:fx="http://javafx.com/fxml"
+           fx:controller="projet.hanouti.GestionCommandes.controllers.PopupDetailCommandeController"
+                 stylesheets="@../../styles/GestionCommandes/commandes.css"
+fx:id="overlayRoot"
+           styleClass="popup-overlay"
+           onMouseClicked="#onOverlayClick">
+
+    <VBox styleClass="popup-card"
+          maxWidth="700" prefWidth="680"
+          maxHeight="620" spacing="0"
+          StackPane.alignment="CENTER"
+          onMouseClicked="#onCardClick">
+
+        <!-- HEADER -->
+        <HBox styleClass="popup-card-header" alignment="CENTER_LEFT" spacing="12"
+              style="-fx-padding: 20 24 16 24;">
+            <VBox HBox.hgrow="ALWAYS" spacing="4">
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label fx:id="popNumero"  text="CMD-..."  styleClass="popup-title"/>
+                    <Label fx:id="popStatut"  text=""         styleClass="statut-badge"/>
+                    <Label fx:id="popVip"     text="⭐ VIP"   styleClass="vip-badge"
+                           visible="false" managed="false"/>
+                </HBox>
+                <Label fx:id="popDate" text="" styleClass="cmd-date"/>
+            </VBox>
+            <Button text="✕" styleClass="btn-annuler" onAction="#onClose"
+                    style="-fx-font-size:14px; -fx-padding:6 10;"/>
+        </HBox>
+
+        <Separator styleClass="detail-sep"/>
+
+        <!-- SCROLLABLE BODY -->
+        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
+                    styleClass="content-scroll" hbarPolicy="NEVER"
+                    style="-fx-padding:0;">
+            <VBox spacing="16" style="-fx-padding: 20 24;">
+
+                <!-- ROW 1 : Infos + Score -->
+                <HBox spacing="14">
+
+                    <!-- Infos commande -->
+                    <VBox styleClass="section-card" HBox.hgrow="ALWAYS" spacing="10">
+                        <Label text="INFORMATIONS" styleClass="section-title"/>
+                        <GridPane hgap="12" vgap="9">
+                            <Label text="Adresse :"     styleClass="detail-label" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                            <Label fx:id="popAdresse"   styleClass="detail-value" GridPane.columnIndex="1" GridPane.rowIndex="0" wrapText="true"/>
+                            <Label text="Mode paiement :" styleClass="detail-label" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                            <Label fx:id="popPaiement"  styleClass="detail-value" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                            <Label text="Date préf. :"  styleClass="detail-label" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                            <Label fx:id="popDatePref"  styleClass="detail-value" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                            <Label text="Total TTC :"   styleClass="detail-label" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                            <Label fx:id="popTotal"     styleClass="cmd-total"    GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                            <columnConstraints>
+                                <ColumnConstraints minWidth="110" maxWidth="120"/>
+                                <ColumnConstraints hgrow="ALWAYS"/>
+                            </columnConstraints>
+                        </GridPane>
+                    </VBox>
+
+                    <!-- Priorité + livraison -->
+                    <VBox styleClass="section-card" prefWidth="200" minWidth="180" spacing="10">
+                        <Label text="PRIORITÉ &amp; LIVRAISON" styleClass="section-title"/>
+                        <VBox spacing="6">
+                            <Label text="Score IA" styleClass="detail-label"/>
+                            <Label fx:id="popScore" text="—" styleClass="cmd-score"
+                                   style="-fx-font-size: 22px;"/>
+                        </VBox>
+                        <Separator styleClass="detail-sep"/>
+                        <VBox spacing="4">
+                            <Label text="Société de livraison" styleClass="detail-label"/>
+                            <Label fx:id="popSociete" text="—" styleClass="detail-value" wrapText="true"/>
+                            <Label fx:id="popStatutLiv" text="" styleClass="cmd-date"/>
+                        </VBox>
+                    </VBox>
+
+                </HBox>
+
+                <!-- Produits commandés -->
+                <VBox styleClass="section-card" spacing="10">
+                    <HBox alignment="CENTER_LEFT">
+                        <Label text="PRODUITS COMMANDÉS" styleClass="section-title" HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="popNbProduits" text="" styleClass="cmd-date"/>
+                    </HBox>
+                    <ListView fx:id="popListLignes" styleClass="list-view"
+                              prefHeight="160" maxHeight="200"/>
+                </VBox>
+
+                <!-- Motif refus -->
+                <VBox fx:id="popMotifBox" styleClass="section-card" spacing="6"
+                      visible="false" managed="false"
+                      style="-fx-border-color: rgba(239,68,68,0.4); -fx-border-width:1; -fx-border-radius:10;">
+                    <Label text="MOTIF DU REFUS" styleClass="detail-label" style="-fx-text-fill:#EF4444;"/>
+                    <Label fx:id="popMotif" text="" styleClass="detail-value" wrapText="true"/>
+                </VBox>
+
+                <!-- Facture -->
+                <VBox fx:id="popFactureBox" styleClass="section-card" spacing="8"
+                      visible="false" managed="false">
+                    <Label text="DOCUMENTS" styleClass="section-title"/>
+                    <HBox spacing="10">
+                        <Button fx:id="popBtnPdf" text="📄  Ouvrir facture PDF"
+                                styleClass="btn-primary" onAction="#onOpenPdf"/>
+                        <Button fx:id="popBtnQr"  text="📱  Voir QR Code"
+                                styleClass="btn-annuler" onAction="#onOpenQr"/>
+                    </HBox>
+                </VBox>
+
+            </VBox>
+        </ScrollPane>
+
+        <Separator styleClass="detail-sep"/>
+
+        <!-- FOOTER ACTIONS -->
+        <HBox spacing="10" alignment="CENTER_RIGHT" style="-fx-padding: 16 24;">
+            <!-- Actions acheteur -->
+            <Button fx:id="actBtnModifierAdresse" text="📍  Modifier adresse"
+                    styleClass="btn-primary" onAction="#onModifierAdresse"
+                    visible="false" managed="false"/>
+            <Button fx:id="actBtnAnnuler" text="❌  Annuler"
+                    styleClass="btn-refuse" onAction="#onAnnuler"
+                    visible="false" managed="false"/>
+            <!-- Actions vendeur -->
+            <Button fx:id="actBtnConfirmer" text="✅  Confirmer"
+                    styleClass="btn-confirm" onAction="#onConfirmer"
+                    visible="false" managed="false"/>
+            <Button fx:id="actBtnRefuser" text="❌  Refuser"
+                    styleClass="btn-refuse" onAction="#onRefuser"
+                    visible="false" managed="false"/>
+            <Button fx:id="actBtnPreparer" text="🔧  En préparation"
+                    styleClass="btn-primary" onAction="#onPreparer"
+                    visible="false" managed="false"/>
+            <Button fx:id="actBtnExpedier" text="🚀  Expédier"
+                    styleClass="btn-assign" onAction="#onExpedier"
+                    visible="false" managed="false"/>
+            <Button fx:id="actBtnLivrer" text="📬  Livré"
+                    styleClass="btn-confirm" onAction="#onLivrer"
+                    visible="false" managed="false"/>
+            <Button fx:id="actBtnAssigner" text="🚚  Assigner livraison"
+                    styleClass="btn-assign" onAction="#onAssigner"
+                    visible="false" managed="false"/>
+            <!-- Fermer -->
+            <Button text="Fermer" styleClass="btn-ignorer" onAction="#onClose"/>
+        </HBox>
+
+    </VBox>
+</StackPane>

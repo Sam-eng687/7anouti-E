@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<!--
+  PopupAssignerLivraison.fxml
+  Popup modal pour assigner une société de livraison à une commande.
+  Affiché par-dessus le contenu principal via StackPane overlay.
+  Controller : controllers.PopupAssignerLivraisonController
+-->
+<StackPane xmlns="http://javafx.com/javafx"
+           xmlns:fx="http://javafx.com/fxml"
+           fx:controller="projet.hanouti.GestionCommandes.controllers.PopupAssignerLivraisonController"
+                 stylesheets="@../../styles/GestionCommandes/commandes.css"
+fx:id="overlayRoot"
+           styleClass="popup-overlay"
+           prefWidth="1200" prefHeight="760"
+           onMouseClicked="#onOverlayClick">
+
+    <!-- Centered popup card — stop click propagation -->
+    <VBox styleClass="popup-card"
+          maxWidth="520" prefWidth="500"
+          spacing="20"
+          StackPane.alignment="CENTER"
+          onMouseClicked="#onCardClick">
+
+        <!-- Header -->
+        <HBox alignment="CENTER_LEFT" spacing="10">
+            <VBox HBox.hgrow="ALWAYS" spacing="4">
+                <Label text="🚚  Assigner une société de livraison" styleClass="popup-title"/>
+                <Label fx:id="lblSubtitle" text="Commande #CMD-..."  styleClass="popup-sub"/>
+            </VBox>
+            <Button text="✕" styleClass="btn-annuler" onAction="#onClose"
+                    style="-fx-font-size:14px; -fx-padding: 6 10;"/>
+        </HBox>
+
+        <!-- Tabs : Automatique / Manuelle -->
+        <HBox spacing="0" style="-fx-border-color: -border; -fx-border-radius: 10; -fx-background-radius: 10; -fx-background-color: rgba(255,255,255,0.03);">
+            <Button fx:id="tabAuto"    text="⚡  Automatique" maxWidth="Infinity"
+                    styleClass="btn-primary" HBox.hgrow="ALWAYS"
+                    onAction="#onTabAuto"
+                    style="-fx-background-radius: 10 0 0 10; -fx-border-radius: 10 0 0 10;"/>
+            <Button fx:id="tabManuel"  text="🖐  Manuelle" maxWidth="Infinity"
+                    styleClass="btn-annuler" HBox.hgrow="ALWAYS"
+                    onAction="#onTabManuel"
+                    style="-fx-background-radius: 0 10 10 0; -fx-border-radius: 0 10 10 0;"/>
+        </HBox>
+
+        <!-- AUTO panel -->
+        <VBox fx:id="panelAuto" spacing="12">
+            <VBox styleClass="section-card" spacing="8">
+                <Label text="✨  MEILLEURE SOCIÉTÉ SÉLECTIONNÉE" styleClass="section-title"/>
+                <HBox spacing="12" alignment="CENTER_LEFT">
+                    <Label text="🏢" style="-fx-font-size:28px;"/>
+                    <VBox HBox.hgrow="ALWAYS" spacing="4">
+                        <Label fx:id="autoNom"   text="—" styleClass="societe-nom"/>
+                        <Label fx:id="autoZone"  text="Zone : —" styleClass="societe-zone"/>
+                        <HBox spacing="8" alignment="CENTER_LEFT">
+                            <Label fx:id="autoNote"  text="★ —" styleClass="societe-note"/>
+                            <Label text="AUTO" styleClass="societe-mode-badge"/>
+                        </HBox>
+                    </VBox>
+                </HBox>
+                <Label fx:id="autoInfo" text="Sélectionnée selon zone de couverture et note."
+                       styleClass="ia-strip-text" wrapText="true"/>
+            </VBox>
+        </VBox>
+
+        <!-- MANUEL panel -->
+        <VBox fx:id="panelManuel" spacing="10" visible="false" managed="false">
+            <TextField fx:id="searchSociete" promptText="🔍  Rechercher une société..."
+                       styleClass="search-field" onKeyReleased="#onSearchSociete"/>
+            <ScrollPane fitToWidth="true" prefHeight="240" maxHeight="280"
+                        styleClass="content-scroll" hbarPolicy="NEVER">
+                <ListView fx:id="listSocietes" styleClass="list-view"
+                          onMouseClicked="#onSocieteSelected"/>
+            </ScrollPane>
+        </VBox>
+
+        <!-- Selected société info (manual) -->
+        <VBox fx:id="selectionInfo" spacing="4" visible="false" managed="false"
+              style="-fx-padding: 10 14; -fx-background-color: rgba(37,99,235,0.08);
+                     -fx-border-color: rgba(37,99,235,0.3); -fx-border-radius: 10;
+                     -fx-background-radius: 10;">
+            <Label text="SOCIÉTÉ SÉLECTIONNÉE" styleClass="detail-label"/>
+            <Label fx:id="selNom"  text="" styleClass="societe-nom"/>
+            <Label fx:id="selZone" text="" styleClass="societe-zone"/>
+            <Label fx:id="selNote" text="" styleClass="societe-note"/>
+        </VBox>
+
+        <!-- Footer buttons -->
+        <HBox spacing="12" alignment="CENTER_RIGHT" style="-fx-padding: 4 0 0 0;">
+            <Button text="Annuler" styleClass="btn-ignorer" onAction="#onClose"/>
+            <Button fx:id="btnValider" text="✅  Valider l'assignation"
+                    styleClass="btn-assign" onAction="#onValider"/>
+        </HBox>
+
+    </VBox>
+</StackPane>
