@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<!--
+  VendeurCommandes.fxml
+  • Clic sur commande → detail panel inline à droite
+  • Noms de produits affichés (pas d'IDs)
+  • Nom de société affiché (pas d'IDs)
+  • Assigner société : popup apparaît automatiquement au moment de CONFIRMER
+  • Pas de bouton "Assigner" visible hors de ce flux
+  • Pas de bouton "Voir détails" — tout est visible directement
+  • Statut EXPÉDIÉE ou LIVRÉE → aucune action possible
+  • ✅ Bouton "Exporter la facture PDF" toujours visible dès qu'une commande est sélectionnée
+  Controller : controllers.VendeurCommandesController
+-->
+<HBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="projet.hanouti.GestionCommandes.controllers.VendeurCommandesController"
+            stylesheets="@../../styles/GestionCommandes/commandes.css"
+fx:id="root"
+      HBox.hgrow="ALWAYS"
+      style="-fx-background-color:transparent;">
+
+    <!-- ══════════════════════════════════════════
+         COLONNE GAUCHE
+    ══════════════════════════════════════════ -->
+    <VBox styleClass="module-wrap" HBox.hgrow="ALWAYS"
+          prefWidth="0" maxWidth="1.7976931348623157E308" spacing="14">
+
+        <HBox styleClass="mod-header" alignment="CENTER_LEFT">
+            <VBox HBox.hgrow="ALWAYS" spacing="3">
+                <Label text="📦  Les Commandes" styleClass="mod-title"/>
+                <Label fx:id="lblSub"
+                       text="Triées par priorité IA — médicaments et VIP en premier"
+                       styleClass="mod-sub"/>
+            </VBox>
+        </HBox>
+
+        <!-- KPIs -->
+        <HBox spacing="10">
+            <VBox styleClass="kpi-card, kpi-royal"  HBox.hgrow="ALWAYS" spacing="4">
+                <Label text="TOTAL"       styleClass="kpi-label"/>
+                <Label fx:id="kpiTotal"   text="0" styleClass="kpi-value"/>
+                <Label text="commandes"   styleClass="kpi-trend"/>
+            </VBox>
+            <VBox styleClass="kpi-card, kpi-orange" HBox.hgrow="ALWAYS" spacing="4">
+                <Label text="EN ATTENTE"  styleClass="kpi-label"/>
+                <Label fx:id="kpiAttente" text="0" styleClass="kpi-value"/>
+                <Label text="à traiter"   styleClass="kpi-trend"/>
+            </VBox>
+            <VBox styleClass="kpi-card, kpi-green"  HBox.hgrow="ALWAYS" spacing="4">
+                <Label text="LIVRÉES"     styleClass="kpi-label"/>
+                <Label fx:id="kpiLivrees" text="0" styleClass="kpi-value"/>
+                <Label text="terminées"   styleClass="kpi-trend"/>
+            </VBox>
+        </HBox>
+
+        <!-- IA strip -->
+        <HBox styleClass="ia-strip" alignment="CENTER_LEFT" spacing="8">
+            <Label text="🤖" style="-fx-font-size:15px;"/>
+            <Label fx:id="lblIA" text="IA : analyse en cours..."
+                   styleClass="ia-strip-text" wrapText="true" HBox.hgrow="ALWAYS"/>
+        </HBox>
+
+        <!-- Filters -->
+        <HBox spacing="8" alignment="CENTER_LEFT">
+            <TextField fx:id="searchField" promptText="🔍  Numéro, adresse..."
+                       styleClass="search-field" HBox.hgrow="ALWAYS"
+                       onKeyReleased="#onSearch"/>
+            <ComboBox fx:id="filterStatut" styleClass="filter-select"
+                      promptText="Statut" onAction="#onFilterStatut" prefWidth="150"/>
+            <ComboBox fx:id="filterMode"   styleClass="filter-select"
+                      promptText="Paiement" onAction="#onFilterMode" prefWidth="115"/>
+            <Button text="↺" styleClass="btn-annuler"
+                    onAction="#onReset" style="-fx-padding:8 12;"/>
+        </HBox>
+
+        <Label fx:id="lblCount" text="0 commande(s)" styleClass="detail-label"/>
+
+        <ListView fx:id="listCommandes" styleClass="list-view"
+                  VBox.vgrow="ALWAYS" onMouseClicked="#onCommandeSelected"/>
+    </VBox>
+
+    <!-- ══════════════════════════════════════════
+         COLONNE DROITE — DETAIL INLINE
+    ══════════════════════════════════════════ -->
+    <VBox fx:id="detailPanelRoot" styleClass="detail-panel"
+          HBox.hgrow="ALWAYS" prefWidth="0" spacing="0">
+
+        <!-- Empty state -->
+        <VBox fx:id="emptyState" alignment="CENTER"
+              VBox.vgrow="ALWAYS" spacing="12"
+              style="-fx-padding:40;">
+            <Label text="📋" style="-fx-font-size:46px;"/>
+            <Label text="Sélectionnez une commande"
+                   styleClass="detail-title" style="-fx-opacity:0.4;"/>
+            <Label text="Cliquez sur une commande pour voir ses détails et agir."
+                   styleClass="cmd-date" wrapText="true"
+                   style="-fx-text-alignment:center; -fx-opacity:0.4;"/>
+        </VBox>
+
+        <!-- Detail content -->
+        <ScrollPane fx:id="detailScroll" fitToWidth="true"
+                    VBox.vgrow="ALWAYS" styleClass="content-scroll"
+                    hbarPolicy="NEVER" visible="false" managed="false">
+            <VBox spacing="14" style="-fx-padding:20;">
+
+                <!-- Header -->
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <VBox HBox.hgrow="ALWAYS" spacing="4">
+                        <Label fx:id="detNumero" text="" styleClass="detail-title"/>
+                        <Label fx:id="detDate"   text="" styleClass="cmd-date"/>
+                    </VBox>
+                    <Label fx:id="detStatutBadge" text="" styleClass="statut-badge"/>
+                    <Label fx:id="detVipBadge" text="⭐ VIP" styleClass="vip-badge"
+                           visible="false" managed="false"/>
+                </HBox>
+
+                <!-- Score -->
+                <HBox alignment="CENTER_LEFT" spacing="8"
+                      style="-fx-padding:8 12; -fx-background-color:#1a2030;
+                             -fx-background-radius:8;">
+                    <Label text="🎯" style="-fx-font-size:14px;"/>
+                    <Label text="Score de priorité IA" styleClass="detail-label"
+                           HBox.hgrow="ALWAYS"/>
+                    <Label fx:id="detScore" text="" styleClass="cmd-score"
+                           style="-fx-font-size:16px;"/>
+                </HBox>
+
+                <Separator styleClass="detail-sep"/>
+
+                <!-- Infos -->
+                <VBox styleClass="section-card" spacing="10">
+                    <Label text="INFORMATIONS" styleClass="section-title"/>
+                    <GridPane hgap="12" vgap="9">
+                        <Label text="Adresse :"    styleClass="detail-label"
+                               GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                        <Label fx:id="detAdresse"  styleClass="detail-value"
+                               GridPane.columnIndex="1" GridPane.rowIndex="0" wrapText="true"/>
+                        <Label text="Paiement :"   styleClass="detail-label"
+                               GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                        <Label fx:id="detPaiement" styleClass="detail-value"
+                               GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                        <Label text="Total :"      styleClass="detail-label"
+                               GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                        <Label fx:id="detTotal"    styleClass="cmd-total"
+                               GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                        <Label text="Date pref. :" styleClass="detail-label"
+                               GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                        <Label fx:id="detDatePref" styleClass="detail-value"
+                               GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                        <columnConstraints>
+                            <ColumnConstraints minWidth="85" maxWidth="100"/>
+                            <ColumnConstraints hgrow="ALWAYS"/>
+                        </columnConstraints>
+                    </GridPane>
+                </VBox>
+
+                <!-- Produits (nom affiché, pas d'ID) -->
+                <VBox styleClass="section-card" spacing="8">
+                    <HBox alignment="CENTER_LEFT">
+                        <Label text="🛍️  PRODUITS COMMANDÉS" styleClass="section-title"
+                               HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="detNbProduits" text="" styleClass="cmd-date"/>
+                    </HBox>
+                    <ListView fx:id="listLignes" styleClass="list-view"
+                              prefHeight="140" maxHeight="180"/>
+                </VBox>
+
+                <!-- Société assignée (nom, pas ID) -->
+                <VBox styleClass="section-card" spacing="6">
+                    <Label text="🚚  LIVRAISON" styleClass="section-title"/>
+                    <Label fx:id="detSociete" text="Non encore assignée"
+                           styleClass="detail-value"/>
+                    <Label fx:id="detStatutLiv" text="" styleClass="cmd-date"/>
+                </VBox>
+
+                <!-- Motif refus -->
+                <VBox fx:id="motifBox" styleClass="section-card" spacing="6"
+                      visible="false" managed="false"
+                      style="-fx-border-color:rgba(239,68,68,0.35);
+                             -fx-border-width:1; -fx-border-radius:10;">
+                    <Label text="❌  MOTIF DU REFUS" styleClass="detail-label"
+                           style="-fx-text-fill:#F87171;"/>
+                    <Label fx:id="detMotif" text="" styleClass="detail-value"
+                           wrapText="true"/>
+                </VBox>
+
+                <!-- ACTIONS -->
+                <VBox fx:id="actionsBox" spacing="8">
+                    <Label text="ACTIONS" styleClass="detail-label"/>
+
+                    <!-- ✅ Export PDF — toujours visible dès qu'une commande est sélectionnée -->
+                    <Button fx:id="btnExporterFacture" text="📄  Exporter la facture PDF"
+                            maxWidth="Infinity" styleClass="btn-primary"
+                            onAction="#onExporterFacture"
+                            visible="false" managed="false"/>
+
+                    <Separator style="-fx-opacity:0.3;"/>
+
+                    <!-- CREEE : Confirmer (→ déclenche popup societe) + Refuser -->
+                    <HBox spacing="8">
+                        <Button fx:id="btnConfirmer" text="✅  Confirmer"
+                                styleClass="btn-confirm" onAction="#onConfirmer"
+                                visible="false" managed="false"
+                                HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                        <Button fx:id="btnRefuser" text="❌  Refuser"
+                                styleClass="btn-refuse" onAction="#onRefuser"
+                                visible="false" managed="false"
+                                HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                    </HBox>
+
+                    <!-- CONFIRMEE : En préparation + Refuser -->
+                    <Button fx:id="btnPreparer" text="🔧  Passer en préparation"
+                            maxWidth="Infinity" styleClass="btn-primary"
+                            onAction="#onPreparer" visible="false" managed="false"/>
+
+                    <!-- EN_PREPARATION : Expédier -->
+                    <Button fx:id="btnExpedier" text="🚀  Expédier la commande"
+                            maxWidth="Infinity" styleClass="btn-assign"
+                            onAction="#onExpedier" visible="false" managed="false"/>
+
+                    <!-- EXPEDIEE : Marquer livré -->
+                    <Button fx:id="btnLivrer" text="📬  Marquer comme livrée"
+                            maxWidth="Infinity" styleClass="btn-confirm"
+                            onAction="#onLivrer" visible="false" managed="false"/>
+
+                    <!-- Terminal states info -->
+                    <Label fx:id="lblTerminal" text=""
+                           styleClass="cmd-date" wrapText="true"
+                           visible="false" managed="false"/>
+                </VBox>
+
+            </VBox>
+        </ScrollPane>
+    </VBox>
+
+</HBox>

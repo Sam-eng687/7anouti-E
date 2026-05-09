@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<!--
+  AdminCommandes.fxml — Vue admin "Gestion des commandes"
+  Controller : controllers.AdminCommandesController
+-->
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="projet.hanouti.GestionCommandes.controllers.AdminCommandesController"
+            stylesheets="@../../styles/GestionCommandes/commandes.css"
+styleClass="module-wrap" spacing="16">
+
+    <HBox styleClass="mod-header" alignment="CENTER_LEFT">
+        <VBox HBox.hgrow="ALWAYS" spacing="3">
+            <Label text="📦  Gestion des Commandes" styleClass="mod-title"/>
+            <Label fx:id="lblSub" text="Vue globale — toutes les commandes de la plateforme" styleClass="mod-sub"/>
+        </VBox>
+        <Button text="⬇️  Exporter CSV" styleClass="btn-export" onAction="#onExportCSV"
+                style="-fx-padding: 9 16;"/>
+    </HBox>
+
+    <!-- IA STRIP -->
+    <HBox styleClass="ia-strip" alignment="CENTER_LEFT" spacing="10">
+        <Label text="🤖" styleClass="ia-strip-dot"/>
+        <Label fx:id="lblIA" text="IA : Analyse en cours..." styleClass="ia-strip-text" HBox.hgrow="ALWAYS"/>
+    </HBox>
+
+    <!-- KPIs -->
+    <HBox spacing="12" styleClass="kpi-row">
+        <VBox styleClass="kpi-card, kpi-royal"  HBox.hgrow="ALWAYS" spacing="5">
+            <Label text="TOTAL"       styleClass="kpi-label"/>
+            <Label fx:id="kpiTotal"   text="0" styleClass="kpi-value"/>
+            <Label text="commandes"   styleClass="kpi-trend"/>
+        </VBox>
+        <VBox styleClass="kpi-card, kpi-orange" HBox.hgrow="ALWAYS" spacing="5">
+            <Label text="EN ATTENTE"    styleClass="kpi-label"/>
+            <Label fx:id="kpiAttente"   text="0" styleClass="kpi-value"/>
+            <Label text="à traiter"     styleClass="kpi-trend"/>
+        </VBox>
+        <VBox styleClass="kpi-card, kpi-green"  HBox.hgrow="ALWAYS" spacing="5">
+            <Label text="LIVRÉES"     styleClass="kpi-label"/>
+            <Label fx:id="kpiLivrees" text="0" styleClass="kpi-value"/>
+            <Label text="terminées"   styleClass="kpi-trend"/>
+        </VBox>
+        <VBox styleClass="kpi-card, kpi-violet" HBox.hgrow="ALWAYS" spacing="5">
+            <Label text="CHIFFRE D'AFF."  styleClass="kpi-label"/>
+            <Label fx:id="kpiCA"          text="0 TND" styleClass="kpi-value" style="-fx-font-size:20px;"/>
+            <Label text="total"           styleClass="kpi-trend"/>
+        </VBox>
+    </HBox>
+
+    <!-- Filters (more options for admin) -->
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <TextField fx:id="searchField" promptText="🔍  Commande, acheteur, vendeur..."
+                   styleClass="search-field" HBox.hgrow="ALWAYS" onKeyReleased="#onSearch"/>
+        <ComboBox fx:id="filterStatut"   styleClass="filter-select" promptText="Statut"   onAction="#onFilter" prefWidth="150"/>
+        <ComboBox fx:id="filterVendeur"  styleClass="filter-select" promptText="Vendeur"  onAction="#onFilter" prefWidth="140"/>
+        <ComboBox fx:id="filterPaiement" styleClass="filter-select" promptText="Paiement" onAction="#onFilter" prefWidth="120"/>
+        <DatePicker fx:id="filterDate"   styleClass="filter-select" promptText="Date"     onAction="#onFilter" prefWidth="140"/>
+        <Button text="↺" styleClass="btn-annuler" onAction="#onReset" style="-fx-padding:8 12;"/>
+    </HBox>
+
+    <!-- Two-panel -->
+    <HBox spacing="14" VBox.vgrow="ALWAYS">
+
+        <VBox HBox.hgrow="ALWAYS" spacing="0">
+            <Label fx:id="lblCount" text="0 commande(s)" styleClass="detail-label"
+                   style="-fx-padding:0 0 8 0;"/>
+            <ListView fx:id="listCommandes" styleClass="list-view"
+                      VBox.vgrow="ALWAYS" onMouseClicked="#onCommandeClicked"/>
+        </VBox>
+
+        <VBox fx:id="detailPanel" styleClass="detail-panel" prefWidth="380" minWidth="340" spacing="0">
+
+            <VBox fx:id="emptyState" alignment="CENTER" VBox.vgrow="ALWAYS" spacing="10"
+                  style="-fx-padding:30;">
+                <Label text="📋" style="-fx-font-size:40px;"/>
+                <Label text="Sélectionnez une commande" styleClass="cmd-numero"
+                       style="-fx-opacity:0.4; -fx-font-size:13px;"/>
+            </VBox>
+
+            <ScrollPane fx:id="detailScroll" fitToWidth="true" VBox.vgrow="ALWAYS"
+                        styleClass="content-scroll" visible="false" managed="false">
+                <VBox spacing="14" style="-fx-padding:16;">
+
+                    <HBox alignment="CENTER_LEFT" spacing="8">
+                        <VBox HBox.hgrow="ALWAYS" spacing="3">
+                            <Label fx:id="detNumero" text="" styleClass="detail-title"/>
+                            <Label fx:id="detDate"   text="" styleClass="cmd-date"/>
+                        </VBox>
+                        <Label fx:id="detStatut" text="" styleClass="statut-badge"/>
+                        <Label fx:id="detVip"    text="⭐ VIP" styleClass="vip-badge"
+                               visible="false" managed="false"/>
+                    </HBox>
+                    <Separator styleClass="detail-sep"/>
+
+                    <VBox styleClass="section-card" spacing="9">
+                        <Label text="INFORMATIONS" styleClass="section-title"/>
+                        <GridPane hgap="12" vgap="7">
+                            <Label text="Acheteur :"   styleClass="detail-label" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                            <Label fx:id="detAcheteur" styleClass="detail-value" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                            <Label text="Vendeur :"    styleClass="detail-label" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                            <Label fx:id="detVendeur"  styleClass="detail-value" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                            <Label text="Total :"      styleClass="detail-label" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                            <Label fx:id="detTotal"    styleClass="cmd-total"    GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                            <Label text="Score IA :"   styleClass="detail-label" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                            <Label fx:id="detScore"    styleClass="cmd-score"    GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                            <Label text="Société :"    styleClass="detail-label" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                            <Label fx:id="detSociete"  styleClass="detail-value" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+                            <columnConstraints>
+                                <ColumnConstraints minWidth="80" maxWidth="95"/>
+                                <ColumnConstraints hgrow="ALWAYS"/>
+                            </columnConstraints>
+                        </GridPane>
+                    </VBox>
+
+                    <VBox styleClass="section-card" spacing="8">
+                        <Label text="PRODUITS" styleClass="section-title"/>
+                        <ListView fx:id="detListLignes" styleClass="list-view"
+                                  prefHeight="140" maxHeight="180"/>
+                    </VBox>
+
+                    <VBox fx:id="motifBox" styleClass="section-card" spacing="6"
+                          visible="false" managed="false"
+                          style="-fx-border-color:rgba(239,68,68,0.4); -fx-border-width:1; -fx-border-radius:10;">
+                        <Label text="MOTIF REFUS" styleClass="detail-label" style="-fx-text-fill:#EF4444;"/>
+                        <Label fx:id="detMotif" text="" styleClass="detail-value" wrapText="true"/>
+                    </VBox>
+
+                    <Button text="🔍  Voir détails complets" maxWidth="Infinity"
+                            styleClass="btn-primary" onAction="#onVoirDetails" style="-fx-padding:9 0;"/>
+
+                </VBox>
+            </ScrollPane>
+        </VBox>
+    </HBox>
+</VBox>

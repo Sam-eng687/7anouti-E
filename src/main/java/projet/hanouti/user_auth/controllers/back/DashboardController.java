@@ -32,6 +32,9 @@ public class DashboardController {
     private static final String ADMIN_USERS_FXML = "/FXML/user_auth/back/tabs/admin_users.fxml";
     private static final String PLACEHOLDER_FXML = "/FXML/user_auth/back/tabs/module_placeholder.fxml";
     private static final String AI_ACHAT_FXML = "/FXML/AIachat/assistant_ia.fxml";
+    private static final String ACHETEUR_COMMANDES_FXML = "/FXML/GestionCommandes/AcheteurCommandes.fxml";
+    private static final String VENDEUR_COMMANDES_FXML = "/FXML/GestionCommandes/VendeurCommandes.fxml";
+    private static final String ADMIN_COMMANDES_FXML = "/FXML/GestionCommandes/AdminCommandes.fxml";
 
     @FXML private AnchorPane rootPane;
     @FXML private VBox sidebar;
@@ -167,7 +170,7 @@ public class DashboardController {
             addNav(navProducts, "Gestion acheteurs", "Gestion des comptes acheteurs", PLACEHOLDER_FXML);
             addNav(navOrders, "Gestion vendeurs", "Gestion des comptes vendeurs", PLACEHOLDER_FXML);
             addNav(navStats, "Gestion societes de livraison", "Gestion livraison", PLACEHOLDER_FXML);
-            addNav(navSettings, "Gestion commandes", "Supervision commandes", PLACEHOLDER_FXML);
+            addNav(navSettings, "Gestion commandes", "Supervision commandes", ADMIN_COMMANDES_FXML);
             addNav(navSupport, "Historique IA et interactions", "Audit IA", PLACEHOLDER_FXML);
         } else if (role == Role.acheteur) {
             addNav(navUsers, "Dashboard", "Accueil acheteur", AI_ACHAT_FXML,
@@ -176,12 +179,12 @@ public class DashboardController {
                     controller -> ((AssistantIAController) controller).openAssistantMode());
             addNav(navOrders, "Catalogue des produits", "Explorer les produits", PLACEHOLDER_FXML);
             addNav(navStats, "Mes favorites", "Produits favoris", PLACEHOLDER_FXML);
-            addNav(navSettings, "Mes commandes", "Suivi commandes", PLACEHOLDER_FXML);
+            addNav(navSettings, "Mes commandes", "Suivi commandes", ACHETEUR_COMMANDES_FXML);
             hideNav(navSupport);
         } else if (role == Role.vendeur) {
             addNav(navUsers, "Dashboard", "Accueil vendeur", PLACEHOLDER_FXML);
             addNav(navProducts, "Ma boutique", "Gestion boutique", PLACEHOLDER_FXML);
-            addNav(navOrders, "Les commandes", "Commandes recues", PLACEHOLDER_FXML);
+            addNav(navOrders, "Les commandes", "Commandes recues", VENDEUR_COMMANDES_FXML);
             addNav(navStats, "Conseil AI", "Recommandations intelligentes", PLACEHOLDER_FXML);
             addNav(navSettings, "Campagne marketing", "Campagnes commerciales", PLACEHOLDER_FXML);
             addNav(navSupport, "Mes fournisseurs", "Gestion fournisseurs", PLACEHOLDER_FXML);
@@ -195,8 +198,20 @@ public class DashboardController {
         }
 
         if (!navItems.isEmpty()) {
-            loadTab(navItems.get(0));
+            loadTab(defaultNavForRole(role));
         }
+    }
+
+    private NavItem defaultNavForRole(Role role) {
+        Button defaultButton = switch (role) {
+            case admin, acheteur -> navSettings;
+            case vendeur -> navOrders;
+            default -> navItems.get(0).button();
+        };
+        return navItems.stream()
+                .filter(item -> item.button() == defaultButton)
+                .findFirst()
+                .orElse(navItems.get(0));
     }
 
     private void addNav(Button button, String title, String subtitle, String fxmlPath) {
@@ -249,6 +264,7 @@ public class DashboardController {
             if (item.afterLoad() != null) {
                 item.afterLoad().accept(currentModuleController);
             }
+            applyThemeToContent(content);
             applyThemeToCurrentModule();
             contentContainer.getChildren().setAll(content);
         } catch (Exception ex) {
@@ -419,8 +435,29 @@ public class DashboardController {
     }
 
     private void applyThemeToCurrentModule() {
+        if (contentContainer != null) {
+            for (Node child : contentContainer.getChildren()) {
+                applyThemeToContent(child);
+            }
+        }
         if (currentModuleController instanceof AssistantIAController assistant) {
             assistant.applyTheme(isDarkMode);
+        }
+    }
+
+    private void applyThemeToContent(Node content) {
+        if (content == null) {
+            return;
+        }
+        contentContainer.getStyleClass().remove("light-mode");
+        content.getStyleClass().remove("light-mode");
+        if (!isDarkMode) {
+            if (!contentContainer.getStyleClass().contains("light-mode")) {
+                contentContainer.getStyleClass().add("light-mode");
+            }
+            if (!content.getStyleClass().contains("light-mode")) {
+                content.getStyleClass().add("light-mode");
+            }
         }
     }
 
