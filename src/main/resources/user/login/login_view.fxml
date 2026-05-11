@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane fx:id="rootPane" prefHeight="700" prefWidth="1100" styleClass="login-root" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.Controllers.user.login.LoginController">
+
+    <!-- ===== BACKGROUND ===== -->
+    <Pane styleClass="login-bg" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" />
+
+    <!-- Animated blobs -->
+    <Circle fx:id="blob1" radius="240" styleClass="blob blob-1" />
+    <Circle fx:id="blob2" radius="180" styleClass="blob blob-2" />
+    <Circle fx:id="blob3" radius="110" styleClass="blob blob-3" />
+    <Circle fx:id="blob4" radius="75" styleClass="blob blob-4" />
+
+    <!-- ===== MAIN ===== -->
+    <StackPane alignment="CENTER" pickOnBounds="false" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
+
+        <HBox alignment="CENTER" maxWidth="1060" spacing="0" styleClass="main-container">
+
+            <!-- ========== LEFT: HERO PANEL ========== -->
+            <VBox alignment="CENTER" prefWidth="480" spacing="0" styleClass="hero-panel" HBox.hgrow="NEVER">
+
+                <!-- Logo — taille INCHANGEE -->
+                <VBox alignment="CENTER" spacing="10" styleClass="hero-logo-zone">
+                    <StackPane maxHeight="250" maxWidth="250" prefHeight="250" prefWidth="250" styleClass="logo-glow-wrap">
+                        <Pane fx:id="logoGlow" styleClass="logo-glow-circle" />
+                        <ImageView fx:id="logoView" fitHeight="300" fitWidth="300" preserveRatio="true" />
+                    </StackPane>
+                    <Text fx:id="brandTitle" styleClass="hero-title" text="7anouti-E" />
+                    <Text styleClass="hero-tagline" text="Smart Shopping Moderne" />
+                </VBox>
+
+                <!-- Separator animee -->
+                <HBox alignment="CENTER" styleClass="hero-sep-wrap">
+                    <Pane styleClass="hero-sep-line" />
+                    <Pane styleClass="hero-sep-dot" />
+                    <Pane styleClass="hero-sep-line" />
+                </HBox>
+
+                <!-- Trust badges -->
+                <HBox alignment="CENTER" spacing="20" styleClass="trust-row">
+                    <VBox alignment="CENTER" spacing="2" styleClass="trust-card">
+                        <Label styleClass="trust-number" text="10K+" />
+                        <Label styleClass="trust-label" text="Utilisateurs" />
+                    </VBox>
+                    <VBox alignment="CENTER" spacing="2" styleClass="trust-card">
+                        <Label styleClass="trust-number" text="4.9" />
+                        <Label styleClass="trust-label" text="Note" />
+                    </VBox>
+                    <VBox alignment="CENTER" spacing="2" styleClass="trust-card">
+                        <Label styleClass="trust-number" text="99.9%" />
+                        <Label styleClass="trust-label" text="Uptime" />
+                    </VBox>
+                </HBox>
+
+                <!-- Features compactes -->
+                <VBox spacing="10" styleClass="hero-features">
+                    <HBox alignment="CENTER_LEFT" spacing="12" styleClass="feature-row">
+                        <StackPane styleClass="feature-badge">
+                            <Label styleClass="feature-badge-text" text="1" />
+                        </StackPane>
+                        <Label styleClass="feature-text" text="Connexion rapide et securisee" />
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" spacing="12" styleClass="feature-row">
+                        <StackPane styleClass="feature-badge">
+                            <Label styleClass="feature-badge-text" text="2" />
+                        </StackPane>
+                        <Label styleClass="feature-text" text="Interface intelligente et intuitive" />
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" spacing="12" styleClass="feature-row">
+                        <StackPane styleClass="feature-badge">
+                            <Label styleClass="feature-badge-text" text="3" />
+                        </StackPane>
+                        <Label styleClass="feature-text" text="Fonctionnalites premium exclusives" />
+                    </HBox>
+                </VBox>
+            </VBox>
+
+            <!-- ========== RIGHT: LOGIN CARD ========== -->
+            <VBox fx:id="loginCard" alignment="TOP_CENTER" prefWidth="500" spacing="18" styleClass="login-card" HBox.hgrow="NEVER">
+
+                <!-- Header avec accent -->
+                <VBox alignment="CENTER_LEFT" spacing="6" styleClass="card-header">
+                    <HBox alignment="CENTER_LEFT" spacing="8">
+                        <Pane styleClass="accent-bar" />
+                        <Text styleClass="card-welcome" text="Bienvenue" />
+                    </HBox>
+                    <Text styleClass="card-subtitle" text="Connectez-vous pour continuer" />
+                </VBox>
+
+                <!-- Error -->
+                <Label fx:id="errorLabel" managed="false" maxWidth="Infinity" styleClass="error-banner" text="" visible="false" wrapText="true" />
+
+                <!-- Email -->
+                <VBox spacing="8" styleClass="field-group">
+                    <Label styleClass="field-label" text="EMAIL" />
+                    <HBox alignment="CENTER_LEFT" styleClass="input-wrap">
+                        <StackPane styleClass="input-icon-wrap">
+                            <Label fx:id="emailIcon" styleClass="input-icon-text" text="E" />
+                        </StackPane>
+                        <TextField fx:id="emailField" promptText="votre email" styleClass="text-input" HBox.hgrow="ALWAYS" />
+                        <Pane fx:id="emailStatus" managed="false" styleClass="input-status" visible="false" />
+                    </HBox>
+                </VBox>
+
+                <!-- Password -->
+                <VBox spacing="8" styleClass="field-group">
+                    <Label styleClass="field-label" text="MOT DE PASSE" />
+                    <HBox alignment="CENTER_LEFT" styleClass="input-wrap">
+                        <StackPane styleClass="input-icon-wrap">
+                            <Label styleClass="input-icon-text" text="*" />
+                        </StackPane>
+                        <StackPane HBox.hgrow="ALWAYS">
+                            <PasswordField fx:id="passwordField" promptText="mot de passe" styleClass="text-input" />
+                            <TextField fx:id="passwordVisibleField" managed="false" promptText="mot de passe" styleClass="text-input" visible="false" />
+                        </StackPane>
+                        <ToggleButton fx:id="showPasswordBtn" focusTraversable="false" styleClass="eye-toggle" text="o" />
+                    </HBox>
+                </VBox>
+
+                <!-- Options -->
+                <HBox alignment="CENTER_LEFT" styleClass="options-row">
+                    <CheckBox fx:id="rememberMeCheck" styleClass="remember-check" text="Se souvenir de moi" />
+                    <Region HBox.hgrow="ALWAYS" />
+                    <Hyperlink fx:id="forgotLink" styleClass="forgot-link" text="oublie" />
+                </HBox>
+
+                <!-- Login button -->
+                <!-- Login button + Face ID -->
+                <VBox spacing="10" styleClass="btn-zone">
+
+                    <StackPane styleClass="btn-wrap">
+                        <Button fx:id="loginBtn"
+                                maxWidth="Infinity"
+                                styleClass="login-btn"
+                                text="Se connecter" />
+                    </StackPane>
+
+                    <HBox alignment="CENTER" spacing="8" styleClass="face-id-row">
+                        <Button fx:id="faceLoginBtn"
+                                text="Face ID"
+                                focusTraversable="false"
+                                styleClass="face-id-btn"/>
+                    </HBox>
+
+                </VBox>
+                <!-- Divider -->
+                <HBox alignment="CENTER" spacing="14" styleClass="divider-row">
+                    <Pane styleClass="divider-line" HBox.hgrow="ALWAYS" />
+                    <Label styleClass="divider-label" text="ou" />
+                    <Pane styleClass="divider-line" HBox.hgrow="ALWAYS" />
+                </HBox>
+
+                <!-- Sign up -->
+                <HBox alignment="CENTER" spacing="4" styleClass="signup-row">
+                    <Label styleClass="signup-text" text="Nouveau ici ?" />
+                    <Hyperlink fx:id="signupLink" styleClass="signup-link" text="Creer un compte" />
+                </HBox>
+
+                <!-- Footer -->
+                <HBox alignment="CENTER" styleClass="card-footer">
+                    <Text styleClass="footer-text" text="7anouti-E 2026 - Tous droits reserves" />
+                </HBox>
+            </VBox>
+
+        </HBox>
+    </StackPane>
+
+    <!-- Theme toggle -->
+    <HBox fx:id="themeToggleWrap" alignment="CENTER" styleClass="theme-toggle-wrap" AnchorPane.rightAnchor="18" AnchorPane.topAnchor="18">
+        <ToggleButton fx:id="themeToggleBtn" styleClass="theme-toggle-btn" text="theme" />
+    </HBox>
+
+</AnchorPane>

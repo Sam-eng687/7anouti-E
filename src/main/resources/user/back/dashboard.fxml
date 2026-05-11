@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.geometry.Insets?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:id="rootPane"
+            fx:controller="org.example.Controllers.user.back.DashboardController"            prefWidth="1400" prefHeight="860"
+            styleClass="dash-root">
+
+    <Pane styleClass="dash-bg" AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0"
+          AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"/>
+    <Circle radius="300" styleClass="dash-blob dash-blob-1"/>
+    <Circle radius="200" styleClass="dash-blob dash-blob-2"/>
+
+    <HBox AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0"
+          AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0">
+
+        <!-- ========== SIDEBAR LARGE 260px ========== -->
+        <VBox fx:id="sidebar" styleClass="sidebar" prefWidth="260" minWidth="260" maxWidth="260" spacing="0">
+
+            <!-- Logo zone: logo image GRAND + titre app -->
+            <VBox alignment="CENTER" spacing="10" styleClass="sidebar-logo-zone">
+                <StackPane prefWidth="120" prefHeight="120" maxWidth="120" maxHeight="120"
+                           styleClass="sidebar-logo-wrap">
+                    <ImageView fx:id="sidebarLogo" fitWidth="110" fitHeight="110" preserveRatio="true"/>
+                </StackPane>
+                <Label text="7anouti-E" styleClass="sidebar-app-name"/>            </VBox>
+
+            <!-- Separateur -->
+            <Pane styleClass="sidebar-sep"/>
+
+            <!-- Section label -->
+            <Label text="NAVIGATION" styleClass="sidebar-section-label">
+                <VBox.margin><Insets left="20" top="12" bottom="4"/></VBox.margin>
+            </Label>
+
+            <!-- Nav items avec icone + texte -->
+            <VBox fx:id="navContainer" alignment="TOP_LEFT" spacing="4"
+                  styleClass="sidebar-nav" VBox.vgrow="ALWAYS">
+
+                <Button fx:id="navUsers" styleClass="nav-btn nav-btn-active" maxWidth="Infinity"
+                        alignment="BASELINE_LEFT">
+                    <graphic>
+                        <HBox spacing="12" alignment="CENTER_LEFT">
+                            <Label text="U" styleClass="nav-icon"/>
+                            <Label text="Gestion Utilisateurs" styleClass="nav-label"/>
+                        </HBox>
+                    </graphic>
+                    <tooltip><Tooltip text="Gestion Utilisateurs"/></tooltip>
+                </Button>
+
+                <Button fx:id="navProducts" styleClass="nav-btn" maxWidth="Infinity"
+                        alignment="BASELINE_LEFT">
+                    <graphic>
+                        <HBox spacing="12" alignment="CENTER_LEFT">
+                            <Label text="P" styleClass="nav-icon"/>
+                            <Label text="Module 2" styleClass="nav-label"/>
+                        </HBox>
+                    </graphic>
+                    <tooltip><Tooltip text="Module 2"/></tooltip>
+                </Button>
+
+                <Button fx:id="navOrders" styleClass="nav-btn" maxWidth="Infinity"
+                        alignment="BASELINE_LEFT">
+                    <graphic>
+                        <HBox spacing="12" alignment="CENTER_LEFT">
+                            <Label text="C" styleClass="nav-icon"/>
+                            <Label text="Module 3" styleClass="nav-label"/>
+                        </HBox>
+                    </graphic>
+                    <tooltip><Tooltip text="Module 3"/></tooltip>
+                </Button>
+
+                <Button fx:id="navStats" styleClass="nav-btn" maxWidth="Infinity"
+                        alignment="BASELINE_LEFT">
+                    <graphic>
+                        <HBox spacing="12" alignment="CENTER_LEFT">
+                            <Label text="S" styleClass="nav-icon"/>
+                            <Label text="Module 4" styleClass="nav-label"/>
+                        </HBox>
+                    </graphic>
+                    <tooltip><Tooltip text="Module 4"/></tooltip>
+                </Button>
+
+                <Button fx:id="navSettings" styleClass="nav-btn" maxWidth="Infinity"
+                        alignment="BASELINE_LEFT">
+                    <graphic>
+                        <HBox spacing="12" alignment="CENTER_LEFT">
+                            <Label text="R" styleClass="nav-icon"/>
+                            <Label text="Module 5" styleClass="nav-label"/>
+                        </HBox>
+                    </graphic>
+                    <tooltip><Tooltip text="Module 5"/></tooltip>
+                </Button>
+
+                <Button fx:id="navSupport" styleClass="nav-btn" maxWidth="Infinity"
+                        alignment="BASELINE_LEFT">
+                    <graphic>
+                        <HBox spacing="12" alignment="CENTER_LEFT">
+                            <Label text="?" styleClass="nav-icon"/>
+                            <Label text="Module 6" styleClass="nav-label"/>
+                        </HBox>
+                    </graphic>
+                    <tooltip><Tooltip text="Module 6"/></tooltip>
+                </Button>
+            </VBox>
+
+            <!-- Separateur bas -->
+            <Pane styleClass="sidebar-sep"/>
+
+            <!-- Section SYSTEME -->
+            <Label text="SYSTEME" styleClass="sidebar-section-label">
+                <VBox.margin><Insets left="20" top="10" bottom="4"/></VBox.margin>
+            </Label>
+
+            <!-- Bottom: theme + logout -->
+            <VBox alignment="TOP_LEFT" spacing="4" styleClass="sidebar-bottom">
+                <Button fx:id="themeToggleBtn" styleClass="nav-btn" maxWidth="Infinity"
+                        alignment="BASELINE_LEFT">
+                    <graphic>
+                        <HBox fx:id="themeGraphic" spacing="12" alignment="CENTER_LEFT">
+                            <Label fx:id="themeIcon" text="L" styleClass="nav-icon"/>
+                            <Label fx:id="themeLabel" text="Mode Jour / Nuit" styleClass="nav-label"/>
+                        </HBox>
+                    </graphic>
+                    <tooltip><Tooltip text="Changer le theme"/></tooltip>
+                </Button>
+                <Button fx:id="logoutBtn" styleClass="nav-btn" maxWidth="Infinity"
+                        alignment="BASELINE_LEFT">
+                    <graphic>
+                        <HBox spacing="12" alignment="CENTER_LEFT">
+                            <Label text="X" styleClass="nav-icon nav-icon-logout"/>
+                            <Label text="Deconnexion" styleClass="nav-label nav-label-logout"/>
+                        </HBox>
+                    </graphic>
+                    <tooltip><Tooltip text="Deconnexion"/></tooltip>
+                </Button>
+            </VBox>
+        </VBox>
+
+        <!-- ========== MAIN CONTENT ========== -->
+        <VBox HBox.hgrow="ALWAYS" styleClass="main-content" spacing="0">
+
+            <!-- ===== HEADER ===== -->
+            <HBox fx:id="headerBar" styleClass="header-bar" alignment="CENTER_LEFT" spacing="16">
+                <Button fx:id="hamburgerBtn"
+                        text="☰"
+                        styleClass="hamburger-btn"/>
+                <VBox alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                    <Text fx:id="headerTitle" text="Gestion des Utilisateurs" styleClass="header-title"/>
+                    <Text fx:id="headerSubtitle" text="Gerez et supervisez tous les comptes" styleClass="header-subtitle"/>
+                </VBox>
+                <HBox alignment="CENTER_RIGHT" spacing="12" styleClass="header-profile">
+                    <VBox alignment="CENTER_RIGHT" spacing="1">
+                        <Label fx:id="adminNameLabel" text="Admin" styleClass="admin-name"/>
+                        <Label fx:id="adminRoleLabel" text="Administrateur" styleClass="admin-role"/>
+                    </VBox>
+                    <Button fx:id="notifBtn" text="🔔" styleClass="header-action-btn"/>
+
+                    <Button fx:id="cartBtn" text="🛒" styleClass="header-action-btn"/>
+
+                    <MenuButton fx:id="profileMenu" text="👤 Profil" styleClass="profile-menu-btn">
+                        <items>
+                            <MenuItem fx:id="editProfileItem" text="Modifier profil"/>
+                            <MenuItem fx:id="paymentHistoryItem" text="Historique de paiement"/>
+                            <SeparatorMenuItem/>
+                            <MenuItem fx:id="logoutProfileItem" text="Déconnexion"/>
+                        </items>
+                    </MenuButton>
+                    <StackPane fx:id="adminAvatarWrap" styleClass="admin-avatar-wrap"
+                               prefWidth="42" prefHeight="42" maxWidth="42" maxHeight="42">
+                        <ImageView fx:id="adminAvatar" fitWidth="38" fitHeight="38" preserveRatio="false"/>
+                        <Label text="A" styleClass="admin-avatar-letter"/>
+                    </StackPane>
+                </HBox>
+            </HBox>
+
+            <!-- ===== SCROLLABLE CONTENT ===== -->
+            <ScrollPane fitToWidth="true" fitToHeight="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
+                        styleClass="content-scroll" VBox.vgrow="ALWAYS">
+                <VBox fx:id="adminUsersContent" spacing="20" styleClass="content-area" VBox.vgrow="ALWAYS">
+                    <!-- ===== STATS CARDS ===== -->
+                    <HBox spacing="16" styleClass="stats-row">
+                        <VBox styleClass="stat-card stat-card-total" HBox.hgrow="ALWAYS">
+                            <HBox alignment="CENTER_LEFT" spacing="14">
+                                <StackPane styleClass="stat-icon-wrap stat-icon-total">
+                                    <Label text="U" styleClass="stat-icon-text"/>
+                                </StackPane>
+                                <VBox spacing="2">
+                                    <Label text="Total Utilisateurs" styleClass="stat-label"/>
+                                    <Label fx:id="statTotal" text="0" styleClass="stat-value"/>
+                                </VBox>
+                            </HBox>
+                        </VBox>
+                        <VBox styleClass="stat-card stat-card-active" HBox.hgrow="ALWAYS">
+                            <HBox alignment="CENTER_LEFT" spacing="14">
+                                <StackPane styleClass="stat-icon-wrap stat-icon-active">
+                                    <Label text="A" styleClass="stat-icon-text"/>
+                                </StackPane>
+                                <VBox spacing="2">
+                                    <Label text="Actifs" styleClass="stat-label"/>
+                                    <Label fx:id="statActive" text="0" styleClass="stat-value"/>
+                                </VBox>
+                            </HBox>
+                        </VBox>
+                        <VBox styleClass="stat-card stat-card-banned" HBox.hgrow="ALWAYS">
+                            <HBox alignment="CENTER_LEFT" spacing="14">
+                                <StackPane styleClass="stat-icon-wrap stat-icon-banned">
+                                    <Label text="B" styleClass="stat-icon-text"/>
+                                </StackPane>
+                                <VBox spacing="2">
+                                    <Label text="Bannis" styleClass="stat-label"/>
+                                    <Label fx:id="statBanned" text="0" styleClass="stat-value"/>
+                                </VBox>
+                            </HBox>
+                        </VBox>
+                        <VBox styleClass="stat-card stat-card-roles" HBox.hgrow="ALWAYS">
+                            <HBox alignment="CENTER_LEFT" spacing="14">
+                                <StackPane styleClass="stat-icon-wrap stat-icon-roles">
+                                    <Label text="R" styleClass="stat-icon-text"/>
+                                </StackPane>
+                                <VBox spacing="2">
+                                    <Label text="Roles" styleClass="stat-label"/>
+                                    <Label fx:id="statRoles" text="3" styleClass="stat-value"/>
+                                </VBox>
+                            </HBox>
+                        </VBox>
+                    </HBox>
+
+                    <!-- ===== TOOLBAR ===== -->
+                    <HBox spacing="12" alignment="CENTER_LEFT" styleClass="toolbar-row">
+                        <HBox alignment="CENTER_LEFT" styleClass="search-wrap" HBox.hgrow="ALWAYS">
+                            <Label text="Q" styleClass="search-icon"/>
+                            <TextField fx:id="searchField" promptText="Rechercher par nom, email ou role..."
+                                       styleClass="search-input" HBox.hgrow="ALWAYS"/>
+                        </HBox>
+                        <ComboBox fx:id="filterRole" promptText="Role" styleClass="filter-combo" prefWidth="150"/>
+                        <ComboBox fx:id="filterStatus" promptText="Statut" styleClass="filter-combo" prefWidth="150"/>
+                        <Button fx:id="refreshBtn" text="Actualiser" styleClass="refresh-btn"/>
+                    </HBox>
+
+                    <!-- ===== USER TABLE ===== -->
+                    <VBox styleClass="table-container" VBox.vgrow="ALWAYS" minHeight="400">
+                        <TableView fx:id="usersTable" styleClass="users-table"
+                                   VBox.vgrow="ALWAYS" minHeight="380">
+                            <columns>
+                                <TableColumn fx:id="colId"      text="ID"          prefWidth="55"  minWidth="50"  sortable="true"/>
+                                <TableColumn fx:id="colNom"     text="Nom"         prefWidth="140" minWidth="100" sortable="true"/>
+                                <TableColumn fx:id="colPrenom"  text="Prenom"      prefWidth="140" minWidth="100" sortable="true"/>
+                                <TableColumn fx:id="colEmail"   text="Email"       prefWidth="230" minWidth="160" sortable="true"/>
+                                <TableColumn fx:id="colRole"    text="Role"        prefWidth="110" minWidth="90"  sortable="true"/>
+                                <TableColumn fx:id="colStatus"  text="Statut"      prefWidth="110" minWidth="90"  sortable="true"/>
+                                <TableColumn fx:id="colDate"    text="Date Naiss." prefWidth="120" minWidth="100" sortable="true"/>
+                                <!-- Actions column: 4 icon buttons -->
+                                <TableColumn fx:id="colActions" text="Gestion"     prefWidth="180" minWidth="170" sortable="false"/>
+                            </columns>
+                            <placeholder>
+                                <Label text="Aucun utilisateur trouve" styleClass="table-placeholder"/>
+                            </placeholder>
+                        </TableView>
+                    </VBox>
+
+                </VBox>
+            </ScrollPane>
+        </VBox>
+    </HBox>
+
+    <!-- ===== DETAIL OVERLAY ===== -->
+    <StackPane fx:id="overlayPane" visible="false" managed="false"
+               AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0"
+               AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
+               styleClass="overlay-bg">
+
+        <VBox fx:id="detailCard" styleClass="detail-card" maxWidth="540" maxHeight="640"
+              alignment="TOP_CENTER" spacing="16">
+
+            <HBox alignment="CENTER_RIGHT" styleClass="detail-header-row">
+                <Text fx:id="detailTitle" text="Details Utilisateur" styleClass="detail-title" HBox.hgrow="ALWAYS"/>
+                <Button fx:id="closeDetailBtn" text="X" styleClass="close-detail-btn"/>
+            </HBox>
+
+            <StackPane styleClass="detail-avatar-wrap" prefWidth="80" prefHeight="80"
+                       maxWidth="80" maxHeight="80">
+                <ImageView fx:id="detailAvatar" fitWidth="76" fitHeight="76" preserveRatio="false"/>
+                <Label fx:id="detailAvatarLetter" text="" styleClass="detail-avatar-letter"/>
+            </StackPane>
+
+            <VBox spacing="10" styleClass="detail-fields">
+                <HBox spacing="10">
+                    <VBox spacing="2" HBox.hgrow="ALWAYS">
+                        <Label text="NOM" styleClass="detail-field-label"/>
+                        <TextField fx:id="detailNom" styleClass="detail-field-input"/>
+                        <Label fx:id="detailErrNom" text="" managed="false" visible="false" styleClass="form-err-label"/>
+                    </VBox>
+                    <VBox spacing="2" HBox.hgrow="ALWAYS">
+                        <Label text="PRENOM" styleClass="detail-field-label"/>
+                        <TextField fx:id="detailPrenom" styleClass="detail-field-input"/>
+                        <Label fx:id="detailErrPrenom" text="" managed="false" visible="false" styleClass="form-err-label"/>
+                    </VBox>
+                </HBox>
+                <VBox spacing="2">
+                    <Label text="EMAIL" styleClass="detail-field-label"/>
+                    <TextField fx:id="detailEmail" styleClass="detail-field-input"/>
+                    <Label fx:id="detailErrEmail" text="" managed="false" visible="false" styleClass="form-err-label"/>
+                </VBox>
+                <HBox spacing="10">
+                    <VBox spacing="2" HBox.hgrow="ALWAYS">
+                        <Label text="TELEPHONE" styleClass="detail-field-label"/>
+                        <TextField fx:id="detailTel" styleClass="detail-field-input"/>
+                        <Label fx:id="detailErrTel" text="" managed="false" visible="false" styleClass="form-err-label"/>
+                    </VBox>
+                    <VBox spacing="2" HBox.hgrow="ALWAYS">
+                        <Label text="DATE DE NAISSANCE" styleClass="detail-field-label"/>
+                        <TextField fx:id="detailDate" styleClass="detail-field-input"/>
+                    </VBox>
+                </HBox>
+                <HBox spacing="10">
+                    <VBox spacing="4" HBox.hgrow="ALWAYS">
+                        <Label text="ROLE" styleClass="detail-field-label"/>
+                        <ComboBox fx:id="detailRole" styleClass="detail-combo" maxWidth="Infinity"/>
+                    </VBox>
+                    <VBox spacing="4" HBox.hgrow="ALWAYS">
+                        <Label text="STATUT" styleClass="detail-field-label"/>
+                        <ComboBox fx:id="detailStatus" styleClass="detail-combo" maxWidth="Infinity"/>
+                    </VBox>
+                </HBox>
+            </VBox>
+
+            <HBox spacing="10" alignment="CENTER" styleClass="detail-actions">
+                <Button fx:id="detailSaveBtn" text="Sauvegarder" styleClass="detail-save-btn"
+                        HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                <Button fx:id="detailCancelBtn" text="Annuler" styleClass="detail-cancel-btn"
+                        HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+            </HBox>
+
+            <Label fx:id="detailMessage" text="" managed="false" visible="false"
+                   wrapText="true" maxWidth="Infinity" styleClass="detail-message"/>
+        </VBox>
+    </StackPane>
+
+</AnchorPane>

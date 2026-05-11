@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.shape.Circle?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:id="rootPane"
+            fx:controller="org.example.Controllers.user.login.ChooseRoleController"
+            prefWidth="1100" prefHeight="700"
+            styleClass="login-root">
+
+    <Pane AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0"
+          AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
+          styleClass="login-bg"/>
+
+    <Circle radius="200" styleClass="blob blob-1"/>
+    <Circle radius="140" styleClass="blob blob-2"/>
+    <Circle radius="100" styleClass="blob blob-3"/>
+
+    <StackPane AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0"
+               AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
+               alignment="CENTER">
+
+        <VBox fx:id="roleCard"
+              alignment="CENTER"
+              spacing="24"
+              maxWidth="820"
+              prefWidth="820"
+              styleClass="forgot-card">
+
+            <VBox alignment="CENTER" spacing="8">
+                <StackPane styleClass="logo-glow-wrap"
+                           prefWidth="110"
+                           prefHeight="110"
+                           maxWidth="110"
+                           maxHeight="110">
+                    <Pane fx:id="logoGlow" styleClass="logo-glow-circle-small"/>
+                    <ImageView fx:id="logoView"
+                               fitWidth="120"
+                               fitHeight="120"
+                               preserveRatio="true"/>
+                </StackPane>
+
+                <Text text="7anouti-E" styleClass="forgot-brand"/>
+            </VBox>
+
+            <VBox alignment="CENTER" spacing="6">
+                <Text text="Quel type de compte voulez-vous créer ?" styleClass="forgot-title"/>
+                <Text text="Choisissez votre rôle pour personnaliser votre expérience"
+                      styleClass="forgot-desc"/>
+            </VBox>
+
+            <HBox alignment="CENTER" spacing="18">
+
+                <VBox fx:id="acheteurCard"
+                      alignment="CENTER"
+                      spacing="12"
+                      prefWidth="230"
+                      prefHeight="260"
+                      styleClass="role-choice-card">
+
+                    <StackPane styleClass="role-avatar role-avatar-acheteur">
+                        <Label text="🛒" styleClass="role-avatar-icon"/>
+                    </StackPane>
+
+                    <Label text="Acheteur" styleClass="role-title"/>
+                    <Label text="Acheter des produits, suivre vos commandes et profiter des offres."
+                           wrapText="true"
+                           textAlignment="CENTER"
+                           styleClass="role-desc"/>
+
+                    <Label text="Créer un compte Acheteur" styleClass="role-action"/>
+                </VBox>
+
+                <VBox fx:id="vendeurCard"
+                      alignment="CENTER"
+                      spacing="12"
+                      prefWidth="230"
+                      prefHeight="260"
+                      styleClass="role-choice-card">
+
+                    <StackPane styleClass="role-avatar role-avatar-vendeur">
+                        <Label text="🏪" styleClass="role-avatar-icon"/>
+                    </StackPane>
+
+                    <Label text="Vendeur" styleClass="role-title"/>
+                    <Label text="Créer votre boutique, gérer vos produits et développer vos ventes."
+                           wrapText="true"
+                           textAlignment="CENTER"
+                           styleClass="role-desc"/>
+
+                    <Label text="Créer un compte Vendeur" styleClass="role-action"/>
+                </VBox>
+
+                <VBox fx:id="livreurCard"
+                      alignment="CENTER"
+                      spacing="12"
+                      prefWidth="230"
+                      prefHeight="260"
+                      styleClass="role-choice-card">
+
+                    <StackPane styleClass="role-avatar role-avatar-livreur">
+                        <Label text="🚚" styleClass="role-avatar-icon"/>
+                    </StackPane>
+
+                    <Label text="Livreur" styleClass="role-title"/>
+                    <Label text="Recevoir des missions, gérer vos livraisons et votre zone."
+                           wrapText="true"
+                           textAlignment="CENTER"
+                           styleClass="role-desc"/>
+
+                    <Label text="Créer un compte Livreur" styleClass="role-action"/>
+                </VBox>
+
+            </HBox>
+
+            <HBox alignment="CENTER" spacing="4" styleClass="signup-row">
+                <Label text="Vous avez déjà un compte ?" styleClass="signup-text"/>
+                <Hyperlink fx:id="backLoginLink" text="Se connecter" styleClass="signup-link"/>
+            </HBox>
+
+        </VBox>
+    </StackPane>
+
+    <HBox AnchorPane.topAnchor="18" AnchorPane.rightAnchor="18"
+          alignment="CENTER"
+          styleClass="theme-toggle-wrap">
+        <ToggleButton fx:id="themeToggleBtn"
+                      text="theme"
+                      styleClass="theme-toggle-btn"/>
+    </HBox>
+
+</AnchorPane>
