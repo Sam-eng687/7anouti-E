@@ -104,6 +104,7 @@ public class DashboardController {
 
         // Charger l'utilisateur depuis la session
         User sessionUser = session.getConnectedUser();
+        updateHeaderUser(sessionUser);
         if (sessionUser == null || sessionUser.getRole() == null) {
             redirectToLoginImmediately();
             return;
@@ -483,7 +484,6 @@ public class DashboardController {
                 updateHeaderUser(currentDetailUser);
 
                 showDetailMessage("Profil mis à jour avec succès !", false);
-
             } else {
 
                 currentDetailUser.setRole(Role.valueOf(detailRole.getValue()));
@@ -776,6 +776,8 @@ public class DashboardController {
 
         adminNameLabel.setText(user.getNom() + " " + user.getPrenom());
         adminRoleLabel.setText(user.getRole() != null ? user.getRole().name() : "");
+
+        profileMenu.setText("👤 " + user.getPrenom());
 
         if (user.getImage() != null && !user.getImage().isBlank()) {
             try {
