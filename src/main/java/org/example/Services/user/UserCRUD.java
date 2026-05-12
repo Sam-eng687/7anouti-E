@@ -326,4 +326,20 @@ public class UserCRUD implements CRUDuser<User> {
 
         pst.executeUpdate();
     }
+    public void updateUserProfile(User user) throws SQLException {
+        String sql = "UPDATE users SET nom = ?, prenom = ?, e_mail = ?, num_tel = ?, date_naiss = ?, image = ?, adresse = ? WHERE id = ?";
+
+        try (PreparedStatement pst = connection.prepareStatement(sql)) {
+            pst.setString(1, user.getNom());
+            pst.setString(2, user.getPrenom());
+            pst.setString(3, user.getE_mail());
+            pst.setString(4, user.getNum_tel());
+            pst.setString(5, user.getDate_naiss());
+            pst.setString(6, user.getImage());
+            pst.setString(7, user.getAdresse());
+            pst.setInt(8, user.getId());
+
+            pst.executeUpdate();
+        }
+    }
 }

@@ -160,12 +160,6 @@
                     </HBox>
 
                 </VBox>
-                <!-- Divider -->
-                <HBox alignment="CENTER" spacing="14" styleClass="divider-row">
-                    <Pane styleClass="divider-line" HBox.hgrow="ALWAYS" />
-                    <Label styleClass="divider-label" text="ou" />
-                    <Pane styleClass="divider-line" HBox.hgrow="ALWAYS" />
-                </HBox>
 
                 <!-- Sign up -->
                 <HBox alignment="CENTER" spacing="4" styleClass="signup-row">

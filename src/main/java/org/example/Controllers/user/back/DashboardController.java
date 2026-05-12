@@ -84,6 +84,8 @@ public class DashboardController {
     private User currentDetailUser = null;
     private User connectedAdmin = null;
 
+    private boolean editingOwnProfile = false;
+
     private boolean sidebarOpen = false;
 
     @FXML
@@ -117,7 +119,6 @@ public class DashboardController {
         logoutProfileItem.setOnAction(e -> navigateToLogin());
 
         editProfileItem.setOnAction(e -> openProfileEdit(sessionUser));
-
         paymentHistoryItem.setOnAction(e ->
                 showAlert("Historique", "Historique paiement prêt pour intégration.")
         );
@@ -440,50 +441,70 @@ public class DashboardController {
     }
 
     private void closeDetail() {
-        FadeTransition fo = new FadeTransition(Duration.millis(150), overlayPane); fo.setToValue(0);
+        FadeTransition fo = new FadeTransition(Duration.millis(150), overlayPane);
+        fo.setToValue(0);
+
         ScaleTransition so = new ScaleTransition(Duration.millis(150), detailCard);
-        so.setToX(0.9); so.setToY(0.9);
+        so.setToX(0.9);
+        so.setToY(0.9);
+
         ParallelTransition pt = new ParallelTransition(fo, so);
-        pt.setOnFinished(e -> { overlayPane.setVisible(false); overlayPane.setManaged(false); currentDetailUser = null; });
+
+        pt.setOnFinished(e -> {
+            overlayPane.setVisible(false);
+            overlayPane.setManaged(false);
+
+            detailCard.setScaleX(1);
+            detailCard.setScaleY(1);
+
+            currentDetailUser = null;
+            editingOwnProfile = false;
+        });
+
         pt.play();
     }
 
     private void saveDetail() {
-
         if (currentDetailUser == null) return;
 
         try {
+            if (editingOwnProfile) {
 
-            currentDetailUser.setRole(
-                    Role.valueOf(detailRole.getValue())
-            );
+                currentDetailUser.setNom(detailNom.getText().trim());
+                currentDetailUser.setPrenom(detailPrenom.getText().trim());
+                currentDetailUser.setE_mail(detailEmail.getText().trim());
+                currentDetailUser.setNum_tel(detailTel.getText().trim());
+                currentDetailUser.setDate_naiss(detailDate.getText().trim());
 
-            currentDetailUser.setStatus(
-                    Status.valueOf(detailStatus.getValue())
-            );
+                userCRUD.updateUserProfile(currentDetailUser);
 
-            userCRUD.updateUserAdminFields(currentDetailUser);
+                org.example.Utils.SessionManager.getInstance().setConnectedUser(currentDetailUser);
 
-            showDetailMessage(
-                    "Role et statut mis a jour avec succes !",
-                    false
-            );
+                updateHeaderUser(currentDetailUser);
 
-            loadUsers();
+                showDetailMessage("Profil mis à jour avec succès !", false);
 
-            PauseTransition redirect =
-                    new PauseTransition(Duration.millis(900));
+            } else {
 
-            redirect.setOnFinished(e -> closeDetail());
+                currentDetailUser.setRole(Role.valueOf(detailRole.getValue()));
+                currentDetailUser.setStatus(Status.valueOf(detailStatus.getValue()));
 
+                userCRUD.updateUserAdminFields(currentDetailUser);
+
+                showDetailMessage("Role et statut mis à jour avec succès !", false);
+
+                loadUsers();
+            }
+
+            PauseTransition redirect = new PauseTransition(Duration.millis(800));
+            redirect.setOnFinished(e -> {
+                closeDetail();
+                editingOwnProfile = false;
+            });
             redirect.play();
 
         } catch (SQLException ex) {
-
-            showDetailMessage(
-                    "Erreur: " + ex.getMessage(),
-                    true
-            );
+            showDetailMessage("Erreur: " + ex.getMessage(), true);
         }
     }
 
@@ -674,22 +695,6 @@ public class DashboardController {
             btn.setText(title);
         }
     }
-    private void openProfileEdit(User user) {
-        openDetail(user, true);
-
-        detailNom.setDisable(false);
-        detailPrenom.setDisable(false);
-        detailEmail.setDisable(false);
-        detailTel.setDisable(false);
-
-        detailNom.setEditable(true);
-        detailPrenom.setEditable(true);
-        detailEmail.setEditable(true);
-        detailTel.setEditable(true);
-
-        detailRole.setDisable(true);
-        detailStatus.setDisable(true);
-    }
     private void configureContentByRole(User user) {
         if (user.getRole() == Role.admin) {
             adminUsersContent.setVisible(true);
@@ -742,6 +747,40 @@ public class DashboardController {
             });
 
             slide.play();
+        }
+    }
+    private void openProfileEdit(User user) {
+        editingOwnProfile = true;
+
+        openDetail(user, true);
+
+        detailTitle.setText("Modifier mon profil");
+
+        detailNom.setDisable(false);
+        detailPrenom.setDisable(false);
+        detailEmail.setDisable(false);
+        detailTel.setDisable(false);
+        detailDate.setDisable(false);
+
+        detailNom.setEditable(true);
+        detailPrenom.setEditable(true);
+        detailEmail.setEditable(true);
+        detailTel.setEditable(true);
+        detailDate.setEditable(true);
+
+        detailRole.setDisable(true);
+        detailStatus.setDisable(true);
+    }
+    private void updateHeaderUser(User user) {
+        if (user == null) return;
+
+        adminNameLabel.setText(user.getNom() + " " + user.getPrenom());
+        adminRoleLabel.setText(user.getRole() != null ? user.getRole().name() : "");
+
+        if (user.getImage() != null && !user.getImage().isBlank()) {
+            try {
+                adminAvatar.setImage(new Image("file:" + user.getImage(), 38, 38, false, true));
+            } catch (Exception ignored) {}
         }
     }
 }
