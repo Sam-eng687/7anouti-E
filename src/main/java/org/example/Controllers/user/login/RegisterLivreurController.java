@@ -126,12 +126,13 @@ public class RegisterLivreurController {
         if (rootPane != null) {
             if (!rootPane.getStyleClass().contains("login-root"))
                 rootPane.getStyleClass().add("login-root");
-            setDarkMode(true);
-        }
-        themeToggleBtn.setSelected(true);
-        themeToggleBtn.setText("\u2600  Jour");
-        themeToggleBtn.selectedProperty().addListener((obs, o, sel) -> setDarkMode(sel));
-
+            boolean dark = org.example.Utils.SessionManager.getInstance().isDarkMode();
+            setDarkMode(dark);        }
+        themeToggleBtn.setOnAction(e -> {
+            boolean newMode = !org.example.Utils.SessionManager.getInstance().isDarkMode();
+            org.example.Utils.SessionManager.getInstance().setDarkMode(newMode);
+            setDarkMode(newMode);
+        });
         // =================== LOGO ===================
         try {
             java.io.InputStream s = getClass().getResourceAsStream("/user/image/logo.png");

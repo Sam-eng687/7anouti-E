@@ -49,12 +49,15 @@ public class ForgotPasswordController {
         if (rootPane != null) {
             if (!rootPane.getStyleClass().contains("login-root"))
                 rootPane.getStyleClass().add("login-root");
-            setDarkMode(true);
+            boolean dark = org.example.Utils.SessionManager.getInstance().isDarkMode();
+            setDarkMode(dark);
         }
 
-        themeToggleBtn.setSelected(true);
-        themeToggleBtn.setText("\u2600  Jour");
-        themeToggleBtn.selectedProperty().addListener((obs, o, sel) -> setDarkMode(sel));
+        themeToggleBtn.setOnAction(e -> {
+            boolean newMode = !org.example.Utils.SessionManager.getInstance().isDarkMode();
+            org.example.Utils.SessionManager.getInstance().setDarkMode(newMode);
+            setDarkMode(newMode);
+        });
 
         try {
             java.io.InputStream s = getClass().getResourceAsStream("/user/image/logo.png");

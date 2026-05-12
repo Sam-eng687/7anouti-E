@@ -31,11 +31,13 @@ public class ChooseRoleController {
             rootPane.getStyleClass().add("login-root");
         }
 
-        setDarkMode(true);
-
-        themeToggleBtn.setSelected(true);
-        themeToggleBtn.setText("\u2600  Jour");
-        themeToggleBtn.selectedProperty().addListener((obs, old, selected) -> setDarkMode(selected));
+        boolean dark = org.example.Utils.SessionManager.getInstance().isDarkMode();
+        setDarkMode(dark);
+        themeToggleBtn.setOnAction(e -> {
+            boolean newMode = !org.example.Utils.SessionManager.getInstance().isDarkMode();
+            org.example.Utils.SessionManager.getInstance().setDarkMode(newMode);
+            setDarkMode(newMode);
+        });
 
         try {
             java.io.InputStream s = getClass().getResourceAsStream("/user/image/logo.png");

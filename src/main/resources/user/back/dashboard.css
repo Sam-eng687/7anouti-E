@@ -81,16 +81,16 @@
    SIDEBAR — 260px LARGE comme le modele
    ============================================================ */
 .sidebar {
-    -fx-background-color: linear-gradient(to bottom, #4F46E5, #312E81, #1E1B4B);
+    -fx-background-color: rgba(255,255,255,0.72);
     -fx-padding: 0;
     -fx-pref-width: 260;
     -fx-min-width: 260;
     -fx-max-width: 260;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.28), 30, 0.14, 6, 0);
+    -fx-effect: dropshadow(gaussian, rgba(79,70,229,0.10), 35, 0.12, 8, 0);
 }
+
 .dash-root.dark .sidebar {
-    -fx-background-color: linear-gradient(to bottom, #1a1744, #0e0c20, #070614);
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.50), 40, 0.22, 6, 0);
+    -fx-background-color: rgba(18,16,42,0.86);
 }
 
 /* --- Logo zone GRAND --- */
@@ -760,4 +760,53 @@
 
 .profile-menu-btn:hover {
     -fx-background-color: linear-gradient(to right, -b800, -b700, -b600);
+}
+.nav-btn,
+.button.nav-btn,
+.toggle-button.nav-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: transparent;
+    -fx-font-size: 0;
+    -fx-min-height: 50;
+    -fx-pref-height: 50;
+    -fx-background-radius: 14;
+    -fx-cursor: hand;
+    -fx-border-color: transparent;
+    -fx-padding: 0 18;
+    -fx-alignment: CENTER_LEFT;
+    -fx-background-insets: 0;
+}
+
+.nav-label {
+    -fx-text-fill: -t2;
+    -fx-font-size: 14px;
+    -fx-font-weight: 800;
+}
+
+.nav-btn:hover {
+    -fx-background-color: rgba(99,102,241,0.10);
+}
+
+.nav-btn:hover .nav-label {
+    -fx-text-fill: -b600;
+}
+
+.nav-btn-active,
+.button.nav-btn-active {
+    -fx-background-color: linear-gradient(to right, #4338CA, #4F46E5, #6366F1);
+    -fx-background-radius: 14;
+    -fx-effect: dropshadow(gaussian, rgba(99,102,241,0.28), 20, 0.16, 0, 8);
+}
+
+.nav-btn-active .nav-label {
+    -fx-text-fill: white;
+    -fx-font-weight: 900;
+}
+
+.nav-icon {
+    -fx-opacity: 0;
+    -fx-max-width: 0;
+    -fx-min-width: 0;
+    -fx-pref-width: 0;
+    -fx-padding: 0;
 }

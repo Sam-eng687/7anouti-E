@@ -49,7 +49,6 @@
                         alignment="BASELINE_LEFT">
                     <graphic>
                         <HBox spacing="12" alignment="CENTER_LEFT">
-                            <Label text="U" styleClass="nav-icon"/>
                             <Label text="Gestion Utilisateurs" styleClass="nav-label"/>
                         </HBox>
                     </graphic>
@@ -60,7 +59,6 @@
                         alignment="BASELINE_LEFT">
                     <graphic>
                         <HBox spacing="12" alignment="CENTER_LEFT">
-                            <Label text="P" styleClass="nav-icon"/>
                             <Label text="Module 2" styleClass="nav-label"/>
                         </HBox>
                     </graphic>
@@ -71,7 +69,6 @@
                         alignment="BASELINE_LEFT">
                     <graphic>
                         <HBox spacing="12" alignment="CENTER_LEFT">
-                            <Label text="C" styleClass="nav-icon"/>
                             <Label text="Module 3" styleClass="nav-label"/>
                         </HBox>
                     </graphic>
@@ -82,7 +79,6 @@
                         alignment="BASELINE_LEFT">
                     <graphic>
                         <HBox spacing="12" alignment="CENTER_LEFT">
-                            <Label text="S" styleClass="nav-icon"/>
                             <Label text="Module 4" styleClass="nav-label"/>
                         </HBox>
                     </graphic>
@@ -93,7 +89,6 @@
                         alignment="BASELINE_LEFT">
                     <graphic>
                         <HBox spacing="12" alignment="CENTER_LEFT">
-                            <Label text="R" styleClass="nav-icon"/>
                             <Label text="Module 5" styleClass="nav-label"/>
                         </HBox>
                     </graphic>
@@ -104,7 +99,6 @@
                         alignment="BASELINE_LEFT">
                     <graphic>
                         <HBox spacing="12" alignment="CENTER_LEFT">
-                            <Label text="?" styleClass="nav-icon"/>
                             <Label text="Module 6" styleClass="nav-label"/>
                         </HBox>
                     </graphic>

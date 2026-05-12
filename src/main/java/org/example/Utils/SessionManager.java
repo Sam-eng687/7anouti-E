@@ -54,4 +54,13 @@ public class SessionManager {
                 + (connectedUser != null ? connectedUser.getE_mail() : "?"));
         connectedUser = null;
     }
+    private boolean darkMode = true;
+
+    public boolean isDarkMode() {
+        return darkMode;
+    }
+
+    public void setDarkMode(boolean darkMode) {
+        this.darkMode = darkMode;
+    }
 }

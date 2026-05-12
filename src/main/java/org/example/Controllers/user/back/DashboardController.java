@@ -139,9 +139,10 @@ public class DashboardController {
         }
 
         // Theme toggle — Button normal (pas ToggleButton)
-        setDarkMode(true);
-        themeToggleBtn.setOnAction(e -> {
+        isDarkMode = org.example.Utils.SessionManager.getInstance().isDarkMode();
+        setDarkMode(isDarkMode);        themeToggleBtn.setOnAction(e -> {
             isDarkMode = !isDarkMode;
+            org.example.Utils.SessionManager.getInstance().setDarkMode(isDarkMode);
             setDarkMode(isDarkMode);
             bounceNode(themeToggleBtn);
         });
@@ -627,9 +628,9 @@ public class DashboardController {
 
         else if (role == Role.acheteur) {
             setNav(navUsers, "Dashboard", "Accueil acheteur");
-            setNav(navProducts, "Catalogue des produits", "Explorer les produits");
-            setNav(navOrders, "AI Achats", "Assistant intelligent");
-            setNav(navStats, "Wishlist", "Produits favoris");
+            setNav(navProducts, "AI Achats", "Assistant intelligent");
+            setNav(navOrders, "Catalogue des produits", "Explorer les produits");
+            setNav(navStats, "Mes favorites", "Produits favoris");
             setNav(navSettings, "Mes commandes", "Suivi commandes");
             navSupport.setVisible(false);
             navSupport.setManaged(false);
@@ -637,10 +638,10 @@ public class DashboardController {
 
         else if (role == Role.vendeur) {
             setNav(navUsers, "Dashboard", "Accueil vendeur");
-            setNav(navProducts, "My Shop", "Gestion boutique");
+            setNav(navProducts, "Ma boutique", "Gestion boutique");
             setNav(navOrders, "Les commandes", "Commandes reçues");
-            setNav(navStats, "AI Marketing", "Recommandations marketing");
-            setNav(navSettings, "Mes campagnes", "Campagnes commerciales");
+            setNav(navStats, "Conseil AI", "Recommandations intelligentes");
+            setNav(navSettings, "Campagne marketing", "Campagnes commerciales");
             setNav(navSupport, "Mes fournisseurs", "Gestion fournisseurs");
         }
 
