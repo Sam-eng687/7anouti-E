@@ -277,7 +277,7 @@ public class UserCRUD implements CRUDuser<User> {
             pstmt.setInt(2, userId);
             pstmt.executeUpdate();
         }
-    }
+    }//
     public boolean updatePasswordByEmail(String email, String newPassword) throws SQLException {
 
         String hashedPassword = hashPassword(newPassword);
