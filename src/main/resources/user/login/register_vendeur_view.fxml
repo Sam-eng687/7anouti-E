@@ -166,16 +166,17 @@
                     <!-- entreprise -->
 
                     <VBox spacing="2" styleClass="field-group">
-                        <Label text="NOM DE L'ENTREPRISE" styleClass="field-label"/>
+                        <Label text="NOM ENTREPRISE" styleClass="field-label"/>
                         <HBox alignment="CENTER_LEFT" styleClass="input-wrap">
                             <StackPane styleClass="input-icon-wrap">
-                                <Label text="B" styleClass="input-icon-text"/>
+                                <Label text="E" styleClass="input-icon-text"/>
                             </StackPane>
-                            <TextField fx:id="entrepriseField" promptText="Nom boutique / entreprise"
-                                       styleClass="text-input" HBox.hgrow="ALWAYS"/>
+                            <TextField fx:id="entrepriseField"
+                                       promptText="Nom de votre boutique"
+                                       styleClass="text-input"
+                                       HBox.hgrow="ALWAYS"/>
                         </HBox>
                     </VBox>
-
 
                     <VBox spacing="2" styleClass="field-group">
                         <Label text="ADRESSE ENTREPRISE" styleClass="field-label"/>
@@ -194,6 +195,19 @@
                                     text="Map"
                                     focusTraversable="false"
                                     styleClass="eye-toggle"/>
+                        </HBox>
+                    </VBox>
+
+                    <VBox spacing="2" styleClass="field-group">
+                        <Label text="TYPE PRODUIT" styleClass="field-label"/>
+                        <HBox alignment="CENTER_LEFT" styleClass="input-wrap">
+                            <StackPane styleClass="input-icon-wrap">
+                                <Label text="P" styleClass="input-icon-text"/>
+                            </StackPane>
+                            <TextField fx:id="typeProduitField"
+                                       promptText="Ex: alimentaire, vêtements, cosmétique..."
+                                       styleClass="text-input"
+                                       HBox.hgrow="ALWAYS"/>
                         </HBox>
                     </VBox>
 

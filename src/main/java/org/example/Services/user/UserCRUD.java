@@ -43,8 +43,8 @@ public class UserCRUD implements CRUDuser<User> {
         String hashedPassword = hashPassword(user.getMot_de_pass());
 
         String req = "INSERT INTO users " +
-                "(nom, prenom, date_naiss, e_mail, num_tel, mot_de_pass, image, role, status, adresse, face_id_enabled, face_image_path) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "(nom, prenom, date_naiss, e_mail, num_tel, mot_de_pass, image, role, status, adresse, face_id_enabled, face_image_path, entreprise, type_produit, vehicule, permis, zone_livraison) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement pstmt = connection.prepareStatement(req, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -62,6 +62,11 @@ public class UserCRUD implements CRUDuser<User> {
 
             pstmt.setBoolean(11, user.isFaceIdEnabled());
             pstmt.setString(12, user.getFaceImagePath());
+            pstmt.setString(13, user.getEntreprise());
+            pstmt.setString(14, user.getTypeProduit());
+            pstmt.setString(15, user.getVehicule());
+            pstmt.setString(16, user.getPermis());
+            pstmt.setString(17, user.getZoneLivraison());
 
             int affectedRows = pstmt.executeUpdate();
 
@@ -218,6 +223,11 @@ public class UserCRUD implements CRUDuser<User> {
         user.setFaceIdEnabled(rs.getBoolean("face_id_enabled"));
         user.setFaceImagePath(rs.getString("face_image_path"));
         user.setAdresse(rs.getString("adresse"));
+        user.setEntreprise(rs.getString("entreprise"));
+        user.setTypeProduit(rs.getString("type_produit"));
+        user.setVehicule(rs.getString("vehicule"));
+        user.setPermis(rs.getString("permis"));
+        user.setZoneLivraison(rs.getString("zone_livraison"));
 
         String roleStr = rs.getString("role");
         if (roleStr != null) {

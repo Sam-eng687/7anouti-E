@@ -32,6 +32,7 @@ import java.io.File;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import javafx.scene.control.TextInputControl;
 
 public class RegisterVendeurController {
     // =================== FXML FIELDS ===================
@@ -551,6 +552,10 @@ public class RegisterVendeurController {
 
                 String dateStr   = dateNaiss.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
                 String imagePath = selectedImageFile != null ? selectedImageFile.getAbsolutePath() : "";
+                System.out.println("entrepriseField = " + entrepriseField);
+                System.out.println("adresseEntrepriseField = " + adresseEntrepriseField);
+                System.out.println("typeProduitField = " + typeProduitField);
+
                 String entreprise = getText(entrepriseField);
                 String adresse = getText(adresseEntrepriseField);
                 String typeProduit = getText(typeProduitField);
@@ -677,10 +682,6 @@ public class RegisterVendeurController {
             }
         }
         delay.play();
-    }
-
-    private String getText(TextField field) {
-        return field.getText() == null ? "" : field.getText().trim();
     }
 
     private void markFieldError(Control field) {
@@ -1078,4 +1079,15 @@ public class RegisterVendeurController {
     </html>
     """;
     }
+
+
+    private String getText(TextInputControl field) {
+        if (field == null) {
+            System.err.println("Champ introuvable null dans RegisterVendeurController");
+            return "";
+        }
+
+        return field.getText() == null ? "" : field.getText().trim();
+    }
+
 }

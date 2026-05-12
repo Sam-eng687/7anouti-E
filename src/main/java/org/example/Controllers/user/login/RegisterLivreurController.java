@@ -27,6 +27,7 @@ import java.io.File;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import javafx.scene.control.TextInputControl;
 
 public class RegisterLivreurController {
 
@@ -664,10 +665,6 @@ public class RegisterLivreurController {
         delay.play();
     }
 
-    private String getText(TextField field) {
-        return field.getText() == null ? "" : field.getText().trim();
-    }
-
     private void markFieldError(Control field) {
         Parent wrap = findInputWrap(field);
         if (wrap != null) {
@@ -980,4 +977,13 @@ public class RegisterLivreurController {
             }
         });
     }
+    private String getText(TextInputControl field) {
+        if (field == null) {
+            System.err.println("Champ introuvable null");
+            return "";
+        }
+
+        return field.getText() == null ? "" : field.getText().trim();
+    }
+
 }

@@ -25,6 +25,7 @@ import java.io.File;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import javafx.scene.control.TextInputControl;
 
 public class RegisterController {
 
@@ -865,5 +866,13 @@ public class RegisterController {
 
         countryLabel.setManaged(true);
         countryLabel.setVisible(true);
+    }
+    private String getText(TextInputControl field) {
+        if (field == null) {
+            System.err.println("Champ introuvable null");
+            return "";
+        }
+
+        return field.getText() == null ? "" : field.getText().trim();
     }
 }
