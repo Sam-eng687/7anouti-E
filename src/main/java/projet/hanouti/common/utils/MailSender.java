@@ -2,6 +2,7 @@ package projet.hanouti.common.utils;
 
 import jakarta.mail.*;
 import jakarta.mail.internet.*;
+import java.io.UnsupportedEncodingException;
 import java.util.Properties;
 
 public class MailSender {
@@ -39,13 +40,42 @@ public class MailSender {
     public static void sendHtmlMail(String toEmail, String subject, String htmlContent) throws MessagingException {
         Session session = createSession();
 
-        Message message = new MimeMessage(session);
+        MimeMessage message = new MimeMessage(session);
         message.setFrom(new InternetAddress(FROM_EMAIL));
         message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
         message.setSubject(subject);
         message.setContent(htmlContent, "text/html; charset=UTF-8");
 
         Transport.send(message);
+    }
+
+    public static void sendHtmlMail(String toEmail, String subject, String htmlContent,
+                                    String senderName, String replyToEmail) throws MessagingException {
+        Session session = createSession();
+
+        MimeMessage message = new MimeMessage(session);
+        message.setFrom(namedSender(senderName, replyToEmail));
+        message.setSender(new InternetAddress(FROM_EMAIL));
+        if (replyToEmail != null && !replyToEmail.isBlank()) {
+            message.setReplyTo(InternetAddress.parse(replyToEmail));
+        }
+        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
+        message.setSubject(subject);
+        message.setContent(htmlContent, "text/html; charset=UTF-8");
+
+        Transport.send(message);
+    }
+
+    private static InternetAddress namedSender(String senderName, String senderEmail) throws MessagingException {
+        try {
+            String fromEmail = senderEmail == null || senderEmail.isBlank() ? FROM_EMAIL : senderEmail;
+            if (senderName == null || senderName.isBlank()) {
+                return new InternetAddress(fromEmail, "7anouti-E");
+            }
+            return new InternetAddress(fromEmail, senderName);
+        } catch (UnsupportedEncodingException e) {
+            throw new MessagingException("Nom d'expediteur invalide", e);
+        }
     }
 
     public static void sendMailWithAttachment(String toEmail, String subject, String messageText, String filePath)

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<ScrollPane fitToWidth="true" styleClass="page-scroll"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="projet.hanouti.produit_fournisseur.controllers.AjouterFournisseurController">
+    <VBox spacing="0" styleClass="page-root">
+
+        <VBox styleClass="page-header" spacing="4">
+            <padding><Insets top="28" left="36" right="36" bottom="20"/></padding>
+            <Label text="Ajouter un Fournisseur" styleClass="page-title"/>
+            <Label text="Enregistrez un nouveau fournisseur dans votre carnet"
+                   styleClass="page-subtitle"/>
+        </VBox>
+
+        <HBox spacing="20" styleClass="form-container">
+            <padding><Insets top="20" left="36" right="36" bottom="36"/></padding>
+
+            <VBox spacing="14" HBox.hgrow="ALWAYS" styleClass="form-card">
+                <padding><Insets top="24" left="24" right="24" bottom="24"/></padding>
+                <Label text="Informations du Fournisseur"
+                       styleClass="form-section-title"/>
+                <Separator/>
+
+                <Label text="Nom de la societe *" styleClass="field-label"/>
+                <TextField fx:id="fieldNom" promptText="Raison sociale"
+                           styleClass="form-field"/>
+                <Label fx:id="errNom" styleClass="error-label"
+                       visible="false" managed="false"/>
+
+                <Label text="Nom du contact *" styleClass="field-label"/>
+                <TextField fx:id="fieldContact" promptText="Nom du responsable"
+                           styleClass="form-field"/>
+                <Label fx:id="errContact" styleClass="error-label"
+                       visible="false" managed="false"/>
+
+                <HBox spacing="14">
+                    <VBox spacing="6" HBox.hgrow="ALWAYS">
+                        <Label text="Email *" styleClass="field-label"/>
+                        <TextField fx:id="fieldEmail"
+                                   promptText="contact@societe.com"
+                                   styleClass="form-field"/>
+                        <Label fx:id="errEmail" styleClass="error-label"
+                               visible="false" managed="false"/>
+                    </VBox>
+                    <VBox spacing="6" HBox.hgrow="ALWAYS">
+                        <Label text="Telephone *" styleClass="field-label"/>
+                        <TextField fx:id="fieldTelephone"
+                                   promptText="Numero de telephone"
+                                   styleClass="form-field"/>
+                        <Label fx:id="errTelephone" styleClass="error-label"
+                               visible="false" managed="false"/>
+                    </VBox>
+                </HBox>
+
+                <!--  ADRESSE WITH MAP BUTTON  -->
+                <Label text="Adresse *" styleClass="field-label"/>
+                <HBox spacing="8" alignment="TOP_LEFT">
+                    <TextArea fx:id="fieldAdresse"
+                              promptText="Cliquez sur  pour choisir sur la carte..."
+                              styleClass="form-field" prefRowCount="3"
+                              editable="false"
+                              HBox.hgrow="ALWAYS"/>
+                    <Button text=""
+                            styleClass="btn-map"
+                            onAction="#openMapPicker"
+                            prefWidth="44" prefHeight="70"
+                            style="-fx-font-size:20px;"/>
+                </HBox>
+                <Label fx:id="errAdresse" styleClass="error-label"
+                       visible="false" managed="false"/>
+
+                <Label text="Conditions de livraison" styleClass="field-label"/>
+                <TextArea fx:id="fieldConditions"
+                          promptText="Delais, conditions... (optionnel)"
+                          styleClass="form-field" prefRowCount="2"/>
+
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <CheckBox fx:id="checkActif" selected="true"/>
+                    <Label text="Fournisseur actif" styleClass="field-label"/>
+                </HBox>
+            </VBox>
+
+            <VBox spacing="14" prefWidth="260" styleClass="form-card">
+                <padding><Insets top="24" left="20" right="20" bottom="24"/></padding>
+                <Label text="Recapitulatif" styleClass="form-section-title"/>
+                <Separator/>
+                <VBox styleClass="preview-box" spacing="8">
+                    <padding><Insets top="14" left="14" right="14" bottom="14"/></padding>
+                    <Label fx:id="previewNom"     text="Nom societe"
+                           styleClass="preview-title"/>
+                    <Label fx:id="previewContact" text="Contact"
+                           styleClass="preview-stock"/>
+                    <Label fx:id="previewEmail"   text="email@..."
+                           styleClass="preview-stock"/>
+                    <Label fx:id="previewTel"     text="Telephone"
+                           styleClass="preview-stock"/>
+                    <Label fx:id="previewStatut"  text="Actif"
+                           styleClass="preview-badge-label"/>
+                </VBox>
+                <Region VBox.vgrow="ALWAYS"/>
+                <Button text="Enregistrer le Fournisseur"
+                        styleClass="btn-primary"
+                        maxWidth="Infinity"
+                        onAction="#submitForm"/>
+                <Button text="Reinitialiser"
+                        styleClass="btn-secondary"
+                        maxWidth="Infinity"
+                        onAction="#resetForm"/>
+            </VBox>
+
+        </HBox>
+    </VBox>
+</ScrollPane>

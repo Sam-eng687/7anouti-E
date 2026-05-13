@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="projet.hanouti.produit_fournisseur.controllers.GererFournisseursController"
+            styleClass="page-root">
+
+    <top>
+        <VBox styleClass="filter-bar">
+            <padding><Insets top="20" left="32" right="32" bottom="16"/></padding>
+            <Label text="Gerer mes Fournisseurs" styleClass="page-title"/>
+            <Label text="Recherchez, modifiez ou supprimez vos fournisseurs"
+                   styleClass="page-subtitle"/>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <padding><Insets top="14"/></padding>
+                <TextField fx:id="searchField"
+                           promptText="Rechercher par nom societe..."
+                           styleClass="search-field" prefWidth="280"
+                           onKeyReleased="#applyFilters"/>
+                <ComboBox fx:id="filterActif" promptText="Statut"
+                          styleClass="filter-combo" prefWidth="140"
+                          onAction="#applyFilters"/>
+                <Button text="Reinitialiser" styleClass="btn-reset"
+                        onAction="#resetFilters"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="lblCount" text="0 fournisseur(s)"
+                       styleClass="result-count"/>
+                <Button text="  Ajouter un Fournisseur"
+                        styleClass="btn-primary"
+                        onAction="#ouvrirAjouter"/>
+                <Button text="  Exporter PDF"
+                        styleClass="btn-export"
+                        onAction="#exportPdf"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="scroll-clean">
+            <VBox fx:id="listContainer" spacing="12" styleClass="catalogue-root">
+                <padding><Insets top="20" left="32" right="32" bottom="32"/></padding>
+            </VBox>
+        </ScrollPane>
+    </center>
+
+    <right>
+        <VBox fx:id="editPanel" styleClass="form-panel"
+              prefWidth="0" spacing="0" managed="false" visible="false">
+            <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
+                        styleClass="scroll-clean">
+                <VBox spacing="12">
+                    <padding><Insets top="20" left="18" right="18" bottom="20"/></padding>
+                    <HBox alignment="CENTER_LEFT">
+                        <Label text="Modifier Fournisseur" styleClass="form-title"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="X" styleClass="btn-close" onAction="#closeEdit"/>
+                    </HBox>
+                    <Separator/>
+                    <Label text="Nom societe *" styleClass="field-label"/>
+                    <TextField fx:id="editNom" styleClass="form-field"/>
+                    <Label fx:id="editErrNom" styleClass="error-label"
+                           visible="false" managed="false"/>
+                    <Label text="Contact *" styleClass="field-label"/>
+                    <TextField fx:id="editContact" styleClass="form-field"/>
+                    <Label fx:id="editErrContact" styleClass="error-label"
+                           visible="false" managed="false"/>
+                    <Label text="Email *" styleClass="field-label"/>
+                    <TextField fx:id="editEmail" styleClass="form-field"/>
+                    <Label fx:id="editErrEmail" styleClass="error-label"
+                           visible="false" managed="false"/>
+                    <Label text="Telephone *" styleClass="field-label"/>
+                    <TextField fx:id="editTel" styleClass="form-field"/>
+                    <Label fx:id="editErrTel" styleClass="error-label"
+                           visible="false" managed="false"/>
+                    <Label text="Adresse *" styleClass="field-label"/>
+                    <TextArea fx:id="editAdresse" styleClass="form-field"
+                              prefRowCount="2"/>
+                    <Label fx:id="editErrAdresse" styleClass="error-label"
+                           visible="false" managed="false"/>
+                    <Label text="Conditions livraison" styleClass="field-label"/>
+                    <TextArea fx:id="editConditions" styleClass="form-field"
+                              prefRowCount="2"/>
+                    <HBox alignment="CENTER_LEFT" spacing="8">
+                        <CheckBox fx:id="editActif"/>
+                        <Label text="Actif" styleClass="field-label"/>
+                    </HBox>
+                    <Button text="Mettre a jour" styleClass="btn-primary"
+                            maxWidth="Infinity" onAction="#submitEdit"/>
+                </VBox>
+            </ScrollPane>
+        </VBox>
+    </right>
+
+</BorderPane>

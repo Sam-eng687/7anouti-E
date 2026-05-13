@@ -16,6 +16,11 @@ import javafx.util.Duration;
 import projet.hanouti.AIachat.controllers.AssistantIAController;
 import projet.hanouti.common.utils.SessionManager;
 import projet.hanouti.common.utils.UiIcons;
+import projet.hanouti.produit_fournisseur.controllers.AjouterFournisseurController;
+import projet.hanouti.produit_fournisseur.controllers.AjouterProduitController;
+import projet.hanouti.produit_fournisseur.controllers.GererFournisseursController;
+import projet.hanouti.produit_fournisseur.controllers.GererProduitsController;
+import projet.hanouti.produit_fournisseur.controllers.ModuleNavigator;
 import projet.hanouti.user_auth.entities.User;
 import projet.hanouti.user_auth.enums.Role;
 import projet.hanouti.user_auth.enums.Status;
@@ -27,11 +32,18 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class DashboardController {
+public class DashboardController implements ModuleNavigator {
 
     private static final String ADMIN_USERS_FXML = "/FXML/user_auth/back/tabs/admin_users.fxml";
     private static final String PLACEHOLDER_FXML = "/FXML/user_auth/back/tabs/module_placeholder.fxml";
     private static final String AI_ACHAT_FXML = "/FXML/AIachat/assistant_ia.fxml";
+    private static final String PF_GERER_PRODUITS_FXML = "/FXML/produit_fournisseur/GererProduits.fxml";
+    private static final String PF_AJOUTER_PRODUIT_FXML = "/FXML/produit_fournisseur/AjouterProduit.fxml";
+    private static final String PF_GERER_FOURNISSEURS_FXML = "/FXML/produit_fournisseur/GererFournisseurs.fxml";
+    private static final String PF_AJOUTER_FOURNISSEUR_FXML = "/FXML/produit_fournisseur/AjouterFournisseur.fxml";
+    private static final String PF_CATALOGUE_FXML = "/FXML/produit_fournisseur/Catalogue.fxml";
+    private static final String PF_DAY_CSS = "/styles/produit_fournisseur/day-theme.css";
+    private static final String PF_NIGHT_CSS = "/styles/produit_fournisseur/night-theme.css";
 
     @FXML private AnchorPane rootPane;
     @FXML private VBox sidebar;
@@ -62,6 +74,7 @@ public class DashboardController {
     private boolean sidebarOpen = false;
     private User connectedUser;
     private Object currentModuleController;
+    private Parent currentModuleContent;
 
     @FXML
     public void initialize() {
@@ -174,17 +187,17 @@ public class DashboardController {
                     controller -> ((AssistantIAController) controller).openExploreMode());
             addNav(navProducts, "AI Achats", "Assistant intelligent", AI_ACHAT_FXML,
                     controller -> ((AssistantIAController) controller).openAssistantMode());
-            addNav(navOrders, "Catalogue des produits", "Explorer les produits", PLACEHOLDER_FXML);
+            addNav(navOrders, "Catalogue des produits", "Explorer les produits", PF_CATALOGUE_FXML);
             addNav(navStats, "Mes favorites", "Produits favoris", PLACEHOLDER_FXML);
             addNav(navSettings, "Mes commandes", "Suivi commandes", PLACEHOLDER_FXML);
             hideNav(navSupport);
         } else if (role == Role.vendeur) {
             addNav(navUsers, "Dashboard", "Accueil vendeur", PLACEHOLDER_FXML);
-            addNav(navProducts, "Ma boutique", "Gestion boutique", PLACEHOLDER_FXML);
+            addNav(navProducts, "Ma boutique", "Gestion boutique", PF_GERER_PRODUITS_FXML);
             addNav(navOrders, "Les commandes", "Commandes recues", PLACEHOLDER_FXML);
             addNav(navStats, "Conseil AI", "Recommandations intelligentes", PLACEHOLDER_FXML);
             addNav(navSettings, "Campagne marketing", "Campagnes commerciales", PLACEHOLDER_FXML);
-            addNav(navSupport, "Mes fournisseurs", "Gestion fournisseurs", PLACEHOLDER_FXML);
+            addNav(navSupport, "Mes fournisseurs", "Gestion fournisseurs", PF_GERER_FOURNISSEURS_FXML);
         } else if (role == Role.livreur) {
             addNav(navUsers, "Dashboard", "Accueil livreur", PLACEHOLDER_FXML);
             addNav(navProducts, "Mes livreurs", "Gestion livreurs", PLACEHOLDER_FXML);
@@ -246,6 +259,8 @@ public class DashboardController {
             FXMLLoader loader = new FXMLLoader(fxml);
             Parent content = loader.load();
             currentModuleController = loader.getController();
+            currentModuleContent = content;
+            wireProduitFournisseurController(currentModuleController);
             if (item.afterLoad() != null) {
                 item.afterLoad().accept(currentModuleController);
             }
@@ -254,6 +269,44 @@ public class DashboardController {
         } catch (Exception ex) {
             showContentError(item.title(), "Impossible de charger le module.");
             ex.printStackTrace();
+        }
+    }
+
+    private void loadEmbeddedModule(String title, String subtitle, String fxmlPath, Button activeButton) {
+        setActiveNav(activeButton);
+        headerTitle.setText(title);
+        headerSubtitle.setText(subtitle);
+
+        try {
+            java.net.URL fxml = getClass().getResource(fxmlPath);
+            if (fxml == null) {
+                showContentError(title, "FXML introuvable: " + fxmlPath);
+                return;
+            }
+
+            FXMLLoader loader = new FXMLLoader(fxml);
+            Parent content = loader.load();
+            currentModuleController = loader.getController();
+            currentModuleContent = content;
+            wireProduitFournisseurController(currentModuleController);
+            applyThemeToCurrentModule();
+            contentContainer.getChildren().setAll(content);
+        } catch (Exception ex) {
+            showContentError(title, "Impossible de charger le module.");
+            ex.printStackTrace();
+        }
+    }
+
+    private void wireProduitFournisseurController(Object controller) {
+        if (controller instanceof AjouterProduitController c) {
+            c.setModuleNavigator(this);
+        } else if (controller instanceof AjouterFournisseurController c) {
+            c.setModuleNavigator(this);
+        } else if (controller instanceof GererProduitsController c) {
+            c.setModuleNavigator(this);
+            c.onPageShown();
+        } else if (controller instanceof GererFournisseursController c) {
+            c.setModuleNavigator(this);
         }
     }
 
@@ -422,6 +475,36 @@ public class DashboardController {
         if (currentModuleController instanceof AssistantIAController assistant) {
             assistant.applyTheme(isDarkMode);
         }
+        applyProduitFournisseurStyles(currentModuleContent);
+    }
+
+    private void applyProduitFournisseurStyles(Parent content) {
+        if (content == null) {
+            return;
+        }
+
+        java.net.URL dayCss = getClass().getResource(PF_DAY_CSS);
+        java.net.URL nightCss = getClass().getResource(PF_NIGHT_CSS);
+        if (dayCss != null) {
+            content.getStylesheets().remove(dayCss.toExternalForm());
+        }
+        if (nightCss != null) {
+            content.getStylesheets().remove(nightCss.toExternalForm());
+        }
+
+        java.net.URL selectedCss = getClass().getResource(isDarkMode ? PF_NIGHT_CSS : PF_DAY_CSS);
+        if (selectedCss != null && isProduitFournisseurModule(currentModuleController)) {
+            content.getStylesheets().add(selectedCss.toExternalForm());
+        }
+    }
+
+    private boolean isProduitFournisseurModule(Object controller) {
+        return controller instanceof AjouterProduitController
+                || controller instanceof AjouterFournisseurController
+                || controller instanceof GererProduitsController
+                || controller instanceof GererFournisseursController
+                || (controller != null && controller.getClass().getPackageName()
+                        .startsWith("projet.hanouti.produit_fournisseur"));
     }
 
     private void refreshHeaderIcons() {
@@ -589,6 +672,26 @@ public class DashboardController {
             adminAvatar.setImage(null);
             adminAvatarLetter.setVisible(true);
         }
+    }
+
+    @Override
+    public void navigateToAjouterProduit() {
+        loadEmbeddedModule("Ajouter un Produit", "Remplissez les informations du produit", PF_AJOUTER_PRODUIT_FXML, navProducts);
+    }
+
+    @Override
+    public void navigateToAjouterFournisseur() {
+        loadEmbeddedModule("Ajouter un Fournisseur", "Enregistrez un nouveau fournisseur", PF_AJOUTER_FOURNISSEUR_FXML, navSupport);
+    }
+
+    @Override
+    public void navigateBackToBoutique() {
+        loadEmbeddedModule("Ma boutique", "Gestion boutique", PF_GERER_PRODUITS_FXML, navProducts);
+    }
+
+    @Override
+    public void navigateBackToFournisseurs() {
+        loadEmbeddedModule("Mes fournisseurs", "Gestion fournisseurs", PF_GERER_FOURNISSEURS_FXML, navSupport);
     }
 
     private record NavItem(Button button, String title, String subtitle, String fxmlPath, Consumer<Object> afterLoad) {}
