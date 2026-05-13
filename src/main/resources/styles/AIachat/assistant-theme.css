@@ -4,7 +4,7 @@
    ════════════════════════════════════════════════════════════════════════════ */
 
 /* ── CSS variables (dark defaults) ──────────────────────────────────────── */
-.root {
+.assistant-root {
     /* CHANGED: shifted from warm dark (#0C0F18 family) to cooler navy (#0a0d1a family) */
     -theme-bg:           #0a0d1a;
     -theme-bg2:          #0d1020;
@@ -27,14 +27,14 @@
     -theme-bubble-bot:   #111425;
     -theme-bubble-user:  rgba(37,99,235,0.14);
     -theme-sep:          rgba(255,255,255,0.07);
-    -theme-navbar:       linear-gradient(to right, #0a0d1a, #0d1020, #0a0d1a);
+    -theme-navbar:       #0d1020;
     -theme-ctx:          #0d1020;
     -theme-bar:          #0d1020;
     -theme-input:        #131729;
     -theme-placeholder:  #475569;
     -theme-disc-bg:      #0d1020;
     -theme-disc-border:  rgba(255,255,255,0.07);
-    -theme-disc-icon:    rgba(37,99,235,0.18);
+    -theme-disc-icon:    #2563EB;
     -theme-disc-text:    #475569;
     -theme-royal:        #2563EB;
     -theme-violet:       #8B5CF6;
@@ -46,7 +46,7 @@
 }
 
 /* ── Light mode overrides ────────────────────────────────────────────────── */
-.light-mode {
+.assistant-root.light-mode {
     -theme-bg:           #F0F4FA;
     -theme-bg2:          #E8EDF5;
     -theme-panel:        #FFFFFF;
@@ -74,13 +74,14 @@
     -theme-disc-border:  #BFDBFE;
     -theme-disc-icon:    #BFDBFE;
     -theme-disc-text:    #64748B;
+    -theme-navbar:       #F1F5F9;
 
     -fx-background-color: -theme-bg;
 }
 
 /* ── Navbar ──────────────────────────────────────────────────────────────── */
 .navbar {
-    -fx-background-color: -theme-navbar;
+    -fx-background-color: linear-gradient(to right, #0a0d1a, #0d1020, #0a0d1a);
     -fx-border-color:     transparent transparent -theme-border transparent;
     -fx-border-width:     0 0 1 0;
     -fx-padding:          0 24 0 24;
@@ -88,7 +89,7 @@
     -fx-alignment:        CENTER_LEFT;
     -fx-spacing:          16;
 }
-.light-mode .navbar { -fx-background-color: -theme-navbar; }
+.light-mode .navbar { -fx-background-color: #F1F5F9; }
 
 .brand-label { -fx-text-fill: white;   -fx-font-size: 18px; -fx-font-weight: bold; }
 .brand-sub   { -fx-text-fill: #5EEAD4; -fx-font-size: 11px; }
@@ -483,7 +484,7 @@
    ADDITIONS - sidebar CSS variables
    ════════════════════════════════════════════════════════════════════════════ */
 
-.root {
+.assistant-root {
     /* CHANGED: sidebar vars updated to inspo's #0d1020 palette */
     -theme-sidebar:       #0d1020;
     -theme-sidebar-tab:   rgba(255,255,255,0.04);
@@ -497,7 +498,7 @@
 }
 
 /* CHANGED: light mode sidebar vars - navy like inspo's light sidebar (#1E3A5F) */
-.light-mode {
+.assistant-root.light-mode {
     -theme-sidebar:       #1E3A5F;
     -theme-sidebar-tab:   rgba(255,255,255,0.05);
     -theme-sidebar-hover: rgba(255,255,255,0.10);

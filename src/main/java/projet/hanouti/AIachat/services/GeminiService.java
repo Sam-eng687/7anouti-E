@@ -24,8 +24,7 @@ import java.util.regex.Pattern;
 
 public class GeminiService {
 
-    private static final String API_URL =
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent";// gemini-flash-latest
+    private static final String DEFAULT_MODEL = "gemini-flash-latest";
     private static final int MAX_INPUT_LENGTH = 300;
     private static final long MIN_CALL_INTERVAL_MS = 2000;
     private static final long DEFAULT_QUOTA_COOLDOWN_MS = 60_000;
@@ -38,6 +37,7 @@ public class GeminiService {
 
     private String apiKey;
     private String apiUrl;
+    private String apiModel = DEFAULT_MODEL;
     private final HttpClient httpClient;
     private Map<String, List<String>> categoryKeywords = new HashMap<>();
     private boolean keywordEnhancerEnabled = false;
@@ -78,6 +78,12 @@ public class GeminiService {
                     System.out.println("[INIT] Keeping env var key (ignoring config.properties key)");
                 }
 
+                String configuredModel = properties.getProperty("gemini.api.model", DEFAULT_MODEL).trim();
+                if (!configuredModel.isBlank()) {
+                    apiModel = configuredModel;
+                }
+                System.out.println("[INIT] Gemini model: " + apiModel);
+
                 String configuredUrl = properties.getProperty("gemini.api.url", "").trim();
                 if (!configuredUrl.isBlank()) {
                     apiUrl = configuredUrl;
@@ -95,10 +101,11 @@ public class GeminiService {
         }
 
         if (apiUrl == null || apiUrl.isBlank()) {
-            apiUrl = API_URL;
+            apiUrl = buildGenerateContentUrl(apiModel);
         }
 
         System.out.println("[INIT] Final API URL: " + apiUrl);
+        System.out.println("[INIT] Final Gemini model: " + apiModel);
         System.out.println("[INIT] Final key prefix: " + debugKey(apiKey));
         System.out.println("[INIT] Key length: " + (apiKey != null ? apiKey.length() : 0) + " chars");
 
@@ -178,6 +185,7 @@ public class GeminiService {
             String requestBody = buildRequestBody(prompt);
 
             System.out.println("[HTTP] Sending POST to: " + apiUrl);
+            System.out.println("[HTTP] Gemini model configured: " + apiModel);
             System.out.println("[HTTP] Key prefix being sent: " + debugKey(apiKey));
             System.out.println("[HTTP] Request body length: " + requestBody.length() + " chars");
 
@@ -216,7 +224,8 @@ public class GeminiService {
                 System.out.println("[HTTP] Full error body: " + response.body());
 
                 if (response.statusCode() == 400) {
-                    System.out.println("[HTTP] 400 = Bad Request - likely malformed JSON or invalid model name");
+                    System.out.println("[HTTP] 400 = Bad Request - likely malformed JSON, unsupported request body, or invalid model endpoint");
+                    System.out.println("[HTTP] Configured model: " + apiModel);
                 } else if (response.statusCode() == 401) {
                     System.out.println("[HTTP] 401 = Unauthorized - API key is INVALID or REVOKED");
                     System.out.println("[HTTP] Check: https://aistudio.google.com/app/apikey");
@@ -224,7 +233,8 @@ public class GeminiService {
                     System.out.println("[HTTP] 403 = Forbidden - API not enabled for this project, or key has no permission");
                     System.out.println("[HTTP] Check: Generative Language API must be enabled in Google Cloud Console");
                 } else if (response.statusCode() == 404) {
-                    System.out.println("[HTTP] 404 = Model not found - check model name in API_URL constant");
+                    System.out.println("[HTTP] 404 = Model not found - check gemini.api.model or gemini.api.url");
+                    System.out.println("[HTTP] Configured model: " + apiModel);
                 } else if (response.statusCode() == 429) {
                     long cooldownMs = extractRetryDelayMs(response.body());
                     quotaBlockedUntil = System.currentTimeMillis() + cooldownMs;
@@ -425,6 +435,13 @@ public class GeminiService {
     private String debugKey(String key) {
         if (key == null || key.isBlank()) return "(empty)";
         return key.substring(0, Math.min(8, key.length())) + "...(" + key.length() + " chars)";
+    }
+
+    private static String buildGenerateContentUrl(String model) {
+        String safeModel = (model == null || model.isBlank()) ? DEFAULT_MODEL : model.trim();
+        return "https://generativelanguage.googleapis.com/v1beta/models/"
+                + safeModel
+                + ":generateContent";
     }
 
     private List<String> enhanceKeywords(String originalInput, List<String> keywords) {
@@ -739,4 +756,3 @@ public class GeminiService {
     }
 
 }
-

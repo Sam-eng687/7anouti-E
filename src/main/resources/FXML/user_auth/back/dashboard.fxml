@@ -134,8 +134,8 @@
                         <Label fx:id="adminNameLabel" text="Utilisateur" styleClass="admin-name"/>
                         <Label fx:id="adminRoleLabel" text="" styleClass="admin-role"/>
                     </VBox>
-                    <Button fx:id="notifBtn" text="N" styleClass="header-action-btn"/>
-                    <Button fx:id="cartBtn" text="C" styleClass="header-action-btn"/>
+                    <Button fx:id="notifBtn" text="" styleClass="header-action-btn"/>
+                    <Button fx:id="cartBtn" text="" styleClass="header-action-btn"/>
                     <MenuButton fx:id="profileMenu" text="Profil" styleClass="profile-menu-btn">
                         <items>
                             <MenuItem fx:id="editProfileItem" text="Modifier profil"/>

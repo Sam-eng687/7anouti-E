@@ -17,6 +17,7 @@
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="projet.hanouti.AIachat.controllers.AssistantIAController"
       prefWidth="1100" prefHeight="720"
+      styleClass="assistant-root"
       stylesheets="@../../styles/AIachat/assistant-theme.css">
     <!-- ═══════════════════════════════════════════════════════════════════
          MAIN CONTENT
@@ -171,18 +172,19 @@
                            HBox.hgrow="ALWAYS"/>
                 <Button fx:id="floatingMicBtn"
                         styleClass="mic-btn"
-                        text="🎤"
+                        text=""
                         onAction="#handleMicBtn"
                         style="-fx-min-width:42;-fx-max-width:42;-fx-min-height:42;-fx-max-height:42;"/>
 
                 <Button fx:id="floatingCameraBtn"
                         styleClass="camera-btn"
-                        text="📷"
+                        text=""
                         onAction="#handleCameraBtn"
                         style="-fx-min-width:42;-fx-max-width:42;-fx-min-height:42;-fx-max-height:42;"/>
 
-                <Button styleClass="floating-send-btn"
-                        text="➤" onAction="#handleFloatingSubmit"/>
+                <Button fx:id="floatingSendBtn"
+                        styleClass="floating-send-btn"
+                        text="" onAction="#handleFloatingSubmit"/>
             </HBox>
 
         </StackPane>
@@ -205,19 +207,19 @@
 
             <Button fx:id="chatMicBtn"
                     styleClass="mic-btn"
-                    text="🎤"
+                    text=""
                     onAction="#handleMicBtn"
                     style="-fx-min-width:42;-fx-max-width:42;-fx-min-height:42;-fx-max-height:42;"/>
 
             <Button fx:id="chatCameraBtn"
                     styleClass="camera-btn"
-                    text="📷"
+                    text=""
                     onAction="#handleCameraBtn"
                     style="-fx-min-width:42;-fx-max-width:42;-fx-min-height:42;-fx-max-height:42;"/>
 
             <Button styleClass="reset-btn" text="Recommencer" onAction="#handleReset"/>
 
-            <Button fx:id="sendButton" styleClass="send-btn" text="➤" onAction="#handleSend"/>
+            <Button fx:id="sendButton" styleClass="send-btn" text="" onAction="#handleSend"/>
 
         </HBox>
 

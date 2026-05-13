@@ -13,6 +13,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -48,6 +49,7 @@ import projet.hanouti.AIachat.tools.RefinementDetector;
 import projet.hanouti.AIachat.tools.RefinementIntent;
 import projet.hanouti.AIachat.tools.RefinementType;
 import projet.hanouti.common.utils.SessionManager;
+import projet.hanouti.common.utils.UiIcons;
 import projet.hanouti.AIachat.entities.ImageRecognitionResult;
 import projet.hanouti.AIachat.entities.ConseilPromo;
 import projet.hanouti.AIachat.services.CameraService;
@@ -118,6 +120,7 @@ public class AssistantIAController {
     @FXML private HBox      floatingBar;
     @FXML private TextField floatingInput;
     @FXML private Button    floatingMicBtn;
+    @FXML private Button    floatingSendBtn;
 
     // ── FXML - chat bar ───────────────────────────────────────────────────────
     @FXML private HBox       chatBarHBox;
@@ -175,6 +178,7 @@ public class AssistantIAController {
     private VBox    detailPanel       = null;
     private boolean detailPanelOpen   = false;
     private Produit detailPanelProduit = null;
+    private boolean showingImageResults = false;
     // ── Theme ─────────────────────────────────────────────────────────────────
     private boolean isDarkMode = true;
 
@@ -206,12 +210,63 @@ public class AssistantIAController {
     private String botBubbleBg()     { return isDarkMode ? "#111425" : "#FFFFFF"; }
     private String botBubbleBorder() { return isDarkMode ? "rgba(255,255,255,0.07)" : "#E2E8F0"; }
 
+    public void applyTheme(boolean dark) {
+        isDarkMode = dark;
+        applyThemeClasses();
+        refreshActionIcons();
+        restyleDetailPanel();
+
+        if (state == ConversationState.IDLE) {
+            loadIdleCards();
+            loadOfferCards();
+        } else if (state == ConversationState.SHOWING_RESULTS && currentResults != null) {
+            if (showingImageResults) buildImageResultCards();
+            else buildResultCards();
+        }
+    }
+
+    private void applyThemeClasses() {
+        for (Region r : new Region[]{rootPane, rootVBox}) {
+            if (r == null) continue;
+            r.getStyleClass().remove("light-mode");
+            if (!isDarkMode) r.getStyleClass().add("light-mode");
+        }
+        if (dayModeBtn != null) {
+            dayModeBtn.setText(isDarkMode ? "Mode Jour" : "Mode Nuit");
+        }
+    }
+
+    private void refreshActionIcons() {
+        String cameraColor = isCameraProcessing ? (isDarkMode ? "#FCD34D" : "#B45309") : (isDarkMode ? "#93C5FD" : "#1D4ED8");
+        String micColor = isRecording ? (isDarkMode ? "#FCA5A5" : "#DC2626") : (isDarkMode ? "#A78BFA" : "#7C3AED");
+        UiIcons.Icon micIcon = isRecording ? UiIcons.Icon.STOP : UiIcons.Icon.MIC;
+
+        UiIcons.setButtonIcon(floatingMicBtn, micIcon, micColor, 17, isRecording ? "Arreter l'enregistrement" : "Cliquer pour dicter");
+        UiIcons.setButtonIcon(chatMicBtn, micIcon, micColor, 17, isRecording ? "Arreter l'enregistrement" : "Cliquer pour dicter");
+        UiIcons.setButtonIcon(floatingCameraBtn, UiIcons.Icon.CAMERA, cameraColor, 17, "Recherche par image");
+        UiIcons.setButtonIcon(chatCameraBtn, UiIcons.Icon.CAMERA, cameraColor, 17, "Recherche par image");
+        UiIcons.setButtonIcon(floatingSendBtn, UiIcons.Icon.SEND, "#FFFFFF", 18, "Envoyer");
+        UiIcons.setButtonIcon(sendButton, UiIcons.Icon.SEND, "#FFFFFF", 18, "Envoyer");
+    }
+
+    private void restyleDetailPanel() {
+        if (detailPanel == null) return;
+        detailPanel.setStyle(
+                "-fx-background-color:" + (isDarkMode ? "#111425" : "#FFFFFF") + ";" +
+                        "-fx-border-color:" + (isDarkMode ? "rgba(255,255,255,0.08)" : "#E2E8F0") + ";" +
+                        "-fx-border-width:0 0 0 1;");
+    }
+
     // ─────────────────────────────────────────────────────────────────────────
     // Initialize
     // ─────────────────────────────────────────────────────────────────────────
 
     @FXML
     void initialize() {
+        isDarkMode = SessionManager.getInstance().isDarkMode();
+        applyThemeClasses();
+        refreshActionIcons();
+
         if (floatingBar   != null) floatingBar.setOnMouseClicked(e  -> { expandFloatingBar(); e.consume(); });
         if (floatingInput != null) floatingInput.setOnMouseClicked(e -> { expandFloatingBar(); e.consume(); });
 
@@ -237,10 +292,7 @@ public class AssistantIAController {
         detailPanel.setMaxWidth(0);
         detailPanel.setVisible(false);
         detailPanel.setManaged(false);
-        detailPanel.setStyle(
-                "-fx-background-color:" + (isDarkMode ? "#111425" : "#FFFFFF") + ";" +
-                        "-fx-border-color:" + (isDarkMode ? "rgba(255,255,255,0.08)" : "#E2E8F0") + ";" +
-                        "-fx-border-width:0 0 0 1;");
+        restyleDetailPanel();
         if (rootPane != null) rootPane.getChildren().add(detailPanel);
 
         enterIdle();
@@ -330,19 +382,7 @@ public class AssistantIAController {
 
     @FXML
     void toggleDayMode(ActionEvent event) {
-        isDarkMode = !isDarkMode;
-        dayModeBtn.setText(isDarkMode ? "☀" : "🌙");
-        for (Region r : new Region[]{rootPane, rootVBox}) {
-            if (r == null) continue;
-            if (isDarkMode) r.getStyleClass().remove("light-mode");
-            else if (!r.getStyleClass().contains("light-mode")) r.getStyleClass().add("light-mode");
-        }
-        if (state == ConversationState.IDLE) {
-            loadIdleCards();
-            loadOfferCards();
-        } else if (state == ConversationState.SHOWING_RESULTS && currentResults != null) {
-            buildResultCards();
-        }
+        applyTheme(!isDarkMode);
     }
 
     @FXML
@@ -445,14 +485,13 @@ public class AssistantIAController {
                 btn.getStyleClass().remove("mic-btn");
                 if (!btn.getStyleClass().contains("mic-btn-recording"))
                     btn.getStyleClass().add("mic-btn-recording");
-                btn.setText("⏹");
             } else {
                 btn.getStyleClass().remove("mic-btn-recording");
                 if (!btn.getStyleClass().contains("mic-btn"))
                     btn.getStyleClass().add("mic-btn");
-                btn.setText("🎤");
             }
         }
+        refreshActionIcons();
     }
 
     private void updateMicBtnState() {
@@ -560,7 +599,8 @@ public class AssistantIAController {
                         "-fx-cursor:hand;" +
                         "-fx-padding:6 0 0 0;";
 
-        Button btnWebcam = new Button("📷   Prendre une photo");
+        Button btnWebcam = new Button("Prendre une photo");
+        btnWebcam.setGraphic(UiIcons.icon(UiIcons.Icon.CAMERA, text1, 16));
         btnWebcam.setStyle(btnStyle);
         btnWebcam.setOnMouseEntered(e -> btnWebcam.setStyle(btnHoverStyle));
         btnWebcam.setOnMouseExited(e -> btnWebcam.setStyle(btnStyle));
@@ -570,7 +610,8 @@ public class AssistantIAController {
             popup.close();
         });
 
-        Button btnFile = new Button("📁   Choisir un fichier");
+        Button btnFile = new Button("Choisir un fichier");
+        btnFile.setGraphic(UiIcons.icon(UiIcons.Icon.FOLDER, text1, 16));
         btnFile.setStyle(btnStyle);
         btnFile.setOnMouseEntered(e -> btnFile.setStyle(btnHoverStyle));
         btnFile.setOnMouseExited(e -> btnFile.setStyle(btnStyle));
@@ -617,14 +658,13 @@ public class AssistantIAController {
                 btn.getStyleClass().remove("camera-btn");
                 if (!btn.getStyleClass().contains("camera-btn-processing"))
                     btn.getStyleClass().add("camera-btn-processing");
-                btn.setText("⏳");
             } else {
                 btn.getStyleClass().remove("camera-btn-processing");
                 if (!btn.getStyleClass().contains("camera-btn"))
                     btn.getStyleClass().add("camera-btn");
-                btn.setText("📷");
             }
         }
+        refreshActionIcons();
     }
 
     /**
@@ -911,6 +951,7 @@ public class AssistantIAController {
 
     private void enterIdle() {
         state = ConversationState.IDLE;
+        showingImageResults = false;
         currentKeywords = null; currentCategorie = null;
         currentBudget   = 0;   currentResults   = null;
         originalResults = null;
@@ -946,6 +987,7 @@ public class AssistantIAController {
 
     private void enterWaitingNeed() {
         state = ConversationState.WAITING_NEED;
+        showingImageResults = false;
         closeDetail();
         if (stateBadge   != null) stateBadge.setText("NEED");
         if (contextLabel != null) contextLabel.setText("Décrivez votre besoin en français.");
@@ -959,6 +1001,7 @@ public class AssistantIAController {
 
     private void enterWaitingBudget() {
         state = ConversationState.WAITING_BUDGET;
+        showingImageResults = false;
         if (stateBadge   != null) stateBadge.setText("BUDGET");
         if (contextLabel != null) contextLabel.setText("Quel est votre budget ?");
         if (inputField   != null) inputField.setPromptText("Ex : 20 ou 50 DT");
@@ -977,6 +1020,7 @@ public class AssistantIAController {
             return;
         }
         state = ConversationState.SHOWING_RESULTS;
+        showingImageResults = false;
         if (stateBadge   != null) stateBadge.setText("RESULTS");
         if (contextLabel != null) contextLabel.setText("Résultats - affinez ou tapez un nouveau besoin.");
         if (inputField   != null) inputField.setPromptText("Ex : moins cher / mieux noté / pas ça...");
@@ -1006,6 +1050,7 @@ public class AssistantIAController {
      */
     private void enterImageSearch(byte[] imageData) {
         state = ConversationState.IMAGE_SEARCH;
+        showingImageResults = false;
         closeDetail();
 
         // Reset search state - image search is a fresh start
@@ -1159,6 +1204,7 @@ public class AssistantIAController {
         }
 
         state = ConversationState.SHOWING_RESULTS;
+        showingImageResults = true;
         if (stateBadge   != null) stateBadge.setText("RESULTS");
         if (contextLabel != null) contextLabel.setText("Résultats image - tapez un besoin ou prenez une autre photo.");
         if (inputField   != null) inputField.setPromptText("Tapez un besoin ou utilisez la caméra...");
@@ -2146,10 +2192,8 @@ public class AssistantIAController {
     }
 
     /** Builds the text icon used as a fallback when no product image is available. */
-    private Label makeCategoryFallback(String categorie, int iconSize) {
-        Label lbl = new Label(categoryIcon(categorie));
-        lbl.setStyle("-fx-font-size:" + iconSize + "px;-fx-text-fill:white;");
-        return lbl;
+    private Node makeCategoryFallback(String categorie, int iconSize) {
+        return UiIcons.icon(categoryIcon(categorie), "#FFFFFF", iconSize);
     }
 
     private VBox buildIdleCard(Produit p) {
@@ -2826,15 +2870,15 @@ public class AssistantIAController {
         return "AUTRE";
     }
 
-    private String categoryIcon(String cat) {
+    private UiIcons.Icon categoryIcon(String cat) {
         String n = norm(cat);
-        if ("medicament".equals(n))   return "💊";
-        if ("alimentaire".equals(n))  return "🛒";
-        if ("electronique".equals(n)) return "💻";
-        if ("hygiene".equals(n))      return "🧴";
-        if ("decor".equals(n))        return "🏠";
-        if ("makeup".equals(n))       return "💄";
-        return "🛍️";
+        if ("medicament".equals(n))   return UiIcons.Icon.PILL;
+        if ("alimentaire".equals(n))  return UiIcons.Icon.BASKET;
+        if ("electronique".equals(n)) return UiIcons.Icon.LAPTOP;
+        if ("hygiene".equals(n))      return UiIcons.Icon.BOTTLE;
+        if ("decor".equals(n))        return UiIcons.Icon.HOME;
+        if ("makeup".equals(n))       return UiIcons.Icon.TAG;
+        return UiIcons.Icon.BAG;
     }
 
     private String categoryGradient(String cat) {

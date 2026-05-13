@@ -15,6 +15,7 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 import projet.hanouti.AIachat.controllers.AssistantIAController;
 import projet.hanouti.common.utils.SessionManager;
+import projet.hanouti.common.utils.UiIcons;
 import projet.hanouti.user_auth.entities.User;
 import projet.hanouti.user_auth.enums.Role;
 import projet.hanouti.user_auth.enums.Status;
@@ -60,6 +61,7 @@ public class DashboardController {
     private boolean isDarkMode = true;
     private boolean sidebarOpen = false;
     private User connectedUser;
+    private Object currentModuleController;
 
     @FXML
     public void initialize() {
@@ -119,6 +121,7 @@ public class DashboardController {
         cartBtn.setVisible(buyer);
         cartBtn.setManaged(buyer);
         paymentHistoryItem.setVisible(buyer);
+        refreshHeaderIcons();
     }
 
     private void setupProfileOverlay() {
@@ -242,9 +245,11 @@ public class DashboardController {
 
             FXMLLoader loader = new FXMLLoader(fxml);
             Parent content = loader.load();
+            currentModuleController = loader.getController();
             if (item.afterLoad() != null) {
-                item.afterLoad().accept(loader.getController());
+                item.afterLoad().accept(currentModuleController);
             }
+            applyThemeToCurrentModule();
             contentContainer.getChildren().setAll(content);
         } catch (Exception ex) {
             showContentError(item.title(), "Impossible de charger le module.");
@@ -409,6 +414,20 @@ public class DashboardController {
         if (themeLabel != null) {
             themeLabel.setText(dark ? "Mode Jour" : "Mode Nuit");
         }
+        refreshHeaderIcons();
+        applyThemeToCurrentModule();
+    }
+
+    private void applyThemeToCurrentModule() {
+        if (currentModuleController instanceof AssistantIAController assistant) {
+            assistant.applyTheme(isDarkMode);
+        }
+    }
+
+    private void refreshHeaderIcons() {
+        String iconColor = isDarkMode ? "#A5B4FC" : "#4338CA";
+        UiIcons.setButtonIcon(notifBtn, UiIcons.Icon.BELL, iconColor, 18, "Notifications");
+        UiIcons.setButtonIcon(cartBtn, UiIcons.Icon.CART, iconColor, 18, "Panier");
     }
 
     private void navigateToLogin() {
