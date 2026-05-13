@@ -1,0 +1,15 @@
+{
+  "name": "7anouti-whatsapp-service",
+  "version": "1.0.0",
+  "description": "WhatsApp notification microservice for 7anouti-E delivery module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@whiskeysockets/baileys": "^6.7.9",
+    "express": "^4.18.2",
+    "pino": "^8.15.0",
+    "qrcode-terminal": "^0.12.0"
+  }
+}
