@@ -4,7 +4,6 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Text?>
-<?import javafx.scene.shape.Circle?>
 <?import javafx.geometry.Insets?>
 
 <AnchorPane xmlns="http://javafx.com/javafx/21"
@@ -17,10 +16,6 @@
     <Pane styleClass="front-bg"
           AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0"
           AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"/>
-
-    <Circle radius="340" styleClass="front-blob front-blob-1"/>
-    <Circle radius="220" styleClass="front-blob front-blob-2"/>
-    <Circle radius="160" styleClass="front-blob front-blob-3"/>
 
     <VBox AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0"
           AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0">

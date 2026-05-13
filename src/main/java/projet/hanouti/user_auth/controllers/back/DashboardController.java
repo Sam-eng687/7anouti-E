@@ -84,6 +84,8 @@ public class DashboardController {
     private User currentDetailUser = null;
     private User connectedAdmin = null;
 
+    private boolean editingOwnProfile = false;
+
     private boolean sidebarOpen = false;
 
     @FXML
@@ -102,6 +104,7 @@ public class DashboardController {
 
         // Charger l'utilisateur depuis la session
         User sessionUser = session.getConnectedUser();
+        updateHeaderUser(sessionUser);
         if (sessionUser == null || sessionUser.getRole() == null) {
             redirectToLoginImmediately();
             return;
@@ -117,7 +120,6 @@ public class DashboardController {
         logoutProfileItem.setOnAction(e -> navigateToLogin());
 
         editProfileItem.setOnAction(e -> openProfileEdit(sessionUser));
-
         paymentHistoryItem.setOnAction(e ->
                 showAlert("Historique", "Historique paiement prêt pour intégration.")
         );
@@ -137,18 +139,13 @@ public class DashboardController {
         }
 
         // Theme toggle — Button normal (pas ToggleButton)
-        setDarkMode(true);
-        themeToggleBtn.setOnAction(e -> {
+        isDarkMode = projet.hanouti.common.utils.SessionManager.getInstance().isDarkMode();
+        setDarkMode(isDarkMode);        themeToggleBtn.setOnAction(e -> {
             isDarkMode = !isDarkMode;
+            projet.hanouti.common.utils.SessionManager.getInstance().setDarkMode(isDarkMode);
             setDarkMode(isDarkMode);
             bounceNode(themeToggleBtn);
         });
-        // Style hover logout
-        logoutBtn.setOnMouseEntered(e ->
-                logoutBtn.setStyle("-fx-background-color: rgba(239,68,68,0.18);"));
-        logoutBtn.setOnMouseExited(e ->
-                logoutBtn.setStyle("-fx-background-color: transparent;"));
-
         // Logo
         try {
             java.io.InputStream s = getClass().getResourceAsStream("/images/user_auth/logo.png");
@@ -286,6 +283,12 @@ public class DashboardController {
         }
 
         playEntrance();
+        // very last line of initialize()
+        javafx.application.Platform.runLater(() -> rootPane.requestFocus());
+        javafx.application.Platform.runLater(() -> {
+            navUsers.getStyleClass().add("nav-btn-active");
+            rootPane.requestFocus();
+        });
     }
 
     /** Creer un bouton icone circulaire avec style CSS */
@@ -440,50 +443,69 @@ public class DashboardController {
     }
 
     private void closeDetail() {
-        FadeTransition fo = new FadeTransition(Duration.millis(150), overlayPane); fo.setToValue(0);
+        FadeTransition fo = new FadeTransition(Duration.millis(150), overlayPane);
+        fo.setToValue(0);
+
         ScaleTransition so = new ScaleTransition(Duration.millis(150), detailCard);
-        so.setToX(0.9); so.setToY(0.9);
+        so.setToX(0.9);
+        so.setToY(0.9);
+
         ParallelTransition pt = new ParallelTransition(fo, so);
-        pt.setOnFinished(e -> { overlayPane.setVisible(false); overlayPane.setManaged(false); currentDetailUser = null; });
+
+        pt.setOnFinished(e -> {
+            overlayPane.setVisible(false);
+            overlayPane.setManaged(false);
+
+            detailCard.setScaleX(1);
+            detailCard.setScaleY(1);
+
+            currentDetailUser = null;
+            editingOwnProfile = false;
+        });
+
         pt.play();
     }
 
     private void saveDetail() {
-
         if (currentDetailUser == null) return;
 
         try {
+            if (editingOwnProfile) {
 
-            currentDetailUser.setRole(
-                    Role.valueOf(detailRole.getValue())
-            );
+                currentDetailUser.setNom(detailNom.getText().trim());
+                currentDetailUser.setPrenom(detailPrenom.getText().trim());
+                currentDetailUser.setE_mail(detailEmail.getText().trim());
+                currentDetailUser.setNum_tel(detailTel.getText().trim());
+                currentDetailUser.setDate_naiss(detailDate.getText().trim());
 
-            currentDetailUser.setStatus(
-                    Status.valueOf(detailStatus.getValue())
-            );
+                userCRUD.updateUserProfile(currentDetailUser);
 
-            userCRUD.updateUserAdminFields(currentDetailUser);
+                projet.hanouti.common.utils.SessionManager.getInstance().setConnectedUser(currentDetailUser);
 
-            showDetailMessage(
-                    "Role et statut mis a jour avec succes !",
-                    false
-            );
+                updateHeaderUser(currentDetailUser);
 
-            loadUsers();
+                showDetailMessage("Profil mis à jour avec succès !", false);
+            } else {
 
-            PauseTransition redirect =
-                    new PauseTransition(Duration.millis(900));
+                currentDetailUser.setRole(Role.valueOf(detailRole.getValue()));
+                currentDetailUser.setStatus(Status.valueOf(detailStatus.getValue()));
 
-            redirect.setOnFinished(e -> closeDetail());
+                userCRUD.updateUserAdminFields(currentDetailUser);
 
+                showDetailMessage("Role et statut mis à jour avec succès !", false);
+
+                loadUsers();
+            }
+
+            PauseTransition redirect = new PauseTransition(Duration.millis(800));
+            redirect.setOnFinished(e -> {
+                closeDetail();
+                editingOwnProfile = false;
+            });
             redirect.play();
 
         } catch (SQLException ex) {
-
-            showDetailMessage(
-                    "Erreur: " + ex.getMessage(),
-                    true
-            );
+            showDetailMessage("Erreur: " + ex.getMessage(), true);
         }
     }
 
@@ -502,6 +524,7 @@ public class DashboardController {
         c.setTitle("Confirmation");
         c.setHeaderText("Voulez-vous " + action + " " + user.getNom() + " " + user.getPrenom() + " ?");
         c.setContentText("Email: " + user.getE_mail());
+        styleDashboardDialog(c);
         Optional<ButtonType> r = c.showAndWait();
         if (r.isPresent() && r.get() == ButtonType.OK) {
             try { userCRUD.updateUserStatus(user.getId(), newStatus); loadUsers(); }
@@ -537,10 +560,16 @@ public class DashboardController {
     }
 
     private void navigateToLogin() {
+        ButtonType confirm = new ButtonType("Se deconnecter", ButtonBar.ButtonData.OK_DONE);
+        ButtonType cancel = new ButtonType("Annuler", ButtonBar.ButtonData.CANCEL_CLOSE);
         Alert c = new Alert(Alert.AlertType.CONFIRMATION);
-        c.setTitle("Deconnexion"); c.setHeaderText("Voulez-vous vous deconnecter ?");
+        c.setTitle("Deconnexion");
+        c.setHeaderText("Confirmer la deconnexion");
+        c.setContentText("Voulez-vous vous deconnecter ?");
+        c.getButtonTypes().setAll(confirm, cancel);
+        styleDashboardDialog(c);
         Optional<ButtonType> r = c.showAndWait();
-        if (r.isPresent() && r.get() == ButtonType.OK) {
+        if (r.isPresent() && r.get() == confirm) {
             // ===== VIDER LA SESSION =====
             projet.hanouti.common.utils.SessionManager.getInstance().logout();
             redirectToLoginImmediately();
@@ -565,7 +594,28 @@ public class DashboardController {
     }
 
     private void showAlert(String title, String content) {
-        Alert a = new Alert(Alert.AlertType.ERROR); a.setTitle(title); a.setContentText(content); a.showAndWait();
+        Alert a = new Alert(Alert.AlertType.ERROR);
+        a.setTitle(title);
+        a.setContentText(content);
+        styleDashboardDialog(a);
+        a.showAndWait();
+    }
+
+    private void styleDashboardDialog(Alert alert) {
+        alert.setGraphic(null);
+        DialogPane pane = alert.getDialogPane();
+        if (!pane.getStyleClass().contains("dashboard-dialog")) {
+            pane.getStyleClass().add("dashboard-dialog");
+        }
+        java.net.URL css = getClass().getResource("/styles/user_auth/back/dashboard.css");
+        if (css != null && !pane.getStylesheets().contains(css.toExternalForm())) {
+            pane.getStylesheets().add(css.toExternalForm());
+        }
+        if (isDarkMode) {
+            pane.setStyle("-card: #14122E; -card-b: rgba(165,180,252,0.18); -inp: rgba(255,255,255,0.06); -inp-b: rgba(165,180,252,0.16); -t1: #F1F0FF; -t2: #A5B4FC; -b600: #6366F1; -b700: #4F46E5;");
+        } else {
+            pane.setStyle("-card: #FFFFFF; -card-b: rgba(99,102,241,0.16); -inp: #EEF2FF; -inp-b: rgba(99,102,241,0.16); -t1: #1E1B4B; -t2: #4F46E5; -b600: #4F46E5; -b700: #4338CA;");
+        }
     }
 
     // =================== ANIMATIONS ===================
@@ -606,9 +656,9 @@ public class DashboardController {
 
         else if (role == Role.acheteur) {
             setNav(navUsers, "Dashboard", "Accueil acheteur");
-            setNav(navProducts, "Catalogue des produits", "Explorer les produits");
-            setNav(navOrders, "AI Achats", "Assistant intelligent");
-            setNav(navStats, "Wishlist", "Produits favoris");
+            setNav(navProducts, "AI Achats", "Assistant intelligent");
+            setNav(navOrders, "Catalogue des produits", "Explorer les produits");
+            setNav(navStats, "Mes favorites", "Produits favoris");
             setNav(navSettings, "Mes commandes", "Suivi commandes");
             navSupport.setVisible(false);
             navSupport.setManaged(false);
@@ -616,10 +666,10 @@ public class DashboardController {
 
         else if (role == Role.vendeur) {
             setNav(navUsers, "Dashboard", "Accueil vendeur");
-            setNav(navProducts, "My Shop", "Gestion boutique");
+            setNav(navProducts, "Ma boutique", "Gestion boutique");
             setNav(navOrders, "Les commandes", "Commandes reçues");
-            setNav(navStats, "AI Marketing", "Recommandations marketing");
-            setNav(navSettings, "Mes campagnes", "Campagnes commerciales");
+            setNav(navStats, "Conseil AI", "Recommandations intelligentes");
+            setNav(navSettings, "Campagne marketing", "Campagnes commerciales");
             setNav(navSupport, "Mes fournisseurs", "Gestion fournisseurs");
         }
 
@@ -674,22 +724,6 @@ public class DashboardController {
             btn.setText(title);
         }
     }
-    private void openProfileEdit(User user) {
-        openDetail(user, true);
-
-        detailNom.setDisable(false);
-        detailPrenom.setDisable(false);
-        detailEmail.setDisable(false);
-        detailTel.setDisable(false);
-
-        detailNom.setEditable(true);
-        detailPrenom.setEditable(true);
-        detailEmail.setEditable(true);
-        detailTel.setEditable(true);
-
-        detailRole.setDisable(true);
-        detailStatus.setDisable(true);
-    }
     private void configureContentByRole(User user) {
         if (user.getRole() == Role.admin) {
             adminUsersContent.setVisible(true);
@@ -724,6 +758,19 @@ public class DashboardController {
             sidebar.setVisible(true);
             sidebar.setManaged(true);
 
+            // Force CSS re-evaluation on the active button
+            // (avoids default JavaFX button chrome on the initially-active item)
+            javafx.application.Platform.runLater(() -> {
+                Button[] all = {navUsers, navProducts, navOrders, navStats, navSettings, navSupport};
+                for (Button b : all) {
+                    if (b.getStyleClass().contains("nav-btn-active")) {
+                        b.getStyleClass().remove("nav-btn-active");
+                        b.getStyleClass().add("nav-btn-active");
+                    }
+                }
+                rootPane.requestFocus();
+            });
+
             TranslateTransition slide = new TranslateTransition(Duration.millis(260), sidebar);
             slide.setFromX(-260);
             slide.setToX(0);
@@ -735,13 +782,47 @@ public class DashboardController {
             slide.setFromX(0);
             slide.setToX(-260);
             slide.setInterpolator(Interpolator.EASE_IN);
-
             slide.setOnFinished(e -> {
                 sidebar.setVisible(false);
                 sidebar.setManaged(false);
             });
-
             slide.play();
+        }
+    }
+    private void openProfileEdit(User user) {
+        editingOwnProfile = true;
+
+        openDetail(user, true);
+
+        detailTitle.setText("Modifier mon profil");
+
+        detailNom.setDisable(false);
+        detailPrenom.setDisable(false);
+        detailEmail.setDisable(false);
+        detailTel.setDisable(false);
+        detailDate.setDisable(false);
+
+        detailNom.setEditable(true);
+        detailPrenom.setEditable(true);
+        detailEmail.setEditable(true);
+        detailTel.setEditable(true);
+        detailDate.setEditable(true);
+
+        detailRole.setDisable(true);
+        detailStatus.setDisable(true);
+    }
+    private void updateHeaderUser(User user) {
+        if (user == null) return;
+
+        adminNameLabel.setText(user.getNom() + " " + user.getPrenom());
+        adminRoleLabel.setText(user.getRole() != null ? user.getRole().name() : "");
+
+        profileMenu.setText("👤 " + user.getPrenom());
+
+        if (user.getImage() != null && !user.getImage().isBlank()) {
+            try {
+                adminAvatar.setImage(new Image("file:" + user.getImage(), 38, 38, false, true));
+            } catch (Exception ignored) {}
         }
     }
 }

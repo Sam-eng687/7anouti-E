@@ -27,6 +27,7 @@ import java.io.File;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import javafx.scene.control.TextInputControl;
 
 public class RegisterLivreurController {
 
@@ -125,12 +126,13 @@ public class RegisterLivreurController {
         if (rootPane != null) {
             if (!rootPane.getStyleClass().contains("login-root"))
                 rootPane.getStyleClass().add("login-root");
-            setDarkMode(true);
-        }
-        themeToggleBtn.setSelected(true);
-        themeToggleBtn.setText("\u2600  Jour");
-        themeToggleBtn.selectedProperty().addListener((obs, o, sel) -> setDarkMode(sel));
-
+            boolean dark = projet.hanouti.common.utils.SessionManager.getInstance().isDarkMode();
+            setDarkMode(dark);        }
+        themeToggleBtn.setOnAction(e -> {
+            boolean newMode = !projet.hanouti.common.utils.SessionManager.getInstance().isDarkMode();
+            projet.hanouti.common.utils.SessionManager.getInstance().setDarkMode(newMode);
+            setDarkMode(newMode);
+        });
         // =================== LOGO ===================
         try {
             java.io.InputStream s = getClass().getResourceAsStream("/images/user_auth/logo.png");
@@ -664,10 +666,6 @@ public class RegisterLivreurController {
         delay.play();
     }
 
-    private String getText(TextField field) {
-        return field.getText() == null ? "" : field.getText().trim();
-    }
-
     private void markFieldError(Control field) {
         Parent wrap = findInputWrap(field);
         if (wrap != null) {
@@ -980,4 +978,13 @@ public class RegisterLivreurController {
             }
         });
     }
+    private String getText(TextInputControl field) {
+        if (field == null) {
+            System.err.println("Champ introuvable null");
+            return "";
+        }
+
+        return field.getText() == null ? "" : field.getText().trim();
+    }
+
 }

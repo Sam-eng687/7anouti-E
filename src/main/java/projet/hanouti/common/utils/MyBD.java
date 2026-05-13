@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 public class MyBD {
     private static final Logger LOGGER = Logger.getLogger(MyBD.class.getName());
 
-    private static final String DEFAULT_URL = "jdbc:mysql://localhost:3306/hanouti";
+    private static final String DEFAULT_URL = "jdbc:mysql://localhost:3306/7anouti_e";
     private static final String DEFAULT_USER = "root";
     private static final String DEFAULT_PASSWORD = "";
 

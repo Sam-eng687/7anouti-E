@@ -4,7 +4,6 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Text?>
-<?import javafx.scene.shape.Circle?>
 
 <AnchorPane xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
@@ -14,10 +13,6 @@
     <Pane AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0"
           AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
           styleClass="login-bg"/>
-    <Circle radius="240" styleClass="blob blob-1"/>
-    <Circle radius="180" styleClass="blob blob-2"/>
-    <Circle radius="110" styleClass="blob blob-3"/>
-
     <StackPane AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0"
                AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
                alignment="CENTER" pickOnBounds="false">
@@ -38,12 +33,6 @@
                     <Text text="7anouti-E" styleClass="hero-title"/>
                     <Text text="Rejoignez la communaute" styleClass="hero-tagline"/>
                 </VBox>
-
-                <HBox alignment="CENTER" styleClass="hero-sep-wrap">
-                    <Pane styleClass="hero-sep-line"/>
-                    <Pane styleClass="hero-sep-dot"/>
-                    <Pane styleClass="hero-sep-line"/>
-                </HBox>
 
                 <VBox spacing="14" styleClass="hero-features">
                     <HBox spacing="12" alignment="CENTER_LEFT" styleClass="feature-row">
@@ -255,13 +244,6 @@
                     <CheckBox fx:id="faceIdCheck"
                               text="Activer Face ID"
                               styleClass="remember-check"/>
-
-                    <!-- Divider -->
-                    <HBox alignment="CENTER" spacing="14" styleClass="divider-row">
-                        <Pane styleClass="divider-line" HBox.hgrow="ALWAYS"/>
-                        <Label text="ou" styleClass="divider-label"/>
-                        <Pane styleClass="divider-line" HBox.hgrow="ALWAYS"/>
-                    </HBox>
 
                     <!-- Login link -->
                     <HBox alignment="CENTER" spacing="4" styleClass="signup-row">

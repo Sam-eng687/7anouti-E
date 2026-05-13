@@ -43,8 +43,8 @@ public class UserCRUD implements CRUDuser<User> {
         String hashedPassword = hashPassword(user.getMot_de_pass());
 
         String req = "INSERT INTO users " +
-                "(nom, prenom, date_naiss, e_mail, num_tel, mot_de_pass, image, role, status, adresse, face_id_enabled, face_image_path) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "(nom, prenom, date_naiss, e_mail, num_tel, mot_de_pass, image, role, status, adresse, face_id_enabled, face_image_path, entreprise, type_produit, vehicule, permis, zone_livraison) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement pstmt = connection.prepareStatement(req, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -62,6 +62,12 @@ public class UserCRUD implements CRUDuser<User> {
 
             pstmt.setBoolean(11, user.isFaceIdEnabled());
             pstmt.setString(12, user.getFaceImagePath());
+
+            pstmt.setString(13, user.getEntreprise());
+            pstmt.setString(14, user.getTypeProduit());
+            pstmt.setString(15, user.getVehicule());
+            pstmt.setString(16, user.getPermis());
+            pstmt.setString(17, user.getZoneLivraison());
 
             int affectedRows = pstmt.executeUpdate();
 
@@ -219,6 +225,12 @@ public class UserCRUD implements CRUDuser<User> {
         user.setFaceImagePath(rs.getString("face_image_path"));
         user.setAdresse(rs.getString("adresse"));
 
+        user.setEntreprise(rs.getString("entreprise"));
+        user.setTypeProduit(rs.getString("type_produit"));
+        user.setVehicule(rs.getString("vehicule"));
+        user.setPermis(rs.getString("permis"));
+        user.setZoneLivraison(rs.getString("zone_livraison"));
+
         String roleStr = rs.getString("role");
         if (roleStr != null) {
             user.setRole(Role.valueOf(roleStr.toLowerCase()));
@@ -302,6 +314,20 @@ public class UserCRUD implements CRUDuser<User> {
         }
         return 0;
     }
+
+    public void updateUserProfile(User user) throws SQLException {
+        String sql = "UPDATE users SET nom = ?, prenom = ?, e_mail = ?, num_tel = ?, date_naiss = ? WHERE id = ?";
+        try (PreparedStatement pst = connection.prepareStatement(sql)) {
+            pst.setString(1, user.getNom());
+            pst.setString(2, user.getPrenom());
+            pst.setString(3, user.getE_mail());
+            pst.setString(4, user.getNum_tel());
+            pst.setString(5, user.getDate_naiss());
+            pst.setInt(6, user.getId());
+            pst.executeUpdate();
+        }
+    }
+
     public void updateUserAdminFields(User user) throws SQLException {
 
         String sql =

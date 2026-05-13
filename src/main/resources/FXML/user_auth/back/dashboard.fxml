@@ -5,7 +5,6 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Text?>
-<?import javafx.scene.shape.Circle?>
 <?import javafx.geometry.Insets?>
 
 <AnchorPane xmlns="http://javafx.com/javafx/21"
@@ -16,8 +15,6 @@
 
     <Pane styleClass="dash-bg" AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0"
           AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"/>
-    <Circle radius="300" styleClass="dash-blob dash-blob-1"/>
-    <Circle radius="200" styleClass="dash-blob dash-blob-2"/>
 
     <HBox AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0"
           AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0">
@@ -45,7 +42,7 @@
             <VBox fx:id="navContainer" alignment="TOP_LEFT" spacing="4"
                   styleClass="sidebar-nav" VBox.vgrow="ALWAYS">
 
-                <Button fx:id="navUsers" styleClass="nav-btn nav-btn-active" maxWidth="Infinity"
+                <Button fx:id="navUsers" styleClass="nav-btn" maxWidth="Infinity" alignment="BASELINE_LEFT">
                         alignment="BASELINE_LEFT">
                     <graphic>
                         <HBox spacing="12" alignment="CENTER_LEFT">

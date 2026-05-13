@@ -59,12 +59,7 @@
             linear-gradient(to bottom right, -bg, -bg2);
 }
 
-.front-blob { -fx-stroke: transparent; }
-.front-blob-1 { -fx-fill: rgba(99,102,241,0.025); -fx-translate-x: 900; -fx-translate-y: 500; }
-.front-blob-2 { -fx-fill: rgba(129,140,248,0.020); -fx-translate-x: 100; -fx-translate-y: 80; }
-.front-blob-3 { -fx-fill: rgba(79,70,229,0.015); -fx-translate-x: 600; -fx-translate-y: 700; }
-.front-root.dark .front-blob-1 { -fx-fill: rgba(99,102,241,0.06); }
-.front-root.dark .front-blob-2 { -fx-fill: rgba(129,140,248,0.05); }
+.front-blob { -fx-fill: transparent; -fx-stroke: transparent; }
 
 /* ============================================================
    TOP NAVBAR
