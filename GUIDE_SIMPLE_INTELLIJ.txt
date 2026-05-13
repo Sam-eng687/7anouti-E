@@ -1,0 +1,139 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║              📋 GUIDE SIMPLE - PUSH AVEC INTELLIJ (SANS GIT)                ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+
+🎯 ÉTAPES À SUIVRE DANS INTELLIJ IDEA
+═══════════════════════════════════════════════════════════════════════════════
+
+ÉTAPE 1 : Ouvrir le projet
+───────────────────────────────────────────────────────────────────────────────
+1. Ouvrez IntelliJ IDEA
+2. File → Open
+3. Sélectionnez : C:\Users\Dell\Downloads\7anouti_Premium_Final_v3_fixed\7anouti_Premium_Final
+4. Cliquez sur OK
+
+
+ÉTAPE 2 : Activer Git
+───────────────────────────────────────────────────────────────────────────────
+1. Menu VCS → Enable Version Control Integration
+2. Sélectionnez "Git" dans la liste
+3. Cliquez sur OK
+
+   ⚠️ Si vous voyez "Git is not installed" :
+   - File → Settings → Version Control → Git
+   - Cliquez sur "Download and Install"
+   - Attendez la fin du téléchargement
+
+
+ÉTAPE 3 : Ajouter le dépôt distant
+───────────────────────────────────────────────────────────────────────────────
+1. Menu VCS → Git → Remotes
+2. Cliquez sur le bouton "+"
+3. Name : origin
+4. URL : https://github.com/Sam-eng687/7anouti-E.git
+5. Cliquez sur OK
+
+
+ÉTAPE 4 : Récupérer les branches
+───────────────────────────────────────────────────────────────────────────────
+1. Menu VCS → Git → Fetch
+2. Attendez que les branches soient récupérées (barre de progression en bas)
+
+
+ÉTAPE 5 : Checkout sur dev.Alachat
+───────────────────────────────────────────────────────────────────────────────
+1. En bas à droite de la fenêtre, cliquez sur "Git: main" (ou la branche actuelle)
+2. Dans le menu qui s'ouvre, cherchez "origin/dev.Alachat"
+3. Cliquez dessus
+4. Sélectionnez "Checkout"
+5. IntelliJ va créer une branche locale "dev.Alachat"
+
+
+ÉTAPE 6 : Créer la branche marketing
+───────────────────────────────────────────────────────────────────────────────
+1. En bas à droite, cliquez sur "Git: dev.Alachat"
+2. Cliquez sur "+ New Branch"
+3. Nom de la branche : dev.Alachat.marketing
+4. ✅ Cochez "Checkout branch"
+5. Cliquez sur "Create"
+
+
+ÉTAPE 7 : Ajouter les fichiers
+───────────────────────────────────────────────────────────────────────────────
+1. Appuyez sur Ctrl+K (ou Menu VCS → Commit)
+2. Une fenêtre s'ouvre à gauche
+3. ✅ Cochez TOUS les fichiers dans la liste
+4. Dans la zone "Commit Message", écrivez :
+
+   feat: intégration module Marketing vendeur
+   
+   - Ajout du package edu.hanouti.modules.marketing
+   - Création de MarketingDashboardView avec cartes KPI
+   - Intégration dans la navigation (SidebarNav + HanoutiDashboard)
+   - Réutilisation de MyConnection et thème dark/light
+   - Ajout .gitignore pour protéger les fichiers sensibles
+
+5. Cliquez sur le bouton "Commit" (en bas)
+
+
+ÉTAPE 8 : Push vers GitHub
+───────────────────────────────────────────────────────────────────────────────
+1. Appuyez sur Ctrl+Shift+K (ou Menu VCS → Git → Push)
+2. Une fenêtre s'ouvre
+3. Vérifiez que la branche est : dev.Alachat.marketing
+4. Cliquez sur "Push"
+
+   ⚠️ Authentification GitHub :
+   - Username : Sam-eng687
+   - Password : Utilisez un Personal Access Token (PAT)
+   
+   Pour créer un PAT :
+   1. Allez sur : https://github.com/settings/tokens
+   2. Generate new token (classic)
+   3. Cochez "repo"
+   4. Generate token
+   5. Copiez le token et utilisez-le comme mot de passe
+
+
+ÉTAPE 9 : Créer la Pull Request
+───────────────────────────────────────────────────────────────────────────────
+1. Allez sur : https://github.com/Sam-eng687/7anouti-E
+2. Vous verrez : "dev.Alachat.marketing had recent pushes"
+3. Cliquez sur "Compare & pull request"
+4. Base : dev.Alachat
+5. Compare : dev.Alachat.marketing
+6. Titre : feat: Intégration module Marketing vendeur
+7. Cliquez sur "Create pull request"
+
+
+═══════════════════════════════════════════════════════════════════════════════
+✅ C'EST TERMINÉ !
+═══════════════════════════════════════════════════════════════════════════════
+
+Votre module Marketing est maintenant sur GitHub et prêt pour la revue ! 🎉
+
+
+═══════════════════════════════════════════════════════════════════════════════
+🆘 EN CAS DE PROBLÈME
+═══════════════════════════════════════════════════════════════════════════════
+
+Problème : "Git is not installed"
+Solution : File → Settings → Version Control → Git → Download and Install
+
+Problème : "Authentication failed"
+Solution : Utilisez un Personal Access Token au lieu du mot de passe
+
+Problème : "Cannot find remote branch dev.Alachat"
+Solution : Vérifiez que vous avez fait VCS → Git → Fetch
+
+Problème : "Push rejected"
+Solution : Vérifiez que vous êtes sur dev.Alachat.marketing (pas dev.Alachat)
+
+
+═══════════════════════════════════════════════════════════════════════════════
+Date : 2026-05-13
+Dépôt : https://github.com/Sam-eng687/7anouti-E.git
+═══════════════════════════════════════════════════════════════════════════════

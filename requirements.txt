@@ -1,0 +1,2 @@
+# Dépendances Python pour pdf_export.py (export PDF depuis Hanouti)
+reportlab>=4.0.0,<5

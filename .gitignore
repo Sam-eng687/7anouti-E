@@ -1,0 +1,23 @@
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+out/
+
+# Maven
+target/
+*.class
+
+# Fichiers sensibles - NE JAMAIS COMMITER
+gemini.properties
+*.properties.local
+*.key
+*.env
+*_API_KEY*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
