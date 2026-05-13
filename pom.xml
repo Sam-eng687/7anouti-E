@@ -73,6 +73,7 @@
                     <include>**/*.svg</include>
                     <include>**/*.mp3</include>
                     <include>**/*.properties</include>
+                    <include>**/*.xml</include>
                 </includes>
             </resource>
         </resources>
@@ -94,7 +95,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.8</version>
                 <configuration>
-                    <mainClass>org.example.GUI.HomePage</mainClass>
+                    <mainClass>projet.hanouti.MainApp</mainClass>
                     <options>
                         <option>--add-modules</option>
                         <option>javafx.controls,javafx.fxml</option>

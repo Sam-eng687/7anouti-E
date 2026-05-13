@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.geometry.Insets?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:id="rootPane"
+            fx:controller="projet.hanouti.user_auth.controllers.front.ProfileController"
+            prefWidth="1400" prefHeight="860"
+            styleClass="front-root">
+
+    <Pane styleClass="front-bg"
+          AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0"
+          AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"/>
+    <Circle radius="300" styleClass="front-blob front-blob-1"/>
+    <Circle radius="200" styleClass="front-blob front-blob-2"/>
+
+    <VBox AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0"
+          AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0">
+
+        <!-- ========== TOP NAVBAR ========== -->
+        <HBox fx:id="topNav" styleClass="topnav" alignment="CENTER_LEFT" spacing="0">
+            <HBox alignment="CENTER_LEFT" spacing="12" styleClass="topnav-logo-zone">
+                <StackPane prefWidth="52" prefHeight="52" maxWidth="52" maxHeight="52"
+                           styleClass="topnav-logo-box">
+                    <ImageView fx:id="navLogo" fitWidth="44" fitHeight="44" preserveRatio="true"/>
+                    <Label text="7E" styleClass="topnav-logo-fallback"/>
+                </StackPane>
+                <VBox spacing="1">
+                    <Label text="7anouti-E" styleClass="topnav-app-name"/>
+                    <Label text="Espace Acheteur" styleClass="topnav-app-sub"/>
+                </VBox>
+            </HBox>
+
+            <Pane styleClass="topnav-vsep"/>
+
+            <HBox fx:id="navLinksBox" alignment="CENTER_LEFT" spacing="2" HBox.hgrow="ALWAYS"
+                  styleClass="topnav-links">
+                <Button fx:id="navHome" text="Accueil" styleClass="topnav-item"/>
+                <Button fx:id="navModule1" text="Module 1" styleClass="topnav-item"/>
+                <Button fx:id="navModule2" text="Module 2" styleClass="topnav-item"/>
+                <Button fx:id="navModule3" text="Module 3" styleClass="topnav-item"/>
+                <Button fx:id="navModule4" text="Module 4" styleClass="topnav-item"/>
+                <Button fx:id="navModule5" text="Module 5" styleClass="topnav-item"/>
+                <Button fx:id="navModule6" text="Module 6" styleClass="topnav-item"/>
+            </HBox>
+
+            <HBox alignment="CENTER_RIGHT" spacing="12" styleClass="topnav-right">
+                <Button fx:id="themeBtn" styleClass="topnav-theme-btn">
+                    <graphic>
+                        <HBox spacing="6" alignment="CENTER">
+                            <Label fx:id="themeIcon" text="L" styleClass="topnav-theme-icon"/>
+                            <Label fx:id="themeLabel" text="Jour" styleClass="topnav-theme-label"/>
+                        </HBox>
+                    </graphic>
+                </Button>
+                <Button fx:id="logoutBtn" styleClass="topnav-logout-btn" text="Deconnexion"/>
+                <Button fx:id="avatarBtn" styleClass="topnav-avatar-chip topnav-active">
+                    <graphic>
+                        <HBox spacing="10" alignment="CENTER">
+                            <StackPane prefWidth="38" prefHeight="38" maxWidth="38" maxHeight="38"
+                                       styleClass="topnav-avatar-circle">
+                                <ImageView fx:id="userAvatar" fitWidth="34" fitHeight="34" preserveRatio="false"/>
+                                <Label fx:id="userAvatarLetter" text="A" styleClass="topnav-avatar-letter"/>
+                            </StackPane>
+                            <VBox spacing="1">
+                                <Label fx:id="userNameLabel" text="" styleClass="topnav-user-name"/>
+                                <Label fx:id="userRoleLabel" text="" styleClass="topnav-user-role"/>
+                            </VBox>
+                        </HBox>
+                    </graphic>
+                </Button>
+            </HBox>
+        </HBox>
+
+        <!-- PAGE HEADER -->
+        <HBox styleClass="page-header" alignment="CENTER_LEFT" spacing="0">
+            <VBox HBox.hgrow="ALWAYS">
+                <Text text="Mon Profil" styleClass="page-header-title"/>
+                <Text text="Gerez vos informations personnelles" styleClass="page-header-sub"/>
+            </VBox>
+        </HBox>
+
+        <!-- CONTENT -->
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
+                    styleClass="front-scroll" VBox.vgrow="ALWAYS">
+            <VBox spacing="20" styleClass="front-content">
+
+                <HBox spacing="20" alignment="TOP_LEFT">
+
+                    <!-- ===== LEFT: FORM ===== -->
+                    <VBox spacing="18" styleClass="profile-form-card" HBox.hgrow="ALWAYS">
+
+                        <!-- Section Infos -->
+                        <VBox spacing="14">
+                            <HBox alignment="CENTER_LEFT" spacing="10">
+                                <Pane styleClass="profile-section-bar"/>
+                                <Label text="Informations personnelles" styleClass="profile-section-title"/>
+                            </HBox>
+
+                            <!-- Avatar upload -->
+                            <HBox spacing="16" alignment="CENTER_LEFT">
+                                <StackPane fx:id="profileAvatarContainer"
+                                           prefWidth="86" prefHeight="86" maxWidth="86" maxHeight="86"
+                                           styleClass="profile-avatar-container">
+                                    <ImageView fx:id="profileAvatarView" fitWidth="82" fitHeight="82"
+                                               preserveRatio="false"/>
+                                    <Label fx:id="profileAvatarLetter" text="?" styleClass="profile-avatar-letter"/>
+                                </StackPane>
+                                <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                    <Label text="Photo de profil" styleClass="profile-avatar-title"/>
+                                    <Label text="Cliquez sur le cercle pour changer votre photo"
+                                           styleClass="profile-avatar-hint" wrapText="true"/>
+                                    <Button fx:id="changeAvatarBtn" text="Changer la photo"
+                                            styleClass="profile-change-avatar-btn"/>
+                                </VBox>
+                            </HBox>
+
+                            <!-- Nom + Prenom -->
+                            <HBox spacing="12">
+                                <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                    <Label text="NOM" styleClass="profile-field-label"/>
+                                    <HBox alignment="CENTER_LEFT" styleClass="input-wrap">
+                                        <StackPane styleClass="input-icon-wrap">
+                                            <Label text="N" styleClass="input-icon-text"/>
+                                        </StackPane>
+                                        <TextField fx:id="nomField" promptText="Votre nom"
+                                                   styleClass="text-input" HBox.hgrow="ALWAYS"/>
+                                    </HBox>
+                                    <Label fx:id="errNom" text="" managed="false" visible="false"
+                                           styleClass="form-err-label"/>
+                                </VBox>
+                                <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                    <Label text="PRENOM" styleClass="profile-field-label"/>
+                                    <HBox alignment="CENTER_LEFT" styleClass="input-wrap">
+                                        <StackPane styleClass="input-icon-wrap">
+                                            <Label text="P" styleClass="input-icon-text"/>
+                                        </StackPane>
+                                        <TextField fx:id="prenomField" promptText="Votre prenom"
+                                                   styleClass="text-input" HBox.hgrow="ALWAYS"/>
+                                    </HBox>
+                                    <Label fx:id="errPrenom" text="" managed="false" visible="false"
+                                           styleClass="form-err-label"/>
+                                </VBox>
+                            </HBox>
+
+                            <!-- Email -->
+                            <VBox spacing="6">
+                                <Label text="EMAIL" styleClass="profile-field-label"/>
+                                <HBox alignment="CENTER_LEFT" styleClass="input-wrap">
+                                    <StackPane styleClass="input-icon-wrap">
+                                        <Label fx:id="emailIcon" text="E" styleClass="input-icon-text"/>
+                                    </StackPane>
+                                    <TextField fx:id="emailField" promptText="votre@email.com"
+                                               styleClass="text-input" HBox.hgrow="ALWAYS"/>
+                                </HBox>
+                                <Label fx:id="errEmail" text="" managed="false" visible="false"
+                                       styleClass="form-err-label"/>
+                            </VBox>
+
+                            <!-- Tel + Date -->
+                            <HBox spacing="12">
+                                <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                    <Label text="TELEPHONE" styleClass="profile-field-label"/>
+                                    <HBox alignment="CENTER_LEFT" styleClass="input-wrap">
+                                        <StackPane styleClass="input-icon-wrap">
+                                            <Label text="T" styleClass="input-icon-text"/>
+                                        </StackPane>
+                                        <TextField fx:id="telField" promptText="+216 XX XXX XXX"
+                                                   styleClass="text-input" HBox.hgrow="ALWAYS"/>
+                                    </HBox>
+                                    <Label fx:id="errTel" text="" managed="false" visible="false"
+                                           styleClass="form-err-label"/>
+                                </VBox>
+                                <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                    <Label text="DATE DE NAISSANCE" styleClass="profile-field-label"/>
+                                    <HBox alignment="CENTER_LEFT" styleClass="input-wrap">
+                                        <StackPane styleClass="input-icon-wrap">
+                                            <Label text="D" styleClass="input-icon-text"/>
+                                        </StackPane>
+                                        <TextField fx:id="dateField" promptText="aaaa-mm-jj"
+                                                   styleClass="text-input" HBox.hgrow="ALWAYS"
+                                                   editable="false"/>
+                                    </HBox>
+                                </VBox>
+                            </HBox>
+                        </VBox>
+
+                        <Pane styleClass="profile-form-sep"/>
+
+                        <!-- Section Mot de passe -->
+                        <VBox spacing="14">
+                            <HBox alignment="CENTER_LEFT" spacing="10">
+                                <Pane styleClass="profile-section-bar profile-section-bar-amber"/>
+                                <Label text="Changer le mot de passe" styleClass="profile-section-title"/>
+                            </HBox>
+                            <VBox spacing="6">
+                                <Label text="NOUVEAU MOT DE PASSE" styleClass="profile-field-label"/>
+                                <HBox alignment="CENTER_LEFT" styleClass="input-wrap">
+                                    <StackPane styleClass="input-icon-wrap">
+                                        <Label text="*" styleClass="input-icon-text"/>
+                                    </StackPane>
+                                    <PasswordField fx:id="newPassField"
+                                                   promptText="Laisser vide pour ne pas changer"
+                                                   styleClass="text-input" HBox.hgrow="ALWAYS"/>
+                                </HBox>
+                                <Label fx:id="errPass" text="" managed="false" visible="false"
+                                       styleClass="form-err-label"/>
+                            </VBox>
+                            <VBox spacing="6">
+                                <Label text="CONFIRMER MOT DE PASSE" styleClass="profile-field-label"/>
+                                <HBox alignment="CENTER_LEFT" styleClass="input-wrap">
+                                    <StackPane styleClass="input-icon-wrap">
+                                        <Label text="*" styleClass="input-icon-text"/>
+                                    </StackPane>
+                                    <PasswordField fx:id="confirmPassField"
+                                                   promptText="Confirmer le mot de passe"
+                                                   styleClass="text-input" HBox.hgrow="ALWAYS"/>
+                                </HBox>
+                                <Label fx:id="errConfirm" text="" managed="false" visible="false"
+                                       styleClass="form-err-label"/>
+                            </VBox>
+                        </VBox>
+
+                        <!-- Messages -->
+                        <Label fx:id="successMsg" text="" managed="false" visible="false"
+                               wrapText="true" maxWidth="Infinity" styleClass="success-banner"/>
+                        <Label fx:id="errorMsg" text="" managed="false" visible="false"
+                               wrapText="true" maxWidth="Infinity" styleClass="error-banner"/>
+
+                        <!-- Boutons -->
+                        <HBox spacing="12">
+                            <Button fx:id="saveBtn" text="Sauvegarder les modifications"
+                                    styleClass="profile-save-btn" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                            <Button fx:id="cancelBtn" text="Annuler" styleClass="profile-cancel-btn"/>
+                        </HBox>
+                    </VBox>
+
+                    <!-- ===== RIGHT: PREVIEW ===== -->
+                    <VBox spacing="0" styleClass="profile-preview-card" prefWidth="270" maxWidth="270">
+
+                        <VBox alignment="CENTER" spacing="12" styleClass="profile-preview-top">
+                            <StackPane prefWidth="100" prefHeight="100"
+                                       maxWidth="100" maxHeight="100"
+                                       styleClass="profile-preview-avatar-wrap">
+                                <ImageView fx:id="previewAvatar" fitWidth="96" fitHeight="96"
+                                           preserveRatio="false"/>
+                                <Label fx:id="previewAvatarLetter" text="?" styleClass="profile-preview-avatar-letter"/>
+                            </StackPane>
+                            <Label fx:id="previewName" text="Votre nom" styleClass="profile-preview-name"/>
+                            <Label fx:id="previewRoleBadge" text="acheteur" styleClass="profile-preview-role"/>
+                        </VBox>
+
+                        <Pane styleClass="preview-sep"/>
+
+                        <VBox spacing="0" styleClass="profile-preview-infos">
+                            <HBox spacing="10" alignment="CENTER_LEFT" styleClass="preview-row">
+                                <StackPane styleClass="preview-row-icon">
+                                    <Label text="E" styleClass="preview-row-icon-text"/>
+                                </StackPane>
+                                <VBox spacing="1">
+                                    <Label text="EMAIL" styleClass="preview-row-label"/>
+                                    <Label fx:id="previewEmail" text="—" styleClass="preview-row-value"/>
+                                </VBox>
+                            </HBox>
+                            <HBox spacing="10" alignment="CENTER_LEFT" styleClass="preview-row">
+                                <StackPane styleClass="preview-row-icon">
+                                    <Label text="T" styleClass="preview-row-icon-text"/>
+                                </StackPane>
+                                <VBox spacing="1">
+                                    <Label text="TELEPHONE" styleClass="preview-row-label"/>
+                                    <Label fx:id="previewTel" text="—" styleClass="preview-row-value"/>
+                                </VBox>
+                            </HBox>
+                            <HBox spacing="10" alignment="CENTER_LEFT" styleClass="preview-row">
+                                <StackPane styleClass="preview-row-icon">
+                                    <Label text="D" styleClass="preview-row-icon-text"/>
+                                </StackPane>
+                                <VBox spacing="1">
+                                    <Label text="DATE NAISS." styleClass="preview-row-label"/>
+                                    <Label fx:id="previewDate" text="—" styleClass="preview-row-value"/>
+                                </VBox>
+                            </HBox>
+                        </VBox>
+
+                        <Pane styleClass="preview-sep"/>
+
+                        <VBox alignment="CENTER" spacing="8" styleClass="profile-preview-status">
+                            <Label text="STATUT DU COMPTE" styleClass="preview-row-label"/>
+                            <Label fx:id="previewStatus" text="Actif"
+                                   styleClass="profile-status-badge profile-status-active"/>
+                        </VBox>
+                    </VBox>
+                </HBox>
+
+                <!-- FOOTER -->
+                <HBox alignment="CENTER" styleClass="front-footer">
+                    <Label text="7anouti-E 2026 — Tous droits reserves" styleClass="front-footer-text"/>
+                </HBox>
+            </VBox>
+        </ScrollPane>
+    </VBox>
+</AnchorPane>
