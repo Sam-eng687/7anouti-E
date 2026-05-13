@@ -1,0 +1,148 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   hanoutim4-integration.css
+   Adapter CSS — Makes Module 4 (Samar) match the 7anouti-E main interface.
+   Add this file to your FXML stylesheets AFTER hanoutim4.css.
+   It overrides colors to use Mootez's CSS variables automatically.
+   Both Day and Night modes are handled.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── When embedded inside .dash-root (Mootez's container) ─────────────
+   Override the page background to be transparent so Mootez's bg shows   */
+.dash-root .root-pane,
+.dash-root .page-bg {
+    -fx-background-color: transparent;
+}
+
+/* ── Main cart wrapper — use Mootez's card colors ──────────────────── */
+.dash-root .cart-wrapper {
+    -fx-background-color: -card;
+    -fx-border-color: -card-b;
+    -fx-border-width: 1;
+    -fx-border-radius: 20;
+    -fx-background-radius: 20;
+    -fx-effect: -card-s;
+}
+
+/* ── Topbar inside Mootez's container ─────────────────────────────── */
+.dash-root .topbar {
+    -fx-background-color: -card;
+    -fx-border-color: -card-b;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
+}
+
+/* ── Text colors — use Mootez's text variables ─────────────────────── */
+.dash-root .topbar-title        { -fx-text-fill: -t1; }
+.dash-root .topbar-page-icon    { -fx-text-fill: -b500; }
+.dash-root .section-title       { -fx-text-fill: -t1; }
+.dash-root .section-subtitle    { -fx-text-fill: -t3; }
+
+/* ── Cards inside module ────────────────────────────────────────────── */
+.dash-root .glass-card,
+.dash-root .payment-card,
+.dash-root .cart-item-card,
+.dash-root .wishlist-card,
+.dash-root .summary-card {
+    -fx-background-color: -card;
+    -fx-border-color: -card-b;
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
+}
+
+/* ── Notification panel ─────────────────────────────────────────────── */
+.dash-root .notif-card {
+    -fx-background-color: -card;
+    -fx-border-color: -card-b;
+}
+
+/* ── AI suggestions panel ───────────────────────────────────────────── */
+.dash-root .ai-panel {
+    -fx-background-color: -card;
+    -fx-border-color: -card-b;
+}
+
+/* ── Buttons — keep indigo accent from Mootez ───────────────────────── */
+.dash-root .checkout-btn,
+.dash-root .btn-primary {
+    -fx-background-color: linear-gradient(to right, -b700, -b600, -b500);
+    -fx-text-fill: white;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   DARK MODE — triggered by .dash-root.dark (Mootez's dark toggle)
+   ══════════════════════════════════════════════════════════════════════ */
+
+.dash-root.dark .root-pane,
+.dash-root.dark .page-bg {
+    -fx-background-color: transparent;
+}
+
+.dash-root.dark .cart-wrapper {
+    -fx-background-color: -card;
+    -fx-border-color: -card-b;
+    -fx-effect: -card-s;
+}
+
+.dash-root.dark .topbar {
+    -fx-background-color: -card;
+    -fx-border-color: -card-b;
+}
+
+.dash-root.dark .topbar-title     { -fx-text-fill: -t1; }
+.dash-root.dark .topbar-page-icon { -fx-text-fill: -b300; }
+.dash-root.dark .section-title    { -fx-text-fill: -t1; }
+.dash-root.dark .section-subtitle { -fx-text-fill: -t3; }
+
+.dash-root.dark .glass-card,
+.dash-root.dark .payment-card,
+.dash-root.dark .cart-item-card,
+.dash-root.dark .wishlist-card,
+.dash-root.dark .summary-card {
+    -fx-background-color: -card;
+    -fx-border-color: -card-b;
+}
+
+/* ── Scrollbars match Mootez ────────────────────────────────────────── */
+.dash-root.dark .glass-scroll .scroll-bar:vertical .thumb {
+    -fx-background-color: rgba(99,102,241,0.30);
+}
+
+/* ── Item names / prices ────────────────────────────────────────────── */
+.dash-root.dark .item-name,
+.dash-root.dark .product-name,
+.dash-root.dark .item-price,
+.dash-root.dark .price-label {
+    -fx-text-fill: -t1;
+}
+
+.dash-root.dark .item-sub,
+.dash-root.dark .item-category,
+.dash-root.dark .secondary-text {
+    -fx-text-fill: -t3;
+}
+
+/* ── Accent price color ─────────────────────────────────────────────── */
+.dash-root.dark .price-accent { -fx-text-fill: -b300; }
+.dash-root .price-accent      { -fx-text-fill: -b600; }
+
+/* ── Notification panel dark ────────────────────────────────────────── */
+.dash-root.dark .notif-card {
+    -fx-background-color: -card;
+    -fx-border-color: -card-b;
+}
+
+/* ── AI suggestions dark ────────────────────────────────────────────── */
+.dash-root.dark .ai-panel {
+    -fx-background-color: -card;
+    -fx-border-color: -card-b;
+}
+
+/* ── Input fields dark ──────────────────────────────────────────────── */
+.dash-root.dark .promo-field,
+.dash-root.dark .search-field {
+    -fx-background-color: -inp;
+    -fx-border-color: -inp-b;
+    -fx-text-fill: -t1;
+    -fx-prompt-text-fill: -t4;
+}

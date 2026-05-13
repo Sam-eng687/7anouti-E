@@ -17,7 +17,6 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import netscape.javascript.JSObject;
 
 import projet.hanouti.user_auth.enums.Role;
 import projet.hanouti.user_auth.enums.Status;
@@ -903,7 +902,7 @@ public class RegisterVendeurController {
         countryLabel.setManaged(true);
         countryLabel.setVisible(true);
     }
-    
+
     private void openEntrepriseMapPopup() {
         Stage stage = new Stage();
         stage.setTitle("Choisir localisation entreprise");
