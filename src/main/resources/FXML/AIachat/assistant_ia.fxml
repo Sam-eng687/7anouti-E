@@ -46,10 +46,10 @@
                         <!-- ── LAST PURCHASES section ───────────────────── -->
                         <VBox styleClass="section-container">
                             <HBox styleClass="section-head" alignment="CENTER_LEFT">
-                                <Label styleClass="section-title" text="● Based on your last purchases"/>
+                                <Label styleClass="section-title" text="● D'après vos dernières recherches"/>
                                 <Region HBox.hgrow="ALWAYS"/>
                                 <Button fx:id="showMoreLastBtn" styleClass="show-more-btn"
-                                        text="Show more ↓" onAction="#toggleLastExpand"/>
+                                        text="Afficher plus ↓" onAction="#toggleLastExpand"/>
                             </HBox>
 
                             <!-- Row 1 - always visible. 6 cards × 134 px + 5 × 10 px gaps
@@ -73,10 +73,10 @@
                         <!-- ── TOP RATED section ────────────────────────── -->
                         <VBox styleClass="section-container">
                             <HBox styleClass="section-head" alignment="CENTER_LEFT">
-                                <Label styleClass="section-title" text="● Highest rated products"/>
+                                <Label styleClass="section-title" text="● Produits les mieux notés"/>
                                 <Region HBox.hgrow="ALWAYS"/>
                                 <Button fx:id="showMoreTopBtn" styleClass="show-more-btn"
-                                        text="Show more ↓" onAction="#toggleTopExpand"/>
+                                        text="Afficher plus ↓" onAction="#toggleTopExpand"/>
                             </HBox>
 
                             <HBox fx:id="topRow1" spacing="10"
@@ -98,7 +98,7 @@
                                 <Label styleClass="section-title" text="● Réductions &amp; Offres"/>
                                 <Region HBox.hgrow="ALWAYS"/>
                                 <Button fx:id="showMoreOffersBtn" styleClass="show-more-btn"
-                                        text="Show more ↓" onAction="#toggleOffersExpand"
+                                        text="Afficher plus ↓" onAction="#toggleOffersExpand"
                                         visible="false" managed="false"/>
                             </HBox>
                             <!-- Shown when no active offers are available -->
@@ -167,7 +167,7 @@
                 </StackPane.margin>
                 <TextField fx:id="floatingInput"
                            styleClass="floating-input"
-                           promptText="✦  Ask AI - what are you looking for?"
+                           promptText="✦  Demandez à l'IA : que recherchez-vous ?"
                            onAction="#handleFloatingSubmit"
                            HBox.hgrow="ALWAYS"/>
                 <Button fx:id="floatingMicBtn"

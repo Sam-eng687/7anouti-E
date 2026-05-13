@@ -43,6 +43,7 @@ import projet.hanouti.AIachat.services.ProduitServices;
 import projet.hanouti.AIachat.services.ScoringService;
 import projet.hanouti.AIachat.services.VoiceService;
 import projet.hanouti.AIachat.services.WishlistService;
+import projet.hanouti.AIachat.services.PanierService;
 import projet.hanouti.AIachat.tools.ConversationState;
 import projet.hanouti.AIachat.tools.KeywordExtractor;
 import projet.hanouti.AIachat.tools.RefinementDetector;
@@ -147,6 +148,7 @@ public class AssistantIAController {
     private final GeminiService                  geminiService      = new GeminiService();
     private final VoiceService                   voiceService       = new VoiceService();
     private final WishlistService                wishlistService    = new WishlistService();
+    private final PanierService                  panierService      = new PanierService();
 
     // ── Wishlist in-memory set - preloaded on startup, kept in sync ──────────
     private final Set<Integer> wishlistProductIds = new HashSet<>();
@@ -359,7 +361,7 @@ public class AssistantIAController {
         boolean expand = !lastExpandRows.isVisible();
         lastExpandRows.setVisible(expand);
         lastExpandRows.setManaged(expand);
-        showMoreLastBtn.setText(expand ? "Show less ↑" : "Show more ↓");
+        showMoreLastBtn.setText(expand ? "Afficher moins ↑" : "Afficher plus ↓");
     }
 
     @FXML
@@ -367,7 +369,7 @@ public class AssistantIAController {
         boolean expand = !topExpandRows.isVisible();
         topExpandRows.setVisible(expand);
         topExpandRows.setManaged(expand);
-        showMoreTopBtn.setText(expand ? "Show less ↑" : "Show more ↓");
+        showMoreTopBtn.setText(expand ? "Afficher moins ↑" : "Afficher plus ↓");
     }
 
     @FXML
@@ -377,7 +379,7 @@ public class AssistantIAController {
         offerExpandRows.setVisible(expand);
         offerExpandRows.setManaged(expand);
         if (showMoreOffersBtn != null)
-            showMoreOffersBtn.setText(expand ? "Show less ↑" : "Show more ↓");
+            showMoreOffersBtn.setText(expand ? "Afficher moins ↑" : "Afficher plus ↓");
     }
 
     @FXML
@@ -1495,8 +1497,8 @@ public class AssistantIAController {
         clearRow(topRow1);  clearRow(topRow2);  clearRow(topRow3);
         if (lastExpandRows != null) { lastExpandRows.setVisible(false); lastExpandRows.setManaged(false); }
         if (topExpandRows  != null) { topExpandRows.setVisible(false);  topExpandRows.setManaged(false);  }
-        if (showMoreLastBtn != null) showMoreLastBtn.setText("Show more ↓");
-        if (showMoreTopBtn  != null) showMoreTopBtn.setText("Show more ↓");
+        if (showMoreLastBtn != null) showMoreLastBtn.setText("Afficher plus ↓");
+        if (showMoreTopBtn  != null) showMoreTopBtn.setText("Afficher plus ↓");
 
         int id = SessionManager.getCurrentUserId();
         List<String>  freq = iaService.getCategoriesFromHistoryByFrequency(id);
@@ -1577,7 +1579,7 @@ public class AssistantIAController {
         // Clear rows
         clearRow(offerRow1); clearRow(offerRow2); clearRow(offerRow3);
         if (offerExpandRows != null) { offerExpandRows.setVisible(false); offerExpandRows.setManaged(false); }
-        if (showMoreOffersBtn != null) showMoreOffersBtn.setText("Show more ↓");
+        if (showMoreOffersBtn != null) showMoreOffersBtn.setText("Afficher plus ↓");
 
         if (activeConseils == null || activeConseils.isEmpty()) {
             offersPlaceholder.setVisible(true);
@@ -1689,7 +1691,7 @@ public class AssistantIAController {
         newPrice.setStyle("-fx-font-weight:bold;-fx-font-size:13px;-fx-text-fill:" + green() + ";");
 
         // Cart button — full width like idle card
-        Button addBtn = new Button("+ Cart");
+        Button addBtn = new Button("+ Ajouter au panier");
         addBtn.setMaxWidth(Double.MAX_VALUE);
         addBtn.setPrefHeight(24);
         addBtn.setStyle("-fx-background-color:linear-gradient(to bottom right,#2563EB,#8B5CF6);"
@@ -2252,7 +2254,7 @@ public class AssistantIAController {
         }
 
         // Cart button - full width, compact height
-        Button addBtn = new Button("+ Cart");
+        Button addBtn = new Button("+ Ajouter au panier");
         addBtn.setMaxWidth(Double.MAX_VALUE);
         addBtn.setPrefHeight(24);
         addBtn.setStyle("-fx-background-color:linear-gradient(to bottom right,#2563EB,#8B5CF6);-fx-background-radius:6;"
@@ -2768,7 +2770,7 @@ public class AssistantIAController {
     }
 
     private Button buildAddToCartButton(Produit p) {
-        Button btn = new Button("+ Cart");
+        Button btn = new Button("+ Ajouter au panier");
         btn.setMinWidth(70); btn.setPrefWidth(70); btn.setMinHeight(32);
         btn.setStyle("-fx-background-color:linear-gradient(to bottom right,#2563EB,#8B5CF6);-fx-background-radius:8;" +
                 "-fx-text-fill:white;-fx-font-size:11px;-fx-font-weight:bold;" +
@@ -2790,9 +2792,22 @@ public class AssistantIAController {
 
     private void logAddToCart(Produit p) {
         if (p == null) return;
-        interactionService.logAddToCart(SessionManager.getCurrentUserId(), p.getIdProduit());
+        final int    userId    = SessionManager.getCurrentUserId();
+        final int    produitId = p.getIdProduit();
+        final double prix      = p.getPrix();
+        final String libelle   = safeText(p.getLibelle(), "Produit");
+
+        // Update UI immediately on FX thread
         if (contextLabel != null)
-            contextLabel.setText("Ajouté au panier : " + safeText(p.getLibelle(), "Produit"));
+            contextLabel.setText("Ajouté au panier : " + libelle);
+
+        // DB writes on background thread — never block the UI
+        Thread t = new Thread(() -> {
+            interactionService.logAddToCart(userId, produitId);
+            panierService.addToCart(userId, produitId, prix);
+        }, "add-to-cart");
+        t.setDaemon(true);
+        t.start();
     }
 
     /**
