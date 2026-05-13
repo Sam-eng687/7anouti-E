@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane fx:id="rootPane"
+            prefHeight="780.0" prefWidth="1280.0"
+            styleClass="root-pane"
+            stylesheets="@hanoutim4.css"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.hanouti.hanoutiem4.controller.HistoriqueController">
+
+    <VBox AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
+          AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+
+        <!-- ══ TOP BAR ══════════════════════════════════════════════════════ -->
+        <HBox fx:id="headerBar" styleClass="topbar" alignment="CENTER_LEFT" spacing="10">
+            <VBox.margin><Insets top="14" right="20" bottom="0" left="20"/></VBox.margin>
+            <padding><Insets top="0" right="16" bottom="0" left="14"/></padding>
+
+            <!-- Hamburger -->
+            <Button fx:id="menuBtn" styleClass="topbar-ham-btn" focusTraversable="false"/>
+
+            <!-- Logo box (indigo gradient + cart SVG — built programmatically) -->
+            <StackPane fx:id="logoBoxPlaceholder"
+                       prefWidth="42" prefHeight="42"
+                       minWidth="42" maxWidth="42"
+                       minHeight="42" maxHeight="42"/>
+
+            <!-- Brand text -->
+            <VBox alignment="CENTER_LEFT" spacing="1" style="-fx-padding:0 4 0 2;">
+                <Label text="7anouti-E" styleClass="brand-name-label"/>
+                <Label text="Votre marché en ligne" styleClass="brand-tagline-label"/>
+            </VBox>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <!-- Theme toggle -->
+            <Button fx:id="themeBtn" styleClass="topbar-icon-btn" focusTraversable="false"/>
+
+            <!-- Notification bell -->
+            <StackPane alignment="TOP_RIGHT" prefWidth="44" prefHeight="44">
+                <Button fx:id="notifBellBtn" styleClass="topbar-icon-btn"
+                        focusTraversable="false" StackPane.alignment="CENTER"/>
+            </StackPane>
+
+            <!-- Cart pill (navigates to panier) -->
+            <HBox alignment="CENTER_LEFT" spacing="8" styleClass="topbar-cart-pill"
+                  onMouseClicked="#handleNavPanier">
+                <Label text="🛒" styleClass="topbar-cart-icon"/>
+                <Label fx:id="cartAmountLabel" text="0.00 DT" styleClass="topbar-cart-label"/>
+                <Button fx:id="cartCountBadge" styleClass="topbar-count-chip" text="0"
+                        focusTraversable="false"/>
+            </HBox>
+
+            <!-- Profile avatar -->
+            <Button styleClass="profile-avatar" text="SZ" focusTraversable="false"/>
+        </HBox>
+
+        <!-- ══ BODY ══════════════════════════════════════════════════════════ -->
+        <HBox VBox.vgrow="ALWAYS" spacing="0">
+            <padding><Insets top="16" right="20" bottom="20" left="20"/></padding>
+
+            <!-- ── LEFT: main content ──────────────────────────────────────── -->
+            <VBox HBox.hgrow="ALWAYS" spacing="12">
+                <HBox.margin><Insets right="16"/></HBox.margin>
+
+                <!-- Page Header Card: icon + title + export + stats + search + filters -->
+                <VBox styleClass="cart-section-header" spacing="12">
+                    <padding><Insets top="16" right="18" bottom="16" left="18"/></padding>
+
+                    <!-- Title row -->
+                    <HBox alignment="CENTER_LEFT" spacing="12">
+                        <!-- Receipt icon box -->
+                        <StackPane fx:id="pageIconBox"
+                                   prefWidth="48" prefHeight="48"
+                                   minWidth="48" maxWidth="48"
+                                   minHeight="48" maxHeight="48"/>
+
+                        <VBox alignment="CENTER_LEFT" spacing="2">
+                            <Label text="Historique des paiements"
+                                   styleClass="cart-section-title"/>
+                            <Label fx:id="transactionsBadge" text="0 transactions"
+                                   styleClass="article-count-badge"/>
+                        </VBox>
+
+                        <Region HBox.hgrow="ALWAYS"/>
+
+                        <!-- Export PDF button -->
+                        <Button fx:id="exportBtn"
+                                styleClass="btn-details"
+                                focusTraversable="false"
+                                text="⬇ Exporter PDF"/>
+                        <!-- AI analyse button -->
+                        <Button fx:id="analyseBtn"
+                                onAction="#handleAnalyseIA"
+                                styleClass="btn-analyse"
+                                focusTraversable="false"
+                                text="✨ Analyser mes dépenses"/>
+                        <!-- Delete all button -->
+                        <Button fx:id="deleteAllBtn"
+                                styleClass="btn-danger-small"
+                                focusTraversable="false"
+                                text="Supprimer tout"/>
+                    </HBox>
+
+                    <!-- Stats cards (4 cols) — filled programmatically -->
+                    <HBox fx:id="statsBar" spacing="10"/>
+
+                    <!-- Search bar -->
+                    <HBox fx:id="searchBar" alignment="CENTER_LEFT" spacing="0"
+                          styleClass="promo-input-field"
+                          style="-fx-padding:0 12;-fx-min-height:38;-fx-max-height:38;">
+                        <Label text="🔍" style="-fx-font-size:13px;-fx-padding:0 6 0 0;"/>
+                        <TextField fx:id="searchField"
+                                   promptText="Rechercher par référence, montant..."
+                                   HBox.hgrow="ALWAYS"
+                                   style="-fx-background-color:transparent;-fx-border-width:0;-fx-padding:0;-fx-font-size:12px;"/>
+                    </HBox>
+
+                    <!-- Sort bar -->
+                    <HBox fx:id="sortBar" spacing="6" alignment="CENTER_LEFT">
+                        <VBox.margin><Insets bottom="4"/></VBox.margin>
+                    </HBox>
+
+                    <!-- Filter pills row -->
+                    <HBox fx:id="filterBar" spacing="8" alignment="CENTER_LEFT"/>
+                </VBox>
+
+                <!-- Transaction cards list (scrollable) -->
+                <ScrollPane fx:id="cardsScrollPane" fitToWidth="true"
+                            styleClass="glass-scroll" VBox.vgrow="ALWAYS">
+                    <content>
+                        <VBox fx:id="cardsContainer" spacing="10">
+                            <padding><Insets top="2" right="2" bottom="16" left="2"/></padding>
+                        </VBox>
+                    </content>
+                </ScrollPane>
+            </VBox>
+
+            <!-- ── RIGHT: sidebar ─────────────────────────────────────────── -->
+            <VBox fx:id="sidebarPanel" spacing="12"
+                  minWidth="300" maxWidth="300" prefWidth="300">
+
+                <!-- Résumé card -->
+                <VBox styleClass="cart-summary" spacing="0">
+                    <padding><Insets top="16" right="18" bottom="16" left="18"/></padding>
+
+                    <!-- Title -->
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <VBox.margin><Insets bottom="12"/></VBox.margin>
+                        <StackPane fx:id="resumeIconBox"
+                                   prefWidth="28" prefHeight="28"
+                                   minWidth="28" maxWidth="28"
+                                   minHeight="28" maxHeight="28"/>
+                        <Label fx:id="resumeTitle" text="Résumé"
+                               styleClass="sum-title"/>
+                    </HBox>
+
+                    <!-- Stats rows (filled programmatically) -->
+                    <VBox fx:id="resumeRows" spacing="0"/>
+                </VBox>
+
+                <!-- Moyens de paiement card -->
+                <VBox styleClass="cart-summary" spacing="0">
+                    <padding><Insets top="16" right="18" bottom="16" left="18"/></padding>
+
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <VBox.margin><Insets bottom="12"/></VBox.margin>
+                        <StackPane fx:id="pmIconBox"
+                                   prefWidth="28" prefHeight="28"
+                                   minWidth="28" maxWidth="28"
+                                   minHeight="28" maxHeight="28"/>
+                        <Label fx:id="moyensTitle" text="Moyens de paiement"
+                               styleClass="sum-title"/>
+                    </HBox>
+
+                    <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding:0 0 8 0;">
+                        <Label text="VISA" styleClass="badge-visa"/>
+                        <Label text="Carte internationale" styleClass="summary-label"/>
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding:6 0 8 0;-fx-border-color:#f1f0ff;-fx-border-width:1 0 0 0;">
+                        <Label text="CIB" styleClass="badge-cib"/>
+                        <Label text="Carte interbancaire" styleClass="summary-label"/>
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding:6 0 8 0;-fx-border-color:#f1f0ff;-fx-border-width:1 0 0 0;">
+                        <Label text="D17" styleClass="badge-d17"/>
+                        <Label text="Paiement mobile" styleClass="summary-label"/>
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding:6 0 0 0;-fx-border-color:#f1f0ff;-fx-border-width:1 0 0 0;">
+                        <Label text="CASH" styleClass="badge-cash"/>
+                        <Label text="Espèces" styleClass="summary-label"/>
+                    </HBox>
+                </VBox>
+
+                <!-- QR hint card -->
+                <VBox styleClass="ai-panel" spacing="0">
+                    <padding><Insets top="14" right="16" bottom="14" left="16"/></padding>
+                    <HBox alignment="CENTER_LEFT" spacing="12">
+                        <StackPane fx:id="qrHintIconBox"
+                                   prefWidth="40" prefHeight="40"
+                                   minWidth="40" maxWidth="40"
+                                   minHeight="40" maxHeight="40"/>
+                        <VBox alignment="CENTER_LEFT" spacing="3">
+                            <Label text="Facture + QR Code" styleClass="ai-title"/>
+                            <Label text="Cliquez &quot;Voir facture&quot; sur une transaction"
+                                   styleClass="ai-sub" wrapText="true"
+                                   prefWidth="190" maxWidth="190"/>
+                        </VBox>
+                    </HBox>
+                </VBox>
+            </VBox>
+        </HBox>
+    </VBox>
+</AnchorPane>

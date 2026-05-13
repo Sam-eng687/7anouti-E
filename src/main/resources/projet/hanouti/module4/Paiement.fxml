@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+
+<AnchorPane fx:id="rootPane"
+            prefHeight="768.0" prefWidth="1250.0"
+            styleClass="root-pane"
+            stylesheets="@hanoutim4.css"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.hanouti.hanoutiem4.controller.PaiementController">
+
+    <BorderPane AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
+                AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+
+        <top>
+            <HBox fx:id="headerBar" alignment="CENTER_LEFT" styleClass="header-bar" spacing="14">
+                <Button text="← Retour" onAction="#handleRetour" styleClass="btn-back"/>
+                <VBox spacing="2">
+                    <Label text="7anouti-E" styleClass="header-logo"/>
+                    <Label text="Paiement sécurisé 🔒" styleClass="header-subtitle"/>
+                </VBox>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label text="💳  Paiement" styleClass="header-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button fx:id="themeBtn" text="☀ Mode Jour" onAction="#handleThemeToggle" styleClass="btn-theme"/>
+            </HBox>
+        </top>
+
+        <center>
+            <ScrollPane fitToWidth="true" fitToHeight="false" styleClass="glass-scroll"
+                        VBox.vgrow="ALWAYS" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
+                <content>
+                    <VBox spacing="18" alignment="TOP_CENTER">
+                        <padding><Insets top="30" right="44" bottom="60" left="44"/></padding>
+
+                        <!-- Credit Card Visual -->
+                        <VBox fx:id="carteVisuelle" styleClass="credit-card-visual" maxWidth="460" spacing="14">
+                            <HBox alignment="CENTER_RIGHT">
+                                <Label fx:id="labelCarteType" text="VISA"
+                                       style="-fx-text-fill: rgba(255,255,255,0.90); -fx-font-size: 22px; -fx-font-weight: bold; -fx-font-style: italic;"/>
+                            </HBox>
+                            <Label fx:id="labelNumeroCarte" text="•••• •••• •••• ••••"
+                                   style="-fx-text-fill: white; -fx-font-size: 21px; -fx-font-weight: 300; -fx-letter-spacing: 2;"/>
+                            <HBox spacing="48">
+                                <VBox spacing="4">
+                                    <Label text="NOM" style="-fx-text-fill: rgba(255,255,255,0.50); -fx-font-size: 9px; -fx-font-weight: bold;"/>
+                                    <Label fx:id="labelNomCarte" text="VOTRE NOM" style="-fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold;"/>
+                                </VBox>
+                                <VBox spacing="4">
+                                    <Label text="EXPIRY" style="-fx-text-fill: rgba(255,255,255,0.50); -fx-font-size: 9px; -fx-font-weight: bold;"/>
+                                    <Label fx:id="labelExpiry" text="MM/YY" style="-fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: bold;"/>
+                                </VBox>
+                            </HBox>
+                        </VBox>
+
+                        <!-- Method Selector -->
+                        <HBox spacing="10" maxWidth="460" fillHeight="true">
+                            <Button fx:id="btnCarte" onAction="#selectCarte" text="VISA" HBox.hgrow="ALWAYS" maxWidth="Infinity" prefHeight="50" styleClass="btn-method, btn-method-active"/>
+                            <Button fx:id="btnCIB" onAction="#selectCIB" text="CIB" HBox.hgrow="ALWAYS" maxWidth="Infinity" prefHeight="50" styleClass="btn-method"/>
+                            <Button fx:id="btnD17" onAction="#selectD17" text="D17" HBox.hgrow="ALWAYS" maxWidth="Infinity" prefHeight="50" styleClass="btn-method"/>
+                            <Button fx:id="btnEspeces" onAction="#selectEspeces" text="Espèces" HBox.hgrow="ALWAYS" maxWidth="Infinity" prefHeight="50" styleClass="btn-method"/>
+                        </HBox>
+
+                        <!-- Card Form (Carte / CIB) -->
+                        <VBox fx:id="formulaireCarte" styleClass="glass-card" maxWidth="460" spacing="12">
+                            <padding><Insets top="22" right="22" bottom="22" left="22"/></padding>
+                            <Label text="Détails de la carte" styleClass="text-h2"/>
+
+                            <VBox spacing="3">
+                                <Label text="NOM SUR LA CARTE" styleClass="text-label"/>
+                                <TextField fx:id="fieldNom" promptText="Votre nom complet" styleClass="glass-input"/>
+                                <Label fx:id="erreurNom" text="" style="-fx-text-fill: #EF4444; -fx-font-size: 11px;"/>
+                            </VBox>
+
+                            <VBox spacing="3">
+                                <Label text="NUMÉRO DE CARTE" styleClass="text-label"/>
+                                <TextField fx:id="fieldNumero" promptText="•••• •••• •••• ••••" styleClass="glass-input"/>
+                                <Label fx:id="erreurNumero" text="" style="-fx-text-fill: #EF4444; -fx-font-size: 11px;"/>
+                            </VBox>
+
+                            <HBox spacing="14">
+                                <VBox spacing="3" HBox.hgrow="ALWAYS">
+                                    <Label text="EXPIRATION" styleClass="text-label"/>
+                                    <TextField fx:id="fieldExpiry" promptText="MM/YY" styleClass="glass-input"/>
+                                    <Label fx:id="erreurExpiry" text="" style="-fx-text-fill: #EF4444; -fx-font-size: 11px;"/>
+                                </VBox>
+                                <VBox spacing="3" HBox.hgrow="ALWAYS">
+                                    <Label text="CVV" styleClass="text-label"/>
+                                    <TextField fx:id="fieldCVV" promptText="•••" styleClass="glass-input"/>
+                                    <Label fx:id="erreurCVV" text="" style="-fx-text-fill: #EF4444; -fx-font-size: 11px;"/>
+                                </VBox>
+                            </HBox>
+                        </VBox>
+
+                        <!-- D17 Form -->
+                        <VBox fx:id="formD17" visible="false" managed="false" styleClass="glass-card" maxWidth="460" spacing="12">
+                            <padding><Insets top="22" right="22" bottom="22" left="22"/></padding>
+                            <HBox alignment="CENTER_LEFT" spacing="10">
+                                <Label text="🟠" style="-fx-font-size: 20px;"/>
+                                <VBox spacing="2">
+                                    <Label text="Carte eDinar D17" styleClass="text-h2"/>
+                                    <Label text="Carte prépayée — La Poste Tunisienne" styleClass="text-muted"/>
+                                </VBox>
+                            </HBox>
+
+                            <VBox spacing="3">
+                                <Label text="NUMÉRO DE CARTE D17 (16 chiffres)" styleClass="text-label"/>
+                                <TextField fx:id="fieldD17Numero" promptText="•••• •••• •••• ••••" styleClass="glass-input"/>
+                                <Label fx:id="erreurD17Numero" text="" style="-fx-text-fill: #EF4444; -fx-font-size: 11px;"/>
+                            </VBox>
+
+                            <VBox spacing="3">
+                                <Label text="CODE PIN (4 chiffres)" styleClass="text-label"/>
+                                <TextField fx:id="fieldD17Pin" promptText="••••" styleClass="glass-input" maxWidth="140"/>
+                                <Label fx:id="erreurD17Pin" text="" style="-fx-text-fill: #EF4444; -fx-font-size: 11px;"/>
+                            </VBox>
+
+                            <Label fx:id="erreurD17" text="" style="-fx-text-fill: #EF4444; -fx-font-size: 11px;"/>
+                            <Label text="🔒 Votre PIN n'est jamais sauvegardé" style="-fx-font-size: 11px; -fx-text-fill: #10B981; -fx-font-weight: bold;"/>
+                        </VBox>
+
+                        <!-- Espèces -->
+                        <VBox fx:id="messageLivraison" visible="false" managed="false"
+                              styleClass="especes-card" maxWidth="460" spacing="12" alignment="CENTER">
+                            <padding><Insets top="36" bottom="36" left="28" right="28"/></padding>
+                            <Label text="🚚" style="-fx-font-size: 46px;"/>
+                            <Label text="Paiement à la livraison"
+                                   style="-fx-font-size:17px;-fx-font-weight:bold;-fx-text-fill:#1e1b4b;"/>
+                            <Label text="Le livreur accepte uniquement les espèces exactes."
+                                   wrapText="true" textAlignment="CENTER"
+                                   style="-fx-font-size:13px;-fx-text-fill:#6b7280;-fx-wrap-text:true;"/>
+                        </VBox>
+
+                        <!-- Recap -->
+                        <VBox styleClass="glass-card" maxWidth="460" spacing="8">
+                            <padding><Insets top="20" right="22" bottom="20" left="22"/></padding>
+                            <Label text="Récapitulatif" styleClass="text-h2"/>
+                            <HBox>
+                                <Label text="Montant total" styleClass="text-muted"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Label fx:id="labelMontant" text="0,00 TND" styleClass="text-total"/>
+                            </HBox>
+                        </VBox>
+
+                        <Button fx:id="btnConfirmer" text="✓   Confirmer le paiement" onAction="#handleConfirmer"
+                                maxWidth="460" prefHeight="54" styleClass="btn-primary" style="-fx-font-size: 15px;"/>
+
+                    </VBox>
+                </content>
+            </ScrollPane>
+        </center>
+
+    </BorderPane>
+</AnchorPane>

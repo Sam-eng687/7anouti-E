@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import java.lang.String?>
+
+<AnchorPane fx:id="rootPane"
+            prefHeight="780.0" prefWidth="1280.0"
+            styleClass="root-pane"
+            stylesheets="@hanoutim4.css"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.hanouti.hanoutiem4.controller.PanierController">
+
+   <VBox AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
+         AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+
+      <!-- ══ TOP BAR ═══════════════════════════════════════════════════════ -->
+      <HBox fx:id="headerBar" styleClass="topbar" alignment="CENTER_LEFT" spacing="10">
+         <VBox.margin><Insets top="14" right="20" bottom="0" left="20"/></VBox.margin>
+         <padding><Insets top="0" right="16" bottom="0" left="14"/></padding>
+
+         <!-- Hamburger button -->
+         <Button fx:id="menuBtn" styleClass="topbar-ham-btn" focusTraversable="false"/>
+
+         <!-- Logo box (42×42 indigo gradient + cart SVG — built in controller) -->
+         <StackPane fx:id="logoBoxPlaceholder" prefWidth="42" prefHeight="42"
+                    minWidth="42" maxWidth="42" minHeight="42" maxHeight="42"/>
+
+         <!-- Brand text -->
+         <VBox alignment="CENTER_LEFT" spacing="1" style="-fx-padding:0 4 0 2;">
+            <Label text="7anouti-E" styleClass="brand-name-label"/>
+            <Label text="Votre marché en ligne" styleClass="brand-tagline-label"/>
+         </VBox>
+
+         <!-- Spacer -->
+         <Region HBox.hgrow="ALWAYS"/>
+
+         <!-- Theme toggle -->
+         <Button fx:id="themeBtn" styleClass="topbar-icon-btn" focusTraversable="false"/>
+
+         <!-- Notification bell + badge -->
+         <StackPane alignment="TOP_RIGHT" prefWidth="44" prefHeight="44">
+            <Button fx:id="notifBellBtn" styleClass="topbar-icon-btn"
+                    focusTraversable="false"
+                    StackPane.alignment="CENTER"/>
+         </StackPane>
+
+         <!-- Cart pill -->
+         <HBox alignment="CENTER_LEFT" spacing="8" styleClass="topbar-cart-pill">
+            <Label styleClass="topbar-cart-icon" text="🛒"/>
+            <Label text="Panier" styleClass="topbar-cart-label"/>
+            <Button fx:id="cartCountBadge" styleClass="topbar-count-chip" text="0"
+                    focusTraversable="false"/>
+         </HBox>
+
+         <!-- Profile avatar (click → dropdown) -->
+         <Button fx:id="profileBadge" styleClass="profile-avatar" text="SZ"
+                 focusTraversable="false"/>
+      </HBox>
+
+      <!-- ══ BODY ═══════════════════════════════════════════════════════════ -->
+      <HBox VBox.vgrow="ALWAYS" spacing="0">
+         <padding><Insets top="16" right="20" bottom="20" left="20"/></padding>
+
+         <!-- ── LEFT: cart section ─────────────────────────────────────── -->
+         <VBox HBox.hgrow="ALWAYS" spacing="12">
+            <HBox.margin><Insets right="16"/></HBox.margin>
+
+            <!-- Cart header card -->
+            <HBox styleClass="cart-section-header" alignment="CENTER_LEFT" spacing="12">
+               <padding><Insets top="14" right="18" bottom="14" left="16"/></padding>
+
+               <!-- Icon box -->
+               <StackPane fx:id="cartSectionIconBox" styleClass="cart-section-icon-box"
+                          prefWidth="44" prefHeight="44"
+                          minWidth="44" maxWidth="44"
+                          minHeight="44" maxHeight="44"/>
+
+               <!-- Title + badge -->
+               <VBox alignment="CENTER_LEFT" spacing="3">
+                  <Label text="Mon Panier" styleClass="cart-section-title"/>
+                  <Label fx:id="labelArticlesBadge" text="0 articles"
+                         styleClass="article-count-badge"/>
+               </VBox>
+
+               <Region HBox.hgrow="ALWAYS"/>
+
+               <!-- Vider button -->
+               <Button fx:id="viderBtn" onAction="#handleVider"
+                       styleClass="btn-danger-small" focusTraversable="false"
+                       text="Vider le panier"/>
+            </HBox>
+
+            <!-- Smart notifications panel -->
+            <VBox fx:id="notifPanel" spacing="8" managed="false" visible="false">
+               <padding><Insets top="4" right="4" bottom="0" left="4"/></padding>
+            </VBox>
+
+            <!-- Cart items (scrollable) -->
+            <ScrollPane fx:id="cartScrollPane" fitToWidth="true"
+                        styleClass="glass-scroll" VBox.vgrow="ALWAYS">
+               <content>
+                  <VBox fx:id="cartItemsContainer" spacing="10">
+                     <padding><Insets top="4" right="4" bottom="16" left="4"/></padding>
+                  </VBox>
+               </content>
+            </ScrollPane>
+
+            <!-- ── AI Suggestions panel ──────────────────────────────── -->
+            <VBox fx:id="aiPanel" styleClass="ai-panel">
+
+               <!-- Drag handle at the very top — drag up/down to resize the suggestions list -->
+               <HBox fx:id="aiResizeHandle" alignment="CENTER"
+                     prefHeight="14" maxWidth="Infinity"
+                     style="-fx-background-color:rgba(99,102,241,0.08);-fx-cursor:s-resize;-fx-padding:2 0;"
+                     onMousePressed="#handleResizeStart"
+                     onMouseDragged="#handleResizeDrag"
+                     onMouseEntered="#handleResizeEnter"
+                     onMouseExited="#handleResizeExit">
+                  <Label text="· · · · ·" mouseTransparent="true"
+                         style="-fx-text-fill:#c7d2fe;-fx-font-size:10px;-fx-font-weight:bold;"/>
+               </HBox>
+
+               <!-- Collapsed header (always visible, click to toggle) -->
+               <HBox fx:id="aiHeader" styleClass="ai-header"
+                     alignment="CENTER_LEFT" spacing="12"
+                     onMouseClicked="#handleToggleAI">
+                  <padding><Insets top="13" right="18" bottom="13" left="18"/></padding>
+
+                  <!-- Bulb icon box (built in controller) -->
+                  <StackPane fx:id="aiIconBox" styleClass="ai-icon-box"
+                             prefWidth="40" prefHeight="40"
+                             minWidth="40" maxWidth="40"
+                             minHeight="40" maxHeight="40"/>
+
+                  <VBox alignment="CENTER_LEFT" spacing="2">
+                     <Label text="Suggestions IA" styleClass="ai-title"/>
+                     <Label text="Que pourrais-je ajouter à mon panier ?"
+                            styleClass="ai-sub"/>
+                  </VBox>
+
+                  <Region HBox.hgrow="ALWAYS"/>
+
+                  <!-- Chevron label (▾ / ▴) -->
+                  <Label fx:id="aiChevron" text="▾" styleClass="ai-chevron"/>
+               </HBox>
+
+               <!-- Expanded body (hidden by default) -->
+               <VBox fx:id="aiBody" spacing="0"
+                     visible="false" managed="false">
+                  <padding><Insets top="0" right="18" bottom="16" left="18"/></padding>
+
+                  <!-- Catalogue header + height controls -->
+                  <HBox alignment="CENTER_LEFT" spacing="8">
+                     <padding><Insets top="4" bottom="12"/></padding>
+                     <Label text="✦" style="-fx-font-size:12px;-fx-text-fill:#4f46e5;"/>
+                     <Label text="Suggestions du catalogue"
+                            style="-fx-font-size:13px;-fx-font-weight:bold;-fx-text-fill:#374151;"/>
+                     <Region HBox.hgrow="ALWAYS"/>
+                     <Label text="Basé sur votre panier"
+                            style="-fx-font-size:10px;-fx-text-fill:#94a3b8;"/>
+                  </HBox>
+
+                  <!-- Scrollable suggestion list — drag the top handle to resize -->
+                  <ScrollPane fx:id="aiScrollPane" fitToWidth="true" styleClass="glass-scroll"
+                              VBox.vgrow="ALWAYS"
+                              prefHeight="200" minHeight="80"
+                              hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
+                     <content>
+                        <VBox fx:id="aiSuggestionsContainer" spacing="2"/>
+                     </content>
+                  </ScrollPane>
+
+                  <!-- Close link -->
+                  <Label text="Fermer les suggestions" styleClass="ai-close-lbl"
+                         onMouseClicked="#handleToggleAI"
+                         style="-fx-padding:12 0 0 0;"/>
+               </VBox>
+            </VBox>
+         </VBox>
+
+         <!-- ── RIGHT: order summary ──────────────────────────────────── -->
+         <VBox alignment="TOP_CENTER" HBox.hgrow="NEVER"
+               prefWidth="318" minWidth="280" maxWidth="340">
+
+            <VBox styleClass="cart-summary" spacing="0">
+               <padding><Insets top="20" right="20" bottom="22" left="20"/></padding>
+
+               <!-- Summary title -->
+               <HBox alignment="CENTER_LEFT" spacing="10">
+                  <VBox.margin><Insets bottom="16"/></VBox.margin>
+                  <StackPane fx:id="sumIconBox" styleClass="sum-icon-box"
+                             prefWidth="34" prefHeight="34"
+                             minWidth="34" maxWidth="34"
+                             minHeight="34" maxHeight="34"/>
+                  <Label text="Résumé de la commande" styleClass="sum-title"/>
+               </HBox>
+
+               <!-- Sous-total -->
+               <HBox alignment="CENTER_LEFT" styleClass="summary-row">
+                  <Label text="Sous-total" styleClass="summary-label"/>
+                  <Region HBox.hgrow="ALWAYS"/>
+                  <Label fx:id="labelSousTotal" text="0.00 DT" styleClass="summary-value"/>
+               </HBox>
+
+               <!-- Livraison -->
+               <HBox alignment="CENTER_LEFT" styleClass="summary-row">
+                  <Label text="🚚 Livraison" styleClass="summary-label"/>
+                  <Region HBox.hgrow="ALWAYS"/>
+                  <Label fx:id="labelLivraison" text="7.00 DT" styleClass="summary-value"/>
+               </HBox>
+
+               <!-- Remise (hidden by default) -->
+               <HBox fx:id="rowReduction" alignment="CENTER_LEFT" styleClass="summary-row"
+                     visible="false" managed="false">
+                  <Label text="Remise" styleClass="summary-label"/>
+                  <Region HBox.hgrow="ALWAYS"/>
+                  <Label fx:id="labelReduction" text="-0.00 DT" styleClass="summary-discount"/>
+               </HBox>
+
+               <!-- Divider -->
+               <Region styleClass="summary-divider" prefHeight="1" maxHeight="1">
+                  <VBox.margin><Insets top="12" bottom="12"/></VBox.margin>
+               </Region>
+
+               <!-- Total -->
+               <HBox alignment="CENTER_LEFT" styleClass="total-row">
+                  <VBox.margin><Insets bottom="18"/></VBox.margin>
+                  <Label text="Total" styleClass="total-label"/>
+                  <Region HBox.hgrow="ALWAYS"/>
+                  <Label fx:id="labelTotal" text="0.00 DT" styleClass="total-value"/>
+               </HBox>
+
+               <!-- Promo code section -->
+               <Label text="Code promo" styleClass="promo-section-label">
+                  <VBox.margin><Insets bottom="8"/></VBox.margin>
+               </Label>
+               <HBox spacing="8">
+                  <VBox.margin><Insets bottom="4"/></VBox.margin>
+                  <TextField fx:id="promoField" promptText="Entrer le code..."
+                             styleClass="promo-input-field" HBox.hgrow="ALWAYS"
+                             onAction="#handleAppliquerPromo"/>
+                  <Button fx:id="promoApplyBtn" text="Appliquer"
+                          styleClass="promo-apply-btn" onAction="#handleAppliquerPromo"
+                          minWidth="88" prefWidth="88" focusTraversable="false"/>
+               </HBox>
+               <Label fx:id="labelPromoMessage" text="" wrapText="true"
+                      styleClass="promo-msg-label">
+                  <VBox.margin><Insets bottom="18"/></VBox.margin>
+               </Label>
+
+               <!-- Checkout button -->
+               <Button onAction="#handlePayer" text="Procéder au paiement"
+                       maxWidth="Infinity" styleClass="checkout-btn"
+                       focusTraversable="false">
+                  <VBox.margin><Insets bottom="14"/></VBox.margin>
+               </Button>
+
+               <!-- Payment methods -->
+               <Label text="Méthodes de paiement acceptées"
+                      styleClass="pm-label"/>
+               <HBox spacing="6" alignment="CENTER">
+                  <VBox.margin><Insets top="8"/></VBox.margin>
+                  <Label text="VISA" styleClass="badge-visa"/>
+                  <Label text="CIB"  styleClass="badge-cib"/>
+                  <Label text="D17"  styleClass="badge-d17"/>
+                  <Label text="CASH" styleClass="badge-cash"/>
+               </HBox>
+
+               <!-- Secure note -->
+               <Label text="🔒 Paiement 100% sécurisé"
+                      styleClass="secure-note">
+                  <VBox.margin><Insets top="12"/></VBox.margin>
+               </Label>
+            </VBox>
+         </VBox>
+
+      </HBox>
+   </VBox>
+</AnchorPane>

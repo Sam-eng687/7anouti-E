@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import java.lang.String?>
+
+<AnchorPane fx:id="rootPane"
+            prefHeight="750.0" prefWidth="1250.0"
+            styleClass="root-pane"
+            stylesheets="@hanoutim4.css"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.hanouti.hanoutiem4.controller.WishlistController">
+
+    <VBox AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
+          AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+
+        <!-- ══ TOP BAR (même structure que Panier) ══════════════════════════ -->
+        <HBox fx:id="headerBar" styleClass="topbar" alignment="CENTER_LEFT" spacing="10">
+            <VBox.margin><Insets top="14" right="20" bottom="0" left="20"/></VBox.margin>
+            <padding><Insets top="0" right="16" bottom="0" left="14"/></padding>
+
+            <!-- Hamburger -->
+            <Button fx:id="menuBtn" styleClass="topbar-ham-btn" focusTraversable="false"/>
+
+            <!-- Logo box (indigo gradient + cart SVG — built in controller) -->
+            <StackPane fx:id="logoBoxPlaceholder" prefWidth="42" prefHeight="42"
+                       minWidth="42" maxWidth="42" minHeight="42" maxHeight="42"/>
+
+            <!-- Brand text -->
+            <VBox alignment="CENTER_LEFT" spacing="1" style="-fx-padding:0 4 0 2;">
+                <Label text="7anouti-E" styleClass="brand-name-label"/>
+                <Label text="Votre marché en ligne" styleClass="brand-tagline-label"/>
+            </VBox>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+
+            <!-- Notification bell -->
+            <StackPane alignment="TOP_RIGHT" prefWidth="44" prefHeight="44">
+                <Button fx:id="notifBellBtn" styleClass="topbar-icon-btn"
+                        focusTraversable="false" StackPane.alignment="CENTER"/>
+            </StackPane>
+
+            <!-- Cart pill -->
+            <HBox alignment="CENTER_LEFT" spacing="8" styleClass="topbar-cart-pill"
+                  onMouseClicked="#handleRetourPanier">
+                <Label text="🛒" styleClass="topbar-cart-icon"/>
+                <Label fx:id="labelNbArticlesText" text="Panier" styleClass="topbar-cart-label"/>
+                <Button fx:id="cartCountBadge" styleClass="topbar-count-chip" text="0"
+                        focusTraversable="false"/>
+            </HBox>
+
+            <!-- Profile avatar -->
+            <Button fx:id="profileBadge" styleClass="profile-avatar" text="SZ" focusTraversable="false"/>
+        </HBox>
+
+        <Button fx:id="backBtn" visible="false" managed="false"
+                onAction="#handleRetourPanier" text="&#x2190;"/>
+
+        <!-- Section header -->
+        <HBox alignment="CENTER_LEFT" spacing="10">
+            <padding><Insets top="20" right="24" bottom="10" left="24"/></padding>
+            <Label text="&#x1F516;" style="-fx-font-size:16px;-fx-text-fill:#2563EB;"/>
+            <Label text="Mes Favoris" styleClass="text-h2"/>
+            <Label fx:id="labelNbFavoris" text="0 produits" styleClass="wishlist-count-badge"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button fx:id="viderBtn" onAction="#handleViderFavoris" text="Vider les favoris"
+                    styleClass="btn-danger-small" focusTraversable="false"/>
+        </HBox>
+
+        <!-- Add panel -->
+        <HBox fx:id="addPanel" alignment="CENTER" spacing="10">
+            <padding><Insets top="0" right="24" bottom="16" left="24"/></padding>
+            <TextField fx:id="fieldProduitId" prefHeight="40"
+                       promptText="ID du produit a ajouter aux favoris..."
+                       styleClass="promo-input-field" HBox.hgrow="ALWAYS"/>
+            <Button fx:id="btnAjouter" onAction="#handleAjouterArticle"
+                    prefHeight="40" text="Ajouter aux favoris"
+                    styleClass="wishlist-add-btn-primary" focusTraversable="false"/>
+        </HBox>
+
+        <!-- Scrollable body -->
+        <ScrollPane fitToWidth="true" styleClass="glass-scroll" VBox.vgrow="ALWAYS">
+            <content>
+                <VBox fx:id="wishlistContainer" spacing="16">
+                    <padding><Insets top="4" right="24" bottom="24" left="24"/></padding>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </VBox>
+</AnchorPane>
