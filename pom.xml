@@ -39,6 +39,11 @@
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
+            <artifactId>javafx-swing</artifactId>
+            <version>${javafx.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
             <artifactId>javafx-web</artifactId>
             <version>${javafx.version}</version>
         </dependency>
@@ -56,6 +61,16 @@
             <groupId>org.openpnp</groupId>
             <artifactId>opencv</artifactId>
             <version>4.9.0-0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.genai</groupId>
+            <artifactId>google-genai</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20240303</version>
         </dependency>
 
     </dependencies>
@@ -98,7 +113,7 @@
                     <mainClass>projet.hanouti.MainApp</mainClass>
                     <options>
                         <option>--add-modules</option>
-                        <option>javafx.controls,javafx.fxml</option>
+                        <option>javafx.controls,javafx.fxml,javafx.swing</option>
                     </options>
                 </configuration>
             </plugin>

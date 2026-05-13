@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<StackPane xmlns="http://javafx.com/javafx/21"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="projet.hanouti.user_auth.controllers.back.AdminUsersController">
+
+    <ScrollPane fitToWidth="true" fitToHeight="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
+                styleClass="content-scroll">
+        <VBox spacing="20" styleClass="content-area">
+            <HBox spacing="16" styleClass="stats-row">
+                <VBox styleClass="stat-card stat-card-total" HBox.hgrow="ALWAYS">
+                    <HBox alignment="CENTER_LEFT" spacing="14">
+                        <StackPane styleClass="stat-icon-wrap stat-icon-total">
+                            <Label text="U" styleClass="stat-icon-text"/>
+                        </StackPane>
+                        <VBox spacing="2">
+                            <Label text="Total Utilisateurs" styleClass="stat-label"/>
+                            <Label fx:id="statTotal" text="0" styleClass="stat-value"/>
+                        </VBox>
+                    </HBox>
+                </VBox>
+                <VBox styleClass="stat-card stat-card-active" HBox.hgrow="ALWAYS">
+                    <HBox alignment="CENTER_LEFT" spacing="14">
+                        <StackPane styleClass="stat-icon-wrap stat-icon-active">
+                            <Label text="A" styleClass="stat-icon-text"/>
+                        </StackPane>
+                        <VBox spacing="2">
+                            <Label text="Actifs" styleClass="stat-label"/>
+                            <Label fx:id="statActive" text="0" styleClass="stat-value"/>
+                        </VBox>
+                    </HBox>
+                </VBox>
+                <VBox styleClass="stat-card stat-card-banned" HBox.hgrow="ALWAYS">
+                    <HBox alignment="CENTER_LEFT" spacing="14">
+                        <StackPane styleClass="stat-icon-wrap stat-icon-banned">
+                            <Label text="B" styleClass="stat-icon-text"/>
+                        </StackPane>
+                        <VBox spacing="2">
+                            <Label text="Bannis" styleClass="stat-label"/>
+                            <Label fx:id="statBanned" text="0" styleClass="stat-value"/>
+                        </VBox>
+                    </HBox>
+                </VBox>
+                <VBox styleClass="stat-card stat-card-roles" HBox.hgrow="ALWAYS">
+                    <HBox alignment="CENTER_LEFT" spacing="14">
+                        <StackPane styleClass="stat-icon-wrap stat-icon-roles">
+                            <Label text="R" styleClass="stat-icon-text"/>
+                        </StackPane>
+                        <VBox spacing="2">
+                            <Label text="Roles" styleClass="stat-label"/>
+                            <Label fx:id="statRoles" text="3" styleClass="stat-value"/>
+                        </VBox>
+                    </HBox>
+                </VBox>
+            </HBox>
+
+            <HBox spacing="12" alignment="CENTER_LEFT" styleClass="toolbar-row">
+                <HBox alignment="CENTER_LEFT" styleClass="search-wrap" HBox.hgrow="ALWAYS">
+                    <Label text="Q" styleClass="search-icon"/>
+                    <TextField fx:id="searchField" promptText="Rechercher par nom, email ou role..."
+                               styleClass="search-input" HBox.hgrow="ALWAYS"/>
+                </HBox>
+                <ComboBox fx:id="filterRole" promptText="Role" styleClass="filter-combo" prefWidth="150"/>
+                <ComboBox fx:id="filterStatus" promptText="Statut" styleClass="filter-combo" prefWidth="150"/>
+                <Button fx:id="refreshBtn" text="Actualiser" styleClass="refresh-btn"/>
+            </HBox>
+
+            <VBox styleClass="table-container" VBox.vgrow="ALWAYS" minHeight="400">
+                <TableView fx:id="usersTable" styleClass="users-table"
+                           VBox.vgrow="ALWAYS" minHeight="380">
+                    <columns>
+                        <TableColumn fx:id="colId" text="ID" prefWidth="55" minWidth="50" sortable="true"/>
+                        <TableColumn fx:id="colNom" text="Nom" prefWidth="140" minWidth="100" sortable="true"/>
+                        <TableColumn fx:id="colPrenom" text="Prenom" prefWidth="140" minWidth="100" sortable="true"/>
+                        <TableColumn fx:id="colEmail" text="Email" prefWidth="230" minWidth="160" sortable="true"/>
+                        <TableColumn fx:id="colRole" text="Role" prefWidth="110" minWidth="90" sortable="true"/>
+                        <TableColumn fx:id="colStatus" text="Statut" prefWidth="110" minWidth="90" sortable="true"/>
+                        <TableColumn fx:id="colDate" text="Date Naiss." prefWidth="120" minWidth="100" sortable="true"/>
+                        <TableColumn fx:id="colActions" text="Gestion" prefWidth="180" minWidth="170" sortable="false"/>
+                    </columns>
+                    <placeholder>
+                        <Label text="Aucun utilisateur trouve" styleClass="table-placeholder"/>
+                    </placeholder>
+                </TableView>
+            </VBox>
+        </VBox>
+    </ScrollPane>
+
+    <StackPane fx:id="overlayPane" visible="false" managed="false" styleClass="overlay-bg">
+        <VBox fx:id="detailCard" styleClass="detail-card" maxWidth="540" maxHeight="640"
+              alignment="TOP_CENTER" spacing="16">
+
+            <HBox alignment="CENTER_RIGHT" styleClass="detail-header-row">
+                <Text fx:id="detailTitle" text="Details Utilisateur" styleClass="detail-title" HBox.hgrow="ALWAYS"/>
+                <Button fx:id="closeDetailBtn" text="X" styleClass="close-detail-btn"/>
+            </HBox>
+
+            <StackPane styleClass="detail-avatar-wrap" prefWidth="80" prefHeight="80"
+                       maxWidth="80" maxHeight="80">
+                <ImageView fx:id="detailAvatar" fitWidth="76" fitHeight="76" preserveRatio="false"/>
+                <Label fx:id="detailAvatarLetter" text="" styleClass="detail-avatar-letter"/>
+            </StackPane>
+
+            <VBox spacing="10" styleClass="detail-fields">
+                <HBox spacing="10">
+                    <VBox spacing="2" HBox.hgrow="ALWAYS">
+                        <Label text="NOM" styleClass="detail-field-label"/>
+                        <TextField fx:id="detailNom" styleClass="detail-field-input"/>
+                    </VBox>
+                    <VBox spacing="2" HBox.hgrow="ALWAYS">
+                        <Label text="PRENOM" styleClass="detail-field-label"/>
+                        <TextField fx:id="detailPrenom" styleClass="detail-field-input"/>
+                    </VBox>
+                </HBox>
+                <VBox spacing="2">
+                    <Label text="EMAIL" styleClass="detail-field-label"/>
+                    <TextField fx:id="detailEmail" styleClass="detail-field-input"/>
+                </VBox>
+                <HBox spacing="10">
+                    <VBox spacing="2" HBox.hgrow="ALWAYS">
+                        <Label text="TELEPHONE" styleClass="detail-field-label"/>
+                        <TextField fx:id="detailTel" styleClass="detail-field-input"/>
+                    </VBox>
+                    <VBox spacing="2" HBox.hgrow="ALWAYS">
+                        <Label text="DATE DE NAISSANCE" styleClass="detail-field-label"/>
+                        <TextField fx:id="detailDate" styleClass="detail-field-input"/>
+                    </VBox>
+                </HBox>
+                <HBox spacing="10">
+                    <VBox spacing="4" HBox.hgrow="ALWAYS">
+                        <Label text="ROLE" styleClass="detail-field-label"/>
+                        <ComboBox fx:id="detailRole" styleClass="detail-combo" maxWidth="Infinity"/>
+                    </VBox>
+                    <VBox spacing="4" HBox.hgrow="ALWAYS">
+                        <Label text="STATUT" styleClass="detail-field-label"/>
+                        <ComboBox fx:id="detailStatus" styleClass="detail-combo" maxWidth="Infinity"/>
+                    </VBox>
+                </HBox>
+            </VBox>
+
+            <HBox spacing="10" alignment="CENTER" styleClass="detail-actions">
+                <Button fx:id="detailSaveBtn" text="Sauvegarder" styleClass="detail-save-btn"
+                        HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                <Button fx:id="detailCancelBtn" text="Annuler" styleClass="detail-cancel-btn"
+                        HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+            </HBox>
+
+            <Label fx:id="detailMessage" text="" managed="false" visible="false"
+                   wrapText="true" maxWidth="Infinity" styleClass="detail-message"/>
+        </VBox>
+    </StackPane>
+</StackPane>

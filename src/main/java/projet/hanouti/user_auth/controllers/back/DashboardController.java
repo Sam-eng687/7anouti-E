@@ -1,13 +1,11 @@
 package projet.hanouti.user_auth.controllers.back;
 
 import javafx.animation.*;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
-import javafx.geometry.Pos;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -15,590 +13,452 @@ import javafx.scene.layout.*;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-
+import projet.hanouti.AIachat.controllers.AssistantIAController;
+import projet.hanouti.common.utils.SessionManager;
+import projet.hanouti.user_auth.entities.User;
 import projet.hanouti.user_auth.enums.Role;
 import projet.hanouti.user_auth.enums.Status;
-import projet.hanouti.user_auth.entities.User;
 import projet.hanouti.user_auth.services.UserCRUD;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 public class DashboardController {
+
+    private static final String ADMIN_USERS_FXML = "/FXML/user_auth/back/tabs/admin_users.fxml";
+    private static final String PLACEHOLDER_FXML = "/FXML/user_auth/back/tabs/module_placeholder.fxml";
+    private static final String AI_ACHAT_FXML = "/FXML/AIachat/assistant_ia.fxml";
 
     @FXML private AnchorPane rootPane;
     @FXML private VBox sidebar;
     @FXML private ImageView sidebarLogo;
-    @FXML private VBox navContainer;
     @FXML private Button navUsers, navProducts, navOrders, navStats, navSettings, navSupport;
-    @FXML private Button themeToggleBtn;
-    @FXML private Label themeIcon;
-    @FXML private Label themeLabel;
-    @FXML private Button logoutBtn;
-
-    @FXML private VBox adminUsersContent;
-
-
-    @FXML private Button notifBtn;
-    @FXML private Button cartBtn;
+    @FXML private Button themeToggleBtn, logoutBtn, notifBtn, cartBtn, hamburgerBtn;
+    @FXML private Label themeIcon, themeLabel;
     @FXML private MenuButton profileMenu;
-    @FXML private MenuItem editProfileItem;
-    @FXML private MenuItem paymentHistoryItem;
-    @FXML private MenuItem logoutProfileItem;
-
-    private boolean isDarkMode = true;
+    @FXML private MenuItem editProfileItem, paymentHistoryItem, logoutProfileItem;
     @FXML private HBox headerBar;
     @FXML private Text headerTitle, headerSubtitle;
-    @FXML private Label adminNameLabel, adminRoleLabel;
-    @FXML private StackPane adminAvatarWrap;
+    @FXML private Label adminNameLabel, adminRoleLabel, adminAvatarLetter;
     @FXML private ImageView adminAvatar;
-    @FXML private Label statTotal, statActive, statBanned, statRoles;
-    @FXML private TextField searchField;
-    @FXML private ComboBox<String> filterRole, filterStatus;
-    @FXML private Button refreshBtn;
-    @FXML private TableView<User> usersTable;
-    @FXML private TableColumn<User, String> colId, colNom, colPrenom, colEmail, colRole, colStatus, colDate, colActions;
-    @FXML private StackPane overlayPane;
-    @FXML private VBox detailCard;
-    @FXML private Button closeDetailBtn;
-    @FXML private Text detailTitle;
-    @FXML private ImageView detailAvatar;
-    @FXML private Label detailAvatarLetter;
-    @FXML private TextField detailNom, detailPrenom, detailEmail, detailTel, detailDate;
-    @FXML private ComboBox<String> detailRole, detailStatus;
-    @FXML private Button detailSaveBtn, detailCancelBtn;
-    @FXML private Label detailMessage;
-    // Error labels pour la validation en temps reel
-    @FXML private Label detailErrNom;
-    @FXML private Label detailErrPrenom;
-    @FXML private Label detailErrEmail;
-    @FXML private Label detailErrTel;
+    @FXML private StackPane contentContainer;
 
-    @FXML private Button hamburgerBtn;
-
+    @FXML private StackPane profileOverlayPane;
+    @FXML private VBox profileDetailCard;
+    @FXML private Button profileCloseDetailBtn, profileDetailSaveBtn, profileDetailCancelBtn;
+    @FXML private Text profileDetailTitle;
+    @FXML private ImageView profileDetailAvatar;
+    @FXML private Label profileDetailAvatarLetter, profileDetailMessage;
+    @FXML private TextField profileDetailNom, profileDetailPrenom, profileDetailEmail, profileDetailTel, profileDetailDate;
+    @FXML private ComboBox<String> profileDetailRole, profileDetailStatus;
 
     private final UserCRUD userCRUD = new UserCRUD();
-    private ObservableList<User> allUsers = FXCollections.observableArrayList();
-    private FilteredList<User> filteredUsers;
-    private User currentDetailUser = null;
-    private User connectedAdmin = null;
-
-    private boolean editingOwnProfile = false;
-
+    private final List<NavItem> navItems = new ArrayList<>();
+    private boolean isDarkMode = true;
     private boolean sidebarOpen = false;
+    private User connectedUser;
 
     @FXML
     public void initialize() {
-
-        if (!rootPane.getStyleClass().contains("dash-root"))
+        if (!rootPane.getStyleClass().contains("dash-root")) {
             rootPane.getStyleClass().add("dash-root");
+        }
 
-        // ===== VERIFICATION DE LA SESSION =====
-        projet.hanouti.common.utils.SessionManager session = projet.hanouti.common.utils.SessionManager.getInstance();
+        SessionManager session = SessionManager.getInstance();
         if (!session.isLoggedIn()) {
-            System.out.println("[Session] Aucune session active — redirection vers Login");
             redirectToLoginImmediately();
             return;
         }
 
-        // Charger l'utilisateur depuis la session
-        User sessionUser = session.getConnectedUser();
-        updateHeaderUser(sessionUser);
-        if (sessionUser == null || sessionUser.getRole() == null) {
+        connectedUser = session.getConnectedUser();
+        if (connectedUser == null || connectedUser.getRole() == null) {
             redirectToLoginImmediately();
             return;
         }
 
-        connectedAdmin = sessionUser;
-        System.out.println("[Session] Session active pour: " + session.getFullName());
-
-        setDarkMode(true);
-
-        profileMenu.setText("👤 " + sessionUser.getPrenom());
-
-        logoutProfileItem.setOnAction(e -> navigateToLogin());
-
-        editProfileItem.setOnAction(e -> openProfileEdit(sessionUser));
-        paymentHistoryItem.setOnAction(e ->
-                showAlert("Historique", "Historique paiement prêt pour intégration.")
-        );
-
-        notifBtn.setOnAction(e ->
-                showAlert("Notifications", "Centre notifications prêt pour intégration.")
-        );
-
-        if (sessionUser.getRole() == Role.acheteur) {
-            cartBtn.setVisible(true);
-            cartBtn.setManaged(true);
-            paymentHistoryItem.setVisible(true);
-        } else {
-            cartBtn.setVisible(false);
-            cartBtn.setManaged(false);
-            paymentHistoryItem.setVisible(false);
-        }
-
-        // Theme toggle — Button normal (pas ToggleButton)
-        isDarkMode = projet.hanouti.common.utils.SessionManager.getInstance().isDarkMode();
-        setDarkMode(isDarkMode);        themeToggleBtn.setOnAction(e -> {
-            isDarkMode = !isDarkMode;
-            projet.hanouti.common.utils.SessionManager.getInstance().setDarkMode(isDarkMode);
-            setDarkMode(isDarkMode);
-            bounceNode(themeToggleBtn);
-        });
-        // Logo
-        try {
-            java.io.InputStream s = getClass().getResourceAsStream("/images/user_auth/logo.png");
-            if (s != null) sidebarLogo.setImage(new Image(s));
-        } catch (Exception ignored) {}
-
-
-        sidebar.setVisible(false);
-        sidebar.setManaged(false);
-
-        hamburgerBtn.setOnAction(e -> toggleSidebar());
-
-        // Admin avatar clip
-        Circle adminClip = new Circle(19, 19, 19);
-        adminAvatar.setClip(adminClip);
-
-        // Nav setup (labels inside graphic, set from FXML)
-        setupRoleNavigation(sessionUser.getRole());
-        configureContentByRole(sessionUser);
+        isDarkMode = session.isDarkMode();
+        setDarkMode(isDarkMode);
+        updateHeaderUser(connectedUser);
+        setupHeaderActions();
+        setupProfileOverlay();
+        setupShellChrome();
+        setupRoleNavigation(connectedUser.getRole());
 
         logoutBtn.setVisible(false);
         logoutBtn.setManaged(false);
-        // Filters
-        filterRole.setItems(FXCollections.observableArrayList("Tous", "admin", "acheteur", "vendeur", "livreur"));        filterStatus.setItems(FXCollections.observableArrayList("Tous", "Unbanned", "Banned"));
-        filterStatus.setValue("Tous");
-
-        // Table columns
-        colId.setCellValueFactory(c -> new SimpleStringProperty(String.valueOf(c.getValue().getId())));
-        colNom.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getNom()));
-        colPrenom.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getPrenom()));
-        colEmail.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getE_mail()));
-        colRole.setCellValueFactory(c -> {
-            Role r = c.getValue().getRole();
-            return new SimpleStringProperty(r != null ? r.name() : "");
-        });
-        colStatus.setCellValueFactory(c -> {
-            Status s = c.getValue().getStatus();
-            return new SimpleStringProperty(s != null ? s.name() : "");
-        });
-        colDate.setCellValueFactory(c -> new SimpleStringProperty(
-                c.getValue().getDate_naiss() != null ? c.getValue().getDate_naiss() : ""));
-
-        // Status badge
-        colStatus.setCellFactory(col -> new TableCell<>() {
-            @Override protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) { setGraphic(null); setText(null); return; }
-                Label badge = new Label(item);
-                badge.getStyleClass().add("status-badge");
-                badge.getStyleClass().add("Banned".equals(item) ? "status-banned" : "status-active");
-                setGraphic(badge); setText(null);
-            }
-        });
-
-        // Role badge with color
-        colRole.setCellFactory(col -> new TableCell<>() {
-            @Override protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) { setGraphic(null); setText(null); return; }
-                Label badge = new Label(item);
-                badge.getStyleClass().add("role-badge");
-                switch (item) {
-                    case "admin"    -> badge.getStyleClass().add("role-admin");
-                    case "vendeur"  -> badge.getStyleClass().add("role-vendeur");
-                    case "acheteur" -> badge.getStyleClass().add("role-acheteur");
-                    case "livreur"  -> badge.getStyleClass().add("role-livreur");
-                }
-                setGraphic(badge); setText(null);
-            }
-        });
-
-        // ========== ACTION COLUMN — ICONES CIRCULAIRES ==========
-        colActions.setCellFactory(col -> new TableCell<>() {
-
-            // Icones : oeil / crayon / interdit-ou-check / corbeille
-            private final Button viewBtn   = makeIconBtn("\u25CF", "action-view",   "Voir les details");
-            private final Button editBtn   = makeIconBtn("\u270E",  "action-edit",   "Modifier");
-            private final Button banBtn    = makeIconBtn("\u2715",  "action-ban",    "Bannir");
-            private final HBox box = new HBox(8, viewBtn, editBtn, banBtn);
-            {
-                box.setAlignment(Pos.CENTER);
-
-                viewBtn.setOnAction(e -> {
-                    User u = getTableView().getItems().get(getIndex());
-                    openDetail(u, false);
-                });
-                editBtn.setOnAction(e -> {
-                    User u = getTableView().getItems().get(getIndex());
-                    openDetail(u, true);
-                });
-                banBtn.setOnAction(e -> {
-                    User u = getTableView().getItems().get(getIndex());
-                    toggleBan(u);
-                });
-            }
-
-            @Override protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty) { setGraphic(null); return; }
-                User user = getTableView().getItems().get(getIndex());
-                // Ban/unban switch
-                banBtn.getStyleClass().removeAll("action-ban", "action-unban");
-                if (user.getStatus() == Status.Banned) {
-                    banBtn.setText("\u2713");
-                    banBtn.getStyleClass().add("action-unban");
-                    banBtn.setTooltip(new Tooltip("Debannir"));
-                } else {
-                    banBtn.setText("\u2715");
-                    banBtn.getStyleClass().add("action-ban");
-                    banBtn.setTooltip(new Tooltip("Bannir"));
-                }
-                setGraphic(box);
-            }
-        });
-
-        // Filtered list
-        filteredUsers = new FilteredList<>(allUsers, p -> true);
-        usersTable.setItems(filteredUsers);
-        searchField.textProperty().addListener((obs, old, val) -> applyFilters());
-        filterRole.valueProperty().addListener((obs, old, val) -> applyFilters());
-        filterStatus.valueProperty().addListener((obs, old, val) -> applyFilters());
-
-        // Detail overlay
-        detailRole.setItems(FXCollections.observableArrayList("admin", "acheteur", "vendeur", "livreur"));        detailStatus.setItems(FXCollections.observableArrayList("Unbanned", "Banned"));
-        closeDetailBtn.setOnAction(e -> closeDetail());
-        detailCancelBtn.setOnAction(e -> closeDetail());
-        detailSaveBtn.setOnAction(e -> saveDetail());
-        overlayPane.setOnMouseClicked(e -> { if (e.getTarget() == overlayPane) closeDetail(); });
-
-        // Refresh
-        refreshBtn.setOnAction(e -> { loadUsers(); bounceNode(refreshBtn); });
-
-        if (sessionUser.getRole() == Role.admin) {
-            loadUsers();
-        }
 
         playEntrance();
-        // very last line of initialize()
         javafx.application.Platform.runLater(() -> rootPane.requestFocus());
-        javafx.application.Platform.runLater(() -> {
-            navUsers.getStyleClass().add("nav-btn-active");
-            rootPane.requestFocus();
-        });
     }
-
-    /** Creer un bouton icone circulaire avec style CSS */
-    private Button makeIconBtn(String icon, String styleClass, String tooltipText) {
-        Button btn = new Button(icon);
-        btn.getStyleClass().addAll("action-btn", styleClass);
-        btn.setTooltip(new Tooltip(tooltipText));
-        return btn;
-    }
-
-    // =================== SET ADMIN ===================
 
     public void setConnectedAdmin(User admin) {
-        // Si admin est null, lire depuis la session
         if (admin == null) {
-            admin = projet.hanouti.common.utils.SessionManager.getInstance().getConnectedUser();
+            admin = SessionManager.getInstance().getConnectedUser();
         }
-        this.connectedAdmin = admin;
-        if (admin != null) {
-            adminNameLabel.setText(admin.getNom() + " " + admin.getPrenom());
-            adminRoleLabel.setText(admin.getRole() != null ? admin.getRole().name() : "vendeur");
-            if (admin.getImage() != null && !admin.getImage().isBlank()) {
-                try {
-                    adminAvatar.setImage(new Image("file:" + admin.getImage(), 38, 38, false, true));
-                } catch (Exception ignored) {}
+        connectedUser = admin;
+        updateHeaderUser(admin);
+    }
+
+    private void setupHeaderActions() {
+        profileMenu.setText("Profil");
+        if (connectedUser.getPrenom() != null && !connectedUser.getPrenom().isBlank()) {
+            profileMenu.setText("Profil " + connectedUser.getPrenom());
+        }
+
+        editProfileItem.setOnAction(e -> openProfileEdit(connectedUser));
+        logoutProfileItem.setOnAction(e -> navigateToLogin());
+        paymentHistoryItem.setOnAction(e ->
+                showInfo("Historique", "Historique paiement pret pour integration."));
+        notifBtn.setOnAction(e ->
+                showInfo("Notifications", "Centre notifications pret pour integration."));
+
+        boolean buyer = connectedUser.getRole() == Role.acheteur;
+        cartBtn.setVisible(buyer);
+        cartBtn.setManaged(buyer);
+        paymentHistoryItem.setVisible(buyer);
+    }
+
+    private void setupProfileOverlay() {
+        profileDetailRole.setItems(FXCollections.observableArrayList("admin", "acheteur", "vendeur", "livreur"));
+        profileDetailStatus.setItems(FXCollections.observableArrayList("Unbanned", "Banned"));
+        profileCloseDetailBtn.setOnAction(e -> closeProfileEdit());
+        profileDetailCancelBtn.setOnAction(e -> closeProfileEdit());
+        profileDetailSaveBtn.setOnAction(e -> saveProfileEdit());
+        profileOverlayPane.setOnMouseClicked(e -> {
+            if (e.getTarget() == profileOverlayPane) {
+                closeProfileEdit();
             }
-        }
-    }
-
-    // =================== DATA ===================
-
-    private void loadUsers() {
-        try {
-            List<User> users = userCRUD.ShowUsers();
-            allUsers.setAll(users);
-            updateStats();
-        } catch (SQLException ex) {
-            showAlert("Erreur", "Impossible de charger les utilisateurs:\n" + ex.getMessage());
-        }
-    }
-
-    private void updateStats() {
-        int total  = allUsers.size();
-        long active = allUsers.stream().filter(u -> u.getStatus() == Status.Unbanned).count();
-        long banned = allUsers.stream().filter(u -> u.getStatus() == Status.Banned).count();
-        animateStatLabel(statTotal,  total);
-        animateStatLabel(statActive, (int) active);
-        animateStatLabel(statBanned, (int) banned);
-        statRoles.setText(String.valueOf(Role.values().length));
-    }
-
-    private void animateStatLabel(Label label, int target) {
-        int current;
-        try { current = Integer.parseInt(label.getText()); } catch (NumberFormatException e) { current = 0; }
-        if (current == target) { label.setText(String.valueOf(target)); return; }
-        final int start = current;
-        Timeline tl = new Timeline();
-        int steps = 20;
-        for (int i = 0; i <= steps; i++) {
-            final int val = start + (int) ((target - start) * ((double) i / steps));
-            tl.getKeyFrames().add(new KeyFrame(Duration.millis(i * 25), e -> label.setText(String.valueOf(val))));
-        }
-        tl.play();
-    }
-
-    // =================== FILTERS ===================
-
-    private void applyFilters() {
-        String search = searchField.getText() == null ? "" : searchField.getText().trim().toLowerCase();
-        String roleFilter   = filterRole.getValue();
-        String statusFilter = filterStatus.getValue();
-
-        filteredUsers.setPredicate(user -> {
-            if (!search.isEmpty()) {
-                boolean m = (user.getNom()    != null && user.getNom().toLowerCase().contains(search))
-                        || (user.getPrenom()  != null && user.getPrenom().toLowerCase().contains(search))
-                        || (user.getE_mail()  != null && user.getE_mail().toLowerCase().contains(search))
-                        || (user.getRole()    != null && user.getRole().name().toLowerCase().contains(search));
-                if (!m) return false;
-            }
-            if (roleFilter != null && !"Tous".equals(roleFilter))
-                if (user.getRole() == null || !user.getRole().name().equals(roleFilter)) return false;
-            if (statusFilter != null && !"Tous".equals(statusFilter))
-                if (user.getStatus() == null || !user.getStatus().name().equals(statusFilter)) return false;
-            return true;
         });
     }
 
-    // =================== DETAIL OVERLAY ===================
+    private void setupShellChrome() {
+        themeToggleBtn.setOnAction(e -> {
+            isDarkMode = !isDarkMode;
+            SessionManager.getInstance().setDarkMode(isDarkMode);
+            setDarkMode(isDarkMode);
+            bounceNode(themeToggleBtn);
+        });
 
-    private void openDetail(User user, boolean editable) {
-        currentDetailUser = user;
-        detailTitle.setText(editable ? "Modifier Utilisateur" : "Details Utilisateur");
-        detailNom.setText(user.getNom());
-        detailPrenom.setText(user.getPrenom());
-        detailEmail.setText(user.getE_mail());
-        detailTel.setText(user.getNum_tel());
-        detailDate.setText(user.getDate_naiss());
-        detailRole.setValue(user.getRole()   != null ? user.getRole().name()   : "acheteur");
-        detailStatus.setValue(user.getStatus() != null ? user.getStatus().name() : "Unbanned");
-        detailAvatarLetter.setText(user.getNom() != null && !user.getNom().isEmpty()
-                ? user.getNom().substring(0, 1).toUpperCase() : "?");
+        try {
+            java.io.InputStream s = getClass().getResourceAsStream("/images/user_auth/logo.png");
+            if (s != null) {
+                sidebarLogo.setImage(new Image(s));
+            }
+        } catch (Exception ignored) {}
+
+        sidebar.setVisible(false);
+        sidebar.setManaged(false);
+        hamburgerBtn.setOnAction(e -> toggleSidebar());
+        adminAvatar.setClip(new Circle(19, 19, 19));
+    }
+
+    private void setupRoleNavigation(Role role) {
+        navItems.clear();
+        resetNavVisibility();
+
+        if (role == Role.admin) {
+            addNav(navUsers, "Dashboard global", "Vue globale plateforme", ADMIN_USERS_FXML);
+            addNav(navProducts, "Gestion acheteurs", "Gestion des comptes acheteurs", PLACEHOLDER_FXML);
+            addNav(navOrders, "Gestion vendeurs", "Gestion des comptes vendeurs", PLACEHOLDER_FXML);
+            addNav(navStats, "Gestion societes de livraison", "Gestion livraison", PLACEHOLDER_FXML);
+            addNav(navSettings, "Gestion commandes", "Supervision commandes", PLACEHOLDER_FXML);
+            addNav(navSupport, "Historique IA et interactions", "Audit IA", PLACEHOLDER_FXML);
+        } else if (role == Role.acheteur) {
+            addNav(navUsers, "Dashboard", "Accueil acheteur", AI_ACHAT_FXML,
+                    controller -> ((AssistantIAController) controller).openExploreMode());
+            addNav(navProducts, "AI Achats", "Assistant intelligent", AI_ACHAT_FXML,
+                    controller -> ((AssistantIAController) controller).openAssistantMode());
+            addNav(navOrders, "Catalogue des produits", "Explorer les produits", PLACEHOLDER_FXML);
+            addNav(navStats, "Mes favorites", "Produits favoris", PLACEHOLDER_FXML);
+            addNav(navSettings, "Mes commandes", "Suivi commandes", PLACEHOLDER_FXML);
+            hideNav(navSupport);
+        } else if (role == Role.vendeur) {
+            addNav(navUsers, "Dashboard", "Accueil vendeur", PLACEHOLDER_FXML);
+            addNav(navProducts, "Ma boutique", "Gestion boutique", PLACEHOLDER_FXML);
+            addNav(navOrders, "Les commandes", "Commandes recues", PLACEHOLDER_FXML);
+            addNav(navStats, "Conseil AI", "Recommandations intelligentes", PLACEHOLDER_FXML);
+            addNav(navSettings, "Campagne marketing", "Campagnes commerciales", PLACEHOLDER_FXML);
+            addNav(navSupport, "Mes fournisseurs", "Gestion fournisseurs", PLACEHOLDER_FXML);
+        } else if (role == Role.livreur) {
+            addNav(navUsers, "Dashboard", "Accueil livreur", PLACEHOLDER_FXML);
+            addNav(navProducts, "Mes livreurs", "Gestion livreurs", PLACEHOLDER_FXML);
+            addNav(navOrders, "Livraisons", "Suivi livraisons", PLACEHOLDER_FXML);
+            hideNav(navStats);
+            hideNav(navSettings);
+            hideNav(navSupport);
+        }
+
+        if (!navItems.isEmpty()) {
+            loadTab(navItems.get(0));
+        }
+    }
+
+    private void addNav(Button button, String title, String subtitle, String fxmlPath) {
+        addNav(button, title, subtitle, fxmlPath, null);
+    }
+
+    private void addNav(Button button, String title, String subtitle, String fxmlPath, Consumer<Object> afterLoad) {
+        button.setVisible(true);
+        button.setManaged(true);
+        setNavLabel(button, title);
+        button.setTooltip(new Tooltip(subtitle));
+
+        NavItem item = new NavItem(button, title, subtitle, fxmlPath, afterLoad);
+        navItems.add(item);
+        button.setOnAction(e -> {
+            loadTab(item);
+            bounceNode(button);
+        });
+    }
+
+    private void hideNav(Button button) {
+        button.setVisible(false);
+        button.setManaged(false);
+        button.setOnAction(null);
+    }
+
+    private void resetNavVisibility() {
+        for (Button button : allNavButtons()) {
+            button.setVisible(true);
+            button.setManaged(true);
+            button.getStyleClass().remove("nav-btn-active");
+        }
+    }
+
+    private void loadTab(NavItem item) {
+        setActiveNav(item.button());
+        headerTitle.setText(item.title());
+        headerSubtitle.setText(item.subtitle());
+
+        try {
+            java.net.URL fxml = getClass().getResource(item.fxmlPath());
+            if (fxml == null) {
+                showContentError(item.title(), "FXML introuvable: " + item.fxmlPath());
+                return;
+            }
+
+            FXMLLoader loader = new FXMLLoader(fxml);
+            Parent content = loader.load();
+            if (item.afterLoad() != null) {
+                item.afterLoad().accept(loader.getController());
+            }
+            contentContainer.getChildren().setAll(content);
+        } catch (Exception ex) {
+            showContentError(item.title(), "Impossible de charger le module.");
+            ex.printStackTrace();
+        }
+    }
+
+    private void showContentError(String title, String message) {
+        Label heading = new Label(title);
+        heading.getStyleClass().add("stat-value");
+
+        Label detail = new Label(message);
+        detail.setWrapText(true);
+        detail.getStyleClass().add("stat-label");
+
+        VBox card = new VBox(12, heading, detail);
+        card.getStyleClass().add("stat-card");
+        card.setMaxWidth(720);
+
+        StackPane wrapper = new StackPane(card);
+        wrapper.getStyleClass().add("content-area");
+        contentContainer.getChildren().setAll(wrapper);
+    }
+
+    private void setActiveNav(Button active) {
+        for (Button button : allNavButtons()) {
+            button.getStyleClass().remove("nav-btn-active");
+        }
+        if (!active.getStyleClass().contains("nav-btn-active")) {
+            active.getStyleClass().add("nav-btn-active");
+        }
+    }
+
+    private Button[] allNavButtons() {
+        return new Button[]{navUsers, navProducts, navOrders, navStats, navSettings, navSupport};
+    }
+
+    private void setNavLabel(Button button, String title) {
+        if (button.getGraphic() instanceof HBox hbox) {
+            for (Node node : hbox.getChildren()) {
+                if (node instanceof Label label && label.getStyleClass().contains("nav-label")) {
+                    label.setText(title);
+                    return;
+                }
+            }
+        }
+        button.setText(title);
+    }
+
+    private void openProfileEdit(User user) {
+        if (user == null) {
+            return;
+        }
+
+        profileDetailTitle.setText("Modifier mon profil");
+        profileDetailNom.setText(value(user.getNom()));
+        profileDetailPrenom.setText(value(user.getPrenom()));
+        profileDetailEmail.setText(value(user.getE_mail()));
+        profileDetailTel.setText(value(user.getNum_tel()));
+        profileDetailDate.setText(value(user.getDate_naiss()));
+        profileDetailRole.setValue(user.getRole() != null ? user.getRole().name() : "");
+        profileDetailStatus.setValue(user.getStatus() != null ? user.getStatus().name() : "");
+        profileDetailMessage.setVisible(false);
+        profileDetailMessage.setManaged(false);
+
+        String letter = value(user.getNom()).isEmpty() ? "?" : user.getNom().substring(0, 1).toUpperCase();
+        profileDetailAvatarLetter.setText(letter);
 
         if (user.getImage() != null && !user.getImage().isBlank()) {
             try {
-                detailAvatar.setClip(new Circle(38, 38, 38));
-                detailAvatar.setImage(new Image("file:" + user.getImage(), 76, 76, false, true));
-                detailAvatarLetter.setVisible(false);
-            } catch (Exception e) { detailAvatar.setImage(null); detailAvatarLetter.setVisible(true); }
-        } else { detailAvatar.setImage(null); detailAvatarLetter.setVisible(true); }
-
-        detailNom.setEditable(false);
-        detailPrenom.setEditable(false);
-        detailEmail.setEditable(false);
-        detailTel.setEditable(false);
-        detailDate.setEditable(false);
-        detailRole.setVisible(true);
-        detailRole.setManaged(true);
-        detailStatus.setVisible(true);
-        detailStatus.setManaged(true);
-
-        detailRole.setDisable(!editable);
-        detailStatus.setDisable(!editable);        detailNom.setDisable(true);
-        detailPrenom.setDisable(true);
-        detailEmail.setDisable(true);
-        detailTel.setDisable(true);
-        detailDate.setDisable(true);
-        detailSaveBtn.setVisible(editable); detailSaveBtn.setManaged(editable);
-        detailMessage.setVisible(false); detailMessage.setManaged(false);
-
-        // Validation en temps reel si mode edition
-        if (editable) {
-            projet.hanouti.common.utils.FormValidator.clearError(detailErrNom);
-            projet.hanouti.common.utils.FormValidator.clearError(detailErrPrenom);
-            projet.hanouti.common.utils.FormValidator.clearError(detailErrEmail);
-            projet.hanouti.common.utils.FormValidator.clearError(detailErrTel);
-            projet.hanouti.common.utils.FormValidator.setupEditValidation(
-                    detailNom,    detailErrNom,
-                    detailPrenom, detailErrPrenom,
-                    detailEmail,  detailErrEmail,
-                    detailTel,    detailErrTel
-            );
+                profileDetailAvatar.setClip(new Circle(38, 38, 38));
+                profileDetailAvatar.setImage(new Image("file:" + user.getImage(), 76, 76, false, true));
+                profileDetailAvatarLetter.setVisible(false);
+            } catch (Exception e) {
+                profileDetailAvatar.setImage(null);
+                profileDetailAvatarLetter.setVisible(true);
+            }
+        } else {
+            profileDetailAvatar.setImage(null);
+            profileDetailAvatarLetter.setVisible(true);
         }
 
-        overlayPane.setVisible(true); overlayPane.setManaged(true);
-        overlayPane.setOpacity(0); detailCard.setScaleX(0.9); detailCard.setScaleY(0.9);
+        profileOverlayPane.setVisible(true);
+        profileOverlayPane.setManaged(true);
+        profileOverlayPane.setOpacity(0);
+        profileDetailCard.setScaleX(0.9);
+        profileDetailCard.setScaleY(0.9);
 
-        FadeTransition fi = new FadeTransition(Duration.millis(200), overlayPane); fi.setToValue(1);
-        ScaleTransition si = new ScaleTransition(Duration.millis(250), detailCard);
-        si.setToX(1); si.setToY(1); si.setInterpolator(Interpolator.EASE_OUT);
-        new ParallelTransition(fi, si).play();
+        FadeTransition fade = new FadeTransition(Duration.millis(200), profileOverlayPane);
+        fade.setToValue(1);
+        ScaleTransition scale = new ScaleTransition(Duration.millis(250), profileDetailCard);
+        scale.setToX(1);
+        scale.setToY(1);
+        scale.setInterpolator(Interpolator.EASE_OUT);
+        new ParallelTransition(fade, scale).play();
     }
 
-    private void closeDetail() {
-        FadeTransition fo = new FadeTransition(Duration.millis(150), overlayPane);
-        fo.setToValue(0);
-
-        ScaleTransition so = new ScaleTransition(Duration.millis(150), detailCard);
-        so.setToX(0.9);
-        so.setToY(0.9);
-
-        ParallelTransition pt = new ParallelTransition(fo, so);
-
-        pt.setOnFinished(e -> {
-            overlayPane.setVisible(false);
-            overlayPane.setManaged(false);
-
-            detailCard.setScaleX(1);
-            detailCard.setScaleY(1);
-
-            currentDetailUser = null;
-            editingOwnProfile = false;
+    private void closeProfileEdit() {
+        FadeTransition fade = new FadeTransition(Duration.millis(150), profileOverlayPane);
+        fade.setToValue(0);
+        ScaleTransition scale = new ScaleTransition(Duration.millis(150), profileDetailCard);
+        scale.setToX(0.9);
+        scale.setToY(0.9);
+        ParallelTransition transition = new ParallelTransition(fade, scale);
+        transition.setOnFinished(e -> {
+            profileOverlayPane.setVisible(false);
+            profileOverlayPane.setManaged(false);
+            profileDetailCard.setScaleX(1);
+            profileDetailCard.setScaleY(1);
         });
-
-        pt.play();
+        transition.play();
     }
 
-    private void saveDetail() {
-        if (currentDetailUser == null) return;
+    private void saveProfileEdit() {
+        if (connectedUser == null) {
+            return;
+        }
 
         try {
-            if (editingOwnProfile) {
+            connectedUser.setNom(profileDetailNom.getText().trim());
+            connectedUser.setPrenom(profileDetailPrenom.getText().trim());
+            connectedUser.setE_mail(profileDetailEmail.getText().trim());
+            connectedUser.setNum_tel(profileDetailTel.getText().trim());
+            connectedUser.setDate_naiss(profileDetailDate.getText().trim());
 
-                currentDetailUser.setNom(detailNom.getText().trim());
-                currentDetailUser.setPrenom(detailPrenom.getText().trim());
-                currentDetailUser.setE_mail(detailEmail.getText().trim());
-                currentDetailUser.setNum_tel(detailTel.getText().trim());
-                currentDetailUser.setDate_naiss(detailDate.getText().trim());
+            userCRUD.updateUserProfile(connectedUser);
+            SessionManager.getInstance().setConnectedUser(connectedUser);
+            updateHeaderUser(connectedUser);
+            showProfileMessage("Profil mis a jour avec succes !", false);
 
-                userCRUD.updateUserProfile(currentDetailUser);
-
-                projet.hanouti.common.utils.SessionManager.getInstance().setConnectedUser(currentDetailUser);
-
-                updateHeaderUser(currentDetailUser);
-
-                showDetailMessage("Profil mis à jour avec succès !", false);
-            } else {
-
-                currentDetailUser.setRole(Role.valueOf(detailRole.getValue()));
-                currentDetailUser.setStatus(Status.valueOf(detailStatus.getValue()));
-
-                userCRUD.updateUserAdminFields(currentDetailUser);
-
-                showDetailMessage("Role et statut mis à jour avec succès !", false);
-
-                loadUsers();
-            }
-
-            PauseTransition redirect = new PauseTransition(Duration.millis(800));
-            redirect.setOnFinished(e -> {
-                closeDetail();
-                editingOwnProfile = false;
-            });
-            redirect.play();
-
+            PauseTransition closeDelay = new PauseTransition(Duration.millis(800));
+            closeDelay.setOnFinished(e -> closeProfileEdit());
+            closeDelay.play();
         } catch (SQLException ex) {
-            showDetailMessage("Erreur: " + ex.getMessage(), true);
+            showProfileMessage("Erreur: " + ex.getMessage(), true);
         }
     }
 
-    private void showDetailMessage(String msg, boolean isError) {
-        detailMessage.setText(msg); detailMessage.setVisible(true); detailMessage.setManaged(true);
-        detailMessage.getStyleClass().removeAll("detail-msg-error", "detail-msg-success");
-        detailMessage.getStyleClass().add(isError ? "detail-msg-error" : "detail-msg-success");
+    private void showProfileMessage(String msg, boolean isError) {
+        profileDetailMessage.setText(msg);
+        profileDetailMessage.setVisible(true);
+        profileDetailMessage.setManaged(true);
+        profileDetailMessage.getStyleClass().removeAll("detail-msg-error", "detail-msg-success");
+        profileDetailMessage.getStyleClass().add(isError ? "detail-msg-error" : "detail-msg-success");
     }
 
-    // =================== BAN / DELETE ===================
-
-    private void toggleBan(User user) {
-        Status newStatus = (user.getStatus() == Status.Banned) ? Status.Unbanned : Status.Banned;
-        String action = (newStatus == Status.Banned) ? "bannir" : "debannir";
-        Alert c = new Alert(Alert.AlertType.CONFIRMATION);
-        c.setTitle("Confirmation");
-        c.setHeaderText("Voulez-vous " + action + " " + user.getNom() + " " + user.getPrenom() + " ?");
-        c.setContentText("Email: " + user.getE_mail());
-        styleDashboardDialog(c);
-        Optional<ButtonType> r = c.showAndWait();
-        if (r.isPresent() && r.get() == ButtonType.OK) {
-            try { userCRUD.updateUserStatus(user.getId(), newStatus); loadUsers(); }
-            catch (SQLException ex) { showAlert("Erreur", ex.getMessage()); }
-        }
+    private String value(String val) {
+        return val == null ? "" : val;
     }
-
-    // =================== THEME ===================
 
     private void setDarkMode(boolean dark) {
         if (dark) {
-            if (!rootPane.getStyleClass().contains("dark"))
+            if (!rootPane.getStyleClass().contains("dark")) {
                 rootPane.getStyleClass().add("dark");
+            }
         } else {
             rootPane.getStyleClass().remove("dark");
         }
-        // Mettre a jour l'icone et le label dans le bouton theme
-        if (themeIcon != null)  themeIcon.setText(dark ? "\u2600" : "\u263D");
-        if (themeLabel != null) themeLabel.setText(dark ? "Mode Jour" : "Mode Nuit");
-    }
-
-    // =================== NAVIGATION ===================
-
-    private void setupNavButton(Button btn, String title, String subtitle) {
-        btn.setOnAction(e -> {
-            for (Button b : new Button[]{navUsers, navProducts, navOrders, navStats, navSettings, navSupport})
-                b.getStyleClass().remove("nav-btn-active");
-            if (!btn.getStyleClass().contains("nav-btn-active")) btn.getStyleClass().add("nav-btn-active");
-            headerTitle.setText(title);
-            headerSubtitle.setText(subtitle);
-            bounceNode(btn);
-        });
+        if (themeIcon != null) {
+            themeIcon.setText(dark ? "\u2600" : "\u263D");
+        }
+        if (themeLabel != null) {
+            themeLabel.setText(dark ? "Mode Jour" : "Mode Nuit");
+        }
     }
 
     private void navigateToLogin() {
         ButtonType confirm = new ButtonType("Se deconnecter", ButtonBar.ButtonData.OK_DONE);
         ButtonType cancel = new ButtonType("Annuler", ButtonBar.ButtonData.CANCEL_CLOSE);
-        Alert c = new Alert(Alert.AlertType.CONFIRMATION);
-        c.setTitle("Deconnexion");
-        c.setHeaderText("Confirmer la deconnexion");
-        c.setContentText("Voulez-vous vous deconnecter ?");
-        c.getButtonTypes().setAll(confirm, cancel);
-        styleDashboardDialog(c);
-        Optional<ButtonType> r = c.showAndWait();
-        if (r.isPresent() && r.get() == confirm) {
-            // ===== VIDER LA SESSION =====
-            projet.hanouti.common.utils.SessionManager.getInstance().logout();
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Deconnexion");
+        alert.setHeaderText("Confirmer la deconnexion");
+        alert.setContentText("Voulez-vous vous deconnecter ?");
+        alert.getButtonTypes().setAll(confirm, cancel);
+        styleDashboardDialog(alert);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == confirm) {
+            SessionManager.getInstance().logout();
             redirectToLoginImmediately();
         }
     }
 
-    /** Rediriger vers Login sans confirmation (session invalide ou deconnexion forcee) */
     private void redirectToLoginImmediately() {
         try {
-            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(
-                    getClass().getResource("/FXML/user_auth/login/login_view.fxml"));
-            javafx.scene.Parent root = loader.load();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/user_auth/login/login_view.fxml"));
+            Parent root = loader.load();
             javafx.scene.Scene scene = rootPane.getScene();
             scene.getStylesheets().clear();
             java.net.URL css = getClass().getResource("/styles/user_auth/login/login.css");
-            if (css != null) scene.getStylesheets().add(css.toExternalForm());
+            if (css != null) {
+                scene.getStylesheets().add(css.toExternalForm());
+            }
             scene.setRoot(root);
         } catch (Exception ex) {
-            showAlert("Erreur", "Impossible de charger la page de connexion.");
+            showError("Erreur", "Impossible de charger la page de connexion.");
             ex.printStackTrace();
         }
     }
 
-    private void showAlert(String title, String content) {
-        Alert a = new Alert(Alert.AlertType.ERROR);
-        a.setTitle(title);
-        a.setContentText(content);
-        styleDashboardDialog(a);
-        a.showAndWait();
+    private void showInfo(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setContentText(content);
+        styleDashboardDialog(alert);
+        alert.showAndWait();
+    }
+
+    private void showError(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setContentText(content);
+        styleDashboardDialog(alert);
+        alert.showAndWait();
     }
 
     private void styleDashboardDialog(Alert alert) {
@@ -618,154 +478,48 @@ public class DashboardController {
         }
     }
 
-    // =================== ANIMATIONS ===================
-
     private void playEntrance() {
-        sidebar.setTranslateX(-260); sidebar.setOpacity(0);
-        TranslateTransition ts = new TranslateTransition(Duration.millis(500), sidebar); ts.setToX(0);
-        FadeTransition fs = new FadeTransition(Duration.millis(500), sidebar); fs.setToValue(1);
-        fs.setInterpolator(Interpolator.EASE_OUT);
-        new ParallelTransition(ts, fs).play();
+        sidebar.setTranslateX(-260);
+        sidebar.setOpacity(0);
+        TranslateTransition sidebarSlide = new TranslateTransition(Duration.millis(500), sidebar);
+        sidebarSlide.setToX(0);
+        FadeTransition sidebarFade = new FadeTransition(Duration.millis(500), sidebar);
+        sidebarFade.setToValue(1);
+        sidebarFade.setInterpolator(Interpolator.EASE_OUT);
+        new ParallelTransition(sidebarSlide, sidebarFade).play();
 
         headerBar.setOpacity(0);
-        FadeTransition fh = new FadeTransition(Duration.millis(600), headerBar);
-        fh.setFromValue(0); fh.setToValue(1); fh.setDelay(Duration.millis(200)); fh.play();
-
-        usersTable.setOpacity(0);
-        FadeTransition ft = new FadeTransition(Duration.millis(600), usersTable);
-        ft.setFromValue(0); ft.setToValue(1); ft.setDelay(Duration.millis(400)); ft.play();
+        FadeTransition headerFade = new FadeTransition(Duration.millis(600), headerBar);
+        headerFade.setFromValue(0);
+        headerFade.setToValue(1);
+        headerFade.setDelay(Duration.millis(200));
+        headerFade.play();
     }
 
-    private void bounceNode(Node n) {
-        if (n == null) return;
-        ScaleTransition sc = new ScaleTransition(Duration.millis(130), n);
-        sc.setFromX(0.88); sc.setFromY(0.88); sc.setToX(1.0); sc.setToY(1.0);
-        sc.setInterpolator(Interpolator.EASE_OUT); sc.play();
-    }
-    private void setupRoleNavigation(Role role) {
-        resetNavVisibility();
-
-        if (role == Role.admin) {
-            setNav(navUsers, "Dashboard global", "Vue globale plateforme");
-            setNav(navProducts, "Gestion acheteurs", "Gestion des comptes acheteurs");
-            setNav(navOrders, "Gestion vendeurs", "Gestion des comptes vendeurs");
-            setNav(navStats, "Gestion sociétés de livraison", "Gestion livraison");
-            setNav(navSettings, "Gestion commandes", "Supervision commandes");
-            setNav(navSupport, "Historique IA et interactions", "Audit IA");
-        }
-
-        else if (role == Role.acheteur) {
-            setNav(navUsers, "Dashboard", "Accueil acheteur");
-            setNav(navProducts, "AI Achats", "Assistant intelligent");
-            setNav(navOrders, "Catalogue des produits", "Explorer les produits");
-            setNav(navStats, "Mes favorites", "Produits favoris");
-            setNav(navSettings, "Mes commandes", "Suivi commandes");
-            navSupport.setVisible(false);
-            navSupport.setManaged(false);
-        }
-
-        else if (role == Role.vendeur) {
-            setNav(navUsers, "Dashboard", "Accueil vendeur");
-            setNav(navProducts, "Ma boutique", "Gestion boutique");
-            setNav(navOrders, "Les commandes", "Commandes reçues");
-            setNav(navStats, "Conseil AI", "Recommandations intelligentes");
-            setNav(navSettings, "Campagne marketing", "Campagnes commerciales");
-            setNav(navSupport, "Mes fournisseurs", "Gestion fournisseurs");
-        }
-
-        else if (role == Role.livreur) {
-            setNav(navUsers, "Dashboard", "Accueil livreur");
-            setNav(navProducts, "Mes livreurs", "Gestion livreurs");
-            setNav(navOrders, "Livraisons", "Suivi livraisons");
-
-            navStats.setVisible(false);
-            navStats.setManaged(false);
-            navSettings.setVisible(false);
-            navSettings.setManaged(false);
-            navSupport.setVisible(false);
-            navSupport.setManaged(false);
-        }
-
-        setupNavButton(navUsers, getNavTitle(navUsers), "Module prêt pour intégration");
-        setupNavButton(navProducts, getNavTitle(navProducts), "Module prêt pour intégration");
-        setupNavButton(navOrders, getNavTitle(navOrders), "Module prêt pour intégration");
-        setupNavButton(navStats, getNavTitle(navStats), "Module prêt pour intégration");
-        setupNavButton(navSettings, getNavTitle(navSettings), "Module prêt pour intégration");
-        setupNavButton(navSupport, getNavTitle(navSupport), "Module prêt pour intégration");
-    }
-    private void resetNavVisibility() {
-        for (Button b : new Button[]{navUsers, navProducts, navOrders, navStats, navSettings, navSupport}) {
-            b.setVisible(true);
-            b.setManaged(true);
-        }
-    }
-
-    private String getNavTitle(Button btn) {
-        if (btn.getGraphic() instanceof HBox hbox) {
-            for (Node node : hbox.getChildren()) {
-                if (node instanceof Label label && label.getStyleClass().contains("nav-label")) {
-                    return label.getText();
-                }
-            }
-        }
-        return btn.getText();
-    }
-
-    private void setNav(Button btn, String title, String tooltip) {
-        btn.setTooltip(new Tooltip(tooltip));
-
-        if (btn.getGraphic() instanceof HBox hbox) {
-            for (Node node : hbox.getChildren()) {
-                if (node instanceof Label label && label.getStyleClass().contains("nav-label")) {
-                    label.setText(title);
-                }
-            }
-        } else {
-            btn.setText(title);
-        }
-    }
-    private void configureContentByRole(User user) {
-        if (user.getRole() == Role.admin) {
-            adminUsersContent.setVisible(true);
-            adminUsersContent.setManaged(true);
-            loadUsers();
+    private void bounceNode(Node node) {
+        if (node == null) {
             return;
         }
-
-        adminUsersContent.getChildren().clear();
-
-        VBox card = new VBox(12);
-        card.getStyleClass().add("stat-card");
-        card.setMaxWidth(720);
-
-        Label title = new Label("Bienvenue " + user.getPrenom());
-        title.setStyle("-fx-text-fill: #1E1B4B; -fx-font-size: 28px; -fx-font-weight: 900;");
-
-        Label role = new Label("Espace " + user.getRole().name());
-        role.setStyle("-fx-background-color: rgba(99,102,241,0.12); -fx-text-fill: #4F46E5; -fx-background-radius: 999; -fx-padding: 6 14; -fx-font-weight: 900;");
-
-        Label desc = new Label("Choisissez une fonctionnalité depuis le menu hamburger. Cette zone est prête pour intégrer les modules de l'équipe.");
-        desc.setWrapText(true);
-        desc.setStyle("-fx-text-fill: #6B7280; -fx-font-size: 14px;");
-
-        card.getChildren().addAll(role, title, desc);
-        adminUsersContent.getChildren().add(card);
+        ScaleTransition scale = new ScaleTransition(Duration.millis(130), node);
+        scale.setFromX(0.88);
+        scale.setFromY(0.88);
+        scale.setToX(1.0);
+        scale.setToY(1.0);
+        scale.setInterpolator(Interpolator.EASE_OUT);
+        scale.play();
     }
+
     private void toggleSidebar() {
         sidebarOpen = !sidebarOpen;
 
         if (sidebarOpen) {
             sidebar.setVisible(true);
             sidebar.setManaged(true);
-
-            // Force CSS re-evaluation on the active button
-            // (avoids default JavaFX button chrome on the initially-active item)
             javafx.application.Platform.runLater(() -> {
-                Button[] all = {navUsers, navProducts, navOrders, navStats, navSettings, navSupport};
-                for (Button b : all) {
-                    if (b.getStyleClass().contains("nav-btn-active")) {
-                        b.getStyleClass().remove("nav-btn-active");
-                        b.getStyleClass().add("nav-btn-active");
+                for (Button button : allNavButtons()) {
+                    if (button.getStyleClass().contains("nav-btn-active")) {
+                        button.getStyleClass().remove("nav-btn-active");
+                        button.getStyleClass().add("nav-btn-active");
                     }
                 }
                 rootPane.requestFocus();
@@ -776,7 +530,6 @@ public class DashboardController {
             slide.setToX(0);
             slide.setInterpolator(Interpolator.EASE_OUT);
             slide.play();
-
         } else {
             TranslateTransition slide = new TranslateTransition(Duration.millis(220), sidebar);
             slide.setFromX(0);
@@ -789,40 +542,35 @@ public class DashboardController {
             slide.play();
         }
     }
-    private void openProfileEdit(User user) {
-        editingOwnProfile = true;
 
-        openDetail(user, true);
-
-        detailTitle.setText("Modifier mon profil");
-
-        detailNom.setDisable(false);
-        detailPrenom.setDisable(false);
-        detailEmail.setDisable(false);
-        detailTel.setDisable(false);
-        detailDate.setDisable(false);
-
-        detailNom.setEditable(true);
-        detailPrenom.setEditable(true);
-        detailEmail.setEditable(true);
-        detailTel.setEditable(true);
-        detailDate.setEditable(true);
-
-        detailRole.setDisable(true);
-        detailStatus.setDisable(true);
-    }
     private void updateHeaderUser(User user) {
-        if (user == null) return;
+        if (user == null) {
+            return;
+        }
 
-        adminNameLabel.setText(user.getNom() + " " + user.getPrenom());
+        String nom = value(user.getNom());
+        String prenom = value(user.getPrenom());
+        String fullName = (nom + " " + prenom).trim();
+        adminNameLabel.setText(fullName.isEmpty() ? "Utilisateur" : fullName);
         adminRoleLabel.setText(user.getRole() != null ? user.getRole().name() : "");
+        adminAvatarLetter.setText(nom.isEmpty() ? "U" : nom.substring(0, 1).toUpperCase());
 
-        profileMenu.setText("👤 " + user.getPrenom());
+        if (profileMenu != null) {
+            profileMenu.setText(prenom.isBlank() ? "Profil" : "Profil " + prenom);
+        }
 
         if (user.getImage() != null && !user.getImage().isBlank()) {
             try {
                 adminAvatar.setImage(new Image("file:" + user.getImage(), 38, 38, false, true));
-            } catch (Exception ignored) {}
+                adminAvatarLetter.setVisible(false);
+            } catch (Exception ignored) {
+                adminAvatarLetter.setVisible(true);
+            }
+        } else {
+            adminAvatar.setImage(null);
+            adminAvatarLetter.setVisible(true);
         }
     }
+
+    private record NavItem(Button button, String title, String subtitle, String fxmlPath, Consumer<Object> afterLoad) {}
 }

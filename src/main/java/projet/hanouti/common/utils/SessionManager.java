@@ -37,6 +37,15 @@ public class SessionManager {
         return connectedUser;
     }
 
+    public static User getCurrentUser() {
+        return getInstance().getConnectedUser();
+    }
+
+    public static int getCurrentUserId() {
+        User user = getCurrentUser();
+        return user != null ? user.getId() : -1;
+    }
+
     /** Verifier si une session est active */
     public boolean isLoggedIn() {
         return connectedUser != null;

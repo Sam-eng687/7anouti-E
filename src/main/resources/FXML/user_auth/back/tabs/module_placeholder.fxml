@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane xmlns="http://javafx.com/javafx/21"
+           xmlns:fx="http://javafx.com/fxml/1"
+           styleClass="content-area">
+    <VBox spacing="12" maxWidth="720" styleClass="stat-card">
+        <Label text="Module pret pour integration" styleClass="stat-value"/>
+        <Label text="Remplacez le chemin FXML dans DashboardController par le module de votre equipe. Le shell chargera ce FXML dans le conteneur central sans changer de scene."
+               wrapText="true"
+               styleClass="stat-label"/>
+    </VBox>
+</StackPane>
