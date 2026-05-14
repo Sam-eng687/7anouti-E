@@ -1,4 +1,4 @@
-package com.hanouti.hanoutiem4.service;
+package projet.hanouti.module4.service;
 
 import jakarta.mail.*;
 import jakarta.mail.internet.*;

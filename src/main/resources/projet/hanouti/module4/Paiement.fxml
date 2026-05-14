@@ -11,7 +11,7 @@
             stylesheets="@hanoutim4.css"
             xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.hanouti.hanoutiem4.controller.PaiementController">
+            fx:controller="projet.hanouti.module4.controller.PaiementController">
 
     <BorderPane AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
                 AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">

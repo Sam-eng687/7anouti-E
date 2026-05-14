@@ -1,4 +1,4 @@
-package com.hanouti.hanoutiem4.util;
+package projet.hanouti.module4.util;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

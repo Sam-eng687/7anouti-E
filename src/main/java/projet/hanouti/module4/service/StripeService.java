@@ -1,4 +1,4 @@
-package com.hanouti.hanoutiem4.service;
+package projet.hanouti.module4.service;
 
 import javax.net.ssl.*;
 import java.io.OutputStream;
@@ -19,7 +19,7 @@ import java.security.cert.X509Certificate;
 public class StripeService {
 
     // ⚠️ Clé secrète TEST uniquement — ne jamais exposer en production
-    private static final String SECRET_KEY = "STRIPE_KEY_HERE";
+    private static final String SECRET_KEY = "sk_test_51TTwI6JF7b0i9BmCeWRezF2hwSDLmzo36yZf7Itp2JBQD5MciemqXSVg5bvNnZlFKvDuKEDtKrM4hdgaW4VbiuPe00zqADd2xk";
     private static final String BASE_URL   = "https://api.stripe.com/v1";
 
     // ─────────────────────────────────────────────────────────────────────

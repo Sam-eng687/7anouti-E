@@ -1,8 +1,8 @@
-package com.hanouti.hanoutiem4.service;
+package projet.hanouti.module4.service;
 
-import com.hanouti.hanoutiem4.dao.PaiementDAO;
-import com.hanouti.hanoutiem4.interfaces.IService;
-import com.hanouti.hanoutiem4.model.Paiement;
+import projet.hanouti.module4.dao.PaiementDAO;
+import projet.hanouti.module4.interfaces.IService;
+import projet.hanouti.module4.model.Paiement;
 
 import java.sql.SQLException;
 import java.util.ArrayList;

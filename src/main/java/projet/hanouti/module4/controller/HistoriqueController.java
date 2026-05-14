@@ -1,8 +1,9 @@
-package com.hanouti.hanoutiem4.controller;
+package projet.hanouti.module4.controller;
+import projet.hanouti.common.utils.SessionManager;
 
-import com.hanouti.hanoutiem4.UserSession;
-import com.hanouti.hanoutiem4.dao.PaiementDAO;
-import com.hanouti.hanoutiem4.model.Paiement;
+import projet.hanouti.module4.UserSession;
+import projet.hanouti.module4.dao.PaiementDAO;
+import projet.hanouti.module4.model.Paiement;
 import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -130,7 +131,7 @@ public class HistoriqueController {
     private PaiementDAO dao;
     private List<Paiement> allData;
     private int currentUserId;
-    private com.hanouti.hanoutiem4.util.DrawerHelper drawerHelper;
+    private projet.hanouti.module4.util.DrawerHelper drawerHelper;
     // Mini local HTTP server for QR scan
     private HttpServer activeQrServer;
     private static final int QR_SERVER_PORT = 7472;
@@ -138,8 +139,11 @@ public class HistoriqueController {
     // ── Initialize ────────────────────────────────────────────────────────
     @FXML
     public void initialize() {
+        // Hide own topbar — dashboard (Mootez) provides the topbar
+        if (headerBar != null) { headerBar.setVisible(false); headerBar.setManaged(false); }
+
         currentUserId = UserSession.getInstance().getUserId();
-        isDarkMode    = UserSession.getInstance().isDarkMode();
+        isDarkMode    = SessionManager.getInstance().isDarkMode();
         applyDarkMode();
 
         try {
@@ -150,6 +154,24 @@ public class HistoriqueController {
         }
 
         Platform.runLater(() -> {
+            // Sync dark mode with parent dashboard (Mootez sets .dark on scene root)
+            if (rootPane.getScene() != null && rootPane.getScene().getRoot().getStyleClass().contains("dark")) {
+                isDarkMode = true; SessionManager.getInstance().setDarkMode(true); applyDarkMode();
+            } else {
+                isDarkMode = false; SessionManager.getInstance().setDarkMode(false); applyDarkMode();
+            }
+            // Live theme listener — reacts when Mootez toggles day/night
+            try {
+                javafx.scene.Parent sceneRoot = rootPane.getScene().getRoot();
+                sceneRoot.getStyleClass().addListener((javafx.collections.ListChangeListener<String>) c -> {
+                    boolean nowDark = sceneRoot.getStyleClass().contains("dark");
+                    if (nowDark != isDarkMode) {
+                        isDarkMode = nowDark;
+                        SessionManager.getInstance().setDarkMode(isDarkMode);
+                        Platform.runLater(() -> { applyDarkMode(); applyCurrentFilter(); buildSidebarIcons(); });
+                    }
+                });
+            } catch (Exception ignored) {}
             buildTopbarIcons();
             buildSidebarIcons();
             setupFilterTabs();
@@ -159,10 +181,10 @@ public class HistoriqueController {
             setupDeleteAllButton();
             updateCartPill();
 
-            drawerHelper = new com.hanouti.hanoutiem4.util.DrawerHelper(
+            drawerHelper = new projet.hanouti.module4.util.DrawerHelper(
                     rootPane, isDarkMode, "historique");
             drawerHelper.setThemeChangeCallback(() -> {
-                isDarkMode = UserSession.getInstance().isDarkMode();
+                isDarkMode = SessionManager.getInstance().isDarkMode();
                 applyDarkMode();
                 setupFilterTabs();
                 applyCurrentFilter();
@@ -196,7 +218,7 @@ public class HistoriqueController {
         if (themeBtn != null) {
             themeBtn.setOnAction(e -> {
                 isDarkMode = !isDarkMode;
-                UserSession.getInstance().setDarkMode(isDarkMode);
+                SessionManager.getInstance().setDarkMode(isDarkMode);
                 if (isDarkMode) rootPane.getStyleClass().add("dark");
                 else            rootPane.getStyleClass().remove("dark");
                 updateThemeIcon();
@@ -443,7 +465,7 @@ public class HistoriqueController {
                                 try {
                                     String sql = "DELETE FROM paiements WHERE user_id = ?";
                                     try (java.sql.PreparedStatement ps =
-                                                 com.hanouti.hanoutiem4.util.DBConnection.getInstance()
+                                                 projet.hanouti.module4.util.DBConnection.getInstance()
                                                          .getConnection().prepareStatement(sql)) {
                                         ps.setInt(1, currentUserId);
                                         ps.executeUpdate();
@@ -468,7 +490,7 @@ public class HistoriqueController {
                     try {
                         String sql = "DELETE FROM paiements WHERE paiement_id = ?";
                         try (java.sql.PreparedStatement ps =
-                                     com.hanouti.hanoutiem4.util.DBConnection.getInstance()
+                                     projet.hanouti.module4.util.DBConnection.getInstance()
                                              .getConnection().prepareStatement(sql)) {
                             ps.setInt(1, p.getPaiementId());
                             ps.executeUpdate();
@@ -734,10 +756,10 @@ public class HistoriqueController {
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy 'à' HH:mm");
         String dateStr = p.getDatePaiement() != null ? sdf.format(p.getDatePaiement()) : "Date inconnue";
-        List<com.hanouti.hanoutiem4.model.Panier> itemsTmp;
+        List<projet.hanouti.module4.model.Panier> itemsTmp;
         try { itemsTmp = getItemsForPaiement(p); } catch (Exception ignored) { itemsTmp = new java.util.ArrayList<>(); }
-        final List<com.hanouti.hanoutiem4.model.Panier> items = itemsTmp;
-        int nbItems = items.stream().mapToInt(com.hanouti.hanoutiem4.model.Panier::getQuantite).sum();
+        final List<projet.hanouti.module4.model.Panier> items = itemsTmp;
+        int nbItems = items.stream().mapToInt(projet.hanouti.module4.model.Panier::getQuantite).sum();
 
         Label metaLbl = new Label(dateStr + (nbItems > 0 ? "  •  " + nbItems + " article" + (nbItems > 1 ? "s" : "") : ""));
         metaLbl.setStyle("-fx-font-size:11px;-fx-text-fill:#94a3b8;");
@@ -918,7 +940,7 @@ public class HistoriqueController {
     }
 
     private void buildExpandedDetails(VBox panel, Paiement p,
-                                      List<com.hanouti.hanoutiem4.model.Panier> items) {
+                                      List<projet.hanouti.module4.model.Panier> items) {
         panel.getChildren().clear();
         panel.setStyle("-fx-padding:12 0 0 0;-fx-border-color:" +
                 (isDarkMode ? "rgba(255,255,255,0.06)" : "#f1f0ff") +
@@ -931,7 +953,7 @@ public class HistoriqueController {
 
         // Products list
         if (!items.isEmpty()) {
-            for (com.hanouti.hanoutiem4.model.Panier item : items) {
+            for (projet.hanouti.module4.model.Panier item : items) {
                 HBox row = new HBox(10); row.setAlignment(Pos.CENTER_LEFT);
                 row.setStyle("-fx-padding:7 10;-fx-background-color:" + rowBg +
                         ";-fx-background-radius:8;-fx-margin:2 0;");
@@ -1250,10 +1272,10 @@ public class HistoriqueController {
 
     private void updateCartPill() {
         try {
-            com.hanouti.hanoutiem4.dao.PanierDAO panierDAO = new com.hanouti.hanoutiem4.dao.PanierDAO();
-            java.util.List<com.hanouti.hanoutiem4.model.Panier> panierItems =
+            projet.hanouti.module4.dao.PanierDAO panierDAO = new projet.hanouti.module4.dao.PanierDAO();
+            java.util.List<projet.hanouti.module4.model.Panier> panierItems =
                     panierDAO.getCartItems(currentUserId);
-            int count = panierItems.stream().mapToInt(com.hanouti.hanoutiem4.model.Panier::getQuantite).sum();
+            int count = panierItems.stream().mapToInt(projet.hanouti.module4.model.Panier::getQuantite).sum();
             double total = panierItems.stream()
                     .mapToDouble(i -> i.getPrixUnitaire() * i.getQuantite()).sum();
             if (cartAmountLabel != null) cartAmountLabel.setText(fmtDT2(total));
@@ -1273,7 +1295,7 @@ public class HistoriqueController {
     private void navigateTo(String fxmlFile, String title, int w, int h) {
         try {
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/com/hanouti/hanoutiem4/" + fxmlFile));
+                    getClass().getResource("/projet/hanouti/module4/" + fxmlFile));
             Scene scene = new Scene(loader.load(), w, h);
             Stage stage = (Stage) rootPane.getScene().getWindow();
             stage.setTitle(title); stage.setScene(scene);
@@ -1499,7 +1521,7 @@ public class HistoriqueController {
             if ("Carte".equals(nouvelleMethode) || "CIB".equals(nouvelleMethode) || "D17".equals(nouvelleMethode)) {
                 try {
                     FXMLLoader loader = new FXMLLoader(
-                            getClass().getResource("/com/hanouti/hanoutiem4/Paiement.fxml"));
+                            getClass().getResource("/projet/hanouti/module4/Paiement.fxml"));
                     Scene scene = new Scene(loader.load(), 1000, 850);
                     PaiementController ctrl = loader.getController();
                     ctrl.setMontantTotal(p.getMontant());
@@ -1551,7 +1573,7 @@ public class HistoriqueController {
                 + "font-size:11px;color:#94a3b8;border-top:1px solid #f0f0ff;background:#fafafe;}";
     }
 
-    private String buildInvoiceHtml(Paiement p, List<com.hanouti.hanoutiem4.model.Panier> items,
+    private String buildInvoiceHtml(Paiement p, List<projet.hanouti.module4.model.Panier> items,
                                     double total, String dateStr, String qrUrl) {
         String statusBg = "validé".equalsIgnoreCase(p.getStatut()) ? "#dcfce7" : "#fef9c3";
         String statusTxt= "validé".equalsIgnoreCase(p.getStatut()) ? "#16a34a" : "#d97706";
@@ -1559,7 +1581,7 @@ public class HistoriqueController {
         String meth      = p.getMethode() != null ? p.getMethode() : "—";
 
         StringBuilder prodRows = new StringBuilder();
-        for (com.hanouti.hanoutiem4.model.Panier item : items) {
+        for (projet.hanouti.module4.model.Panier item : items) {
             String emoji = emojiForProduct(item.getNomProduit());
             prodRows.append("<tr>")
                     .append("<td style=\"display:flex;align-items:center;gap:8px;padding:10px 18px;\">"
@@ -1666,7 +1688,7 @@ public class HistoriqueController {
 
     private void exportInvoiceHtml(Paiement p) {
         try {
-            List<com.hanouti.hanoutiem4.model.Panier> items = getItemsForPaiement(p);
+            List<projet.hanouti.module4.model.Panier> items = getItemsForPaiement(p);
             double total = p.getMontant();
             SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy 'à' HH:mm", java.util.Locale.FRANCE);
             String dateStr = p.getDatePaiement() != null ? sdf.format(p.getDatePaiement()) : "Date inconnue";
@@ -1709,7 +1731,7 @@ public class HistoriqueController {
     //  Works when phone and PC are on the same WiFi network.
     //  Server auto-stops after 5 minutes.
 
-    private void startQrServer(Paiement p, List<com.hanouti.hanoutiem4.model.Panier> items,
+    private void startQrServer(Paiement p, List<projet.hanouti.module4.model.Panier> items,
                                double total, String dateStr, String baseUrl) {
         // Stop any previously running server
         stopQrServer();
@@ -1864,7 +1886,7 @@ public class HistoriqueController {
         VBox productRows = new VBox(0);
         double totalTND = 0.0;
         try {
-            List<com.hanouti.hanoutiem4.model.Panier> items = getItemsForPaiement(p);
+            List<projet.hanouti.module4.model.Panier> items = getItemsForPaiement(p);
             if (items.isEmpty()) {
                 productRows.getChildren().add(buildProductRow(
                         "Commande #" + p.getCommandeId(), 1, p.getMontant(), p.getMontant(),
@@ -1872,7 +1894,7 @@ public class HistoriqueController {
                 totalTND = p.getMontant();
             } else {
                 for (int i = 0; i < items.size(); i++) {
-                    com.hanouti.hanoutiem4.model.Panier item = items.get(i);
+                    projet.hanouti.module4.model.Panier item = items.get(i);
                     boolean last = (i == items.size() - 1);
                     productRows.getChildren().add(buildProductRow(
                             item.getNomProduit(), item.getQuantite(),
@@ -2022,18 +2044,18 @@ public class HistoriqueController {
 
     // ── Preserved helper methods ──────────────────────────────────────────
 
-    private List<com.hanouti.hanoutiem4.model.Panier> getItemsForPaiement(Paiement p)
+    private List<projet.hanouti.module4.model.Panier> getItemsForPaiement(Paiement p)
             throws java.sql.SQLException {
-        List<com.hanouti.hanoutiem4.model.Panier> list = new java.util.ArrayList<>();
+        List<projet.hanouti.module4.model.Panier> list = new java.util.ArrayList<>();
         try {
             String sql = "SELECT * FROM lignes_commande WHERE reference_transaction = ?";
             try (java.sql.PreparedStatement ps =
-                         com.hanouti.hanoutiem4.util.DBConnection.getInstance()
+                         projet.hanouti.module4.util.DBConnection.getInstance()
                                  .getConnection().prepareStatement(sql)) {
                 ps.setString(1, p.getReferenceTransaction());
                 try (java.sql.ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
-                        com.hanouti.hanoutiem4.model.Panier item = new com.hanouti.hanoutiem4.model.Panier(
+                        projet.hanouti.module4.model.Panier item = new projet.hanouti.module4.model.Panier(
                                 0, rs.getInt("produit_id"),
                                 rs.getInt("quantite"), rs.getDouble("prix_unitaire"));
                         item.setNomProduit(rs.getString("nom_produit"));
@@ -2168,7 +2190,7 @@ public class HistoriqueController {
         new Thread(() -> {
             try {
                 // ── Collect stats from paiements ─────────────────────
-                java.sql.Connection conn = com.hanouti.hanoutiem4.util.DBConnection.getInstance().getConnection();
+                java.sql.Connection conn = projet.hanouti.module4.util.DBConnection.getInstance().getConnection();
 
                 // Total & count this month
                 String sqlMonth =
@@ -2241,7 +2263,7 @@ public class HistoriqueController {
                         methodePref, nbTotal, totalAll
                 );
 
-                String result = com.hanouti.hanoutiem4.util.ClaudeService.ask(systemPrompt, userMsg);
+                String result = projet.hanouti.module4.util.ClaudeService.ask(systemPrompt, userMsg);
 
                 final String finalResult = (result != null && !result.isBlank())
                         ? result

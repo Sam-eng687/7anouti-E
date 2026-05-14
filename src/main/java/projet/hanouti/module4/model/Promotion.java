@@ -1,4 +1,4 @@
-package com.hanouti.hanoutiem4.model;
+package projet.hanouti.module4.model;
 
 import java.time.LocalDateTime;
 

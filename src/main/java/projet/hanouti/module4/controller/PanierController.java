@@ -1,16 +1,17 @@
-package com.hanouti.hanoutiem4.controller;
+package projet.hanouti.module4.controller;
+import projet.hanouti.common.utils.SessionManager;
 
-import com.hanouti.hanoutiem4.UserSession;
-import com.hanouti.hanoutiem4.dao.CodePromoDAO;
-import com.hanouti.hanoutiem4.dao.PanierDAO;
-import com.hanouti.hanoutiem4.dao.ProduitDAO;
-import com.hanouti.hanoutiem4.dao.PromotionDAO;
-import com.hanouti.hanoutiem4.model.Panier;
-import com.hanouti.hanoutiem4.model.Produit;
-import com.hanouti.hanoutiem4.model.Promotion;
+import projet.hanouti.module4.UserSession;
+import projet.hanouti.module4.dao.CodePromoDAO;
+import projet.hanouti.module4.dao.PanierDAO;
+import projet.hanouti.module4.dao.ProduitDAO;
+import projet.hanouti.module4.dao.PromotionDAO;
+import projet.hanouti.module4.model.Panier;
+import projet.hanouti.module4.model.Produit;
+import projet.hanouti.module4.model.Promotion;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import com.hanouti.hanoutiem4.util.DrawerHelper;
+import projet.hanouti.module4.util.DrawerHelper;
 import javafx.animation.*;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -97,7 +98,10 @@ public class PanierController {
     @FXML
     public void initialize() {
         currentUserId = UserSession.getInstance().getUserId();
-        isDarkMode    = UserSession.getInstance().isDarkMode();
+        isDarkMode    = SessionManager.getInstance().isDarkMode();
+        // INTEGRATION FIX: hide our topbar — team interface has its own
+        if (headerBar != null) { headerBar.setVisible(false); headerBar.setManaged(false); }
+        if (menuBtn   != null) { menuBtn.setVisible(false);   menuBtn.setManaged(false); }
         // aiPanel starts collapsed — no forced prefHeight, it auto-sizes to its header
 
         try { panierDAO    = new PanierDAO();    } catch (Exception e) { showAlert("Erreur", "DB panier."); }
@@ -113,7 +117,7 @@ public class PanierController {
         if (menuBtn != null) {
             drawerHelper = new DrawerHelper(rootPane, isDarkMode, "panier");
             drawerHelper.setThemeChangeCallback(() -> {
-                isDarkMode = UserSession.getInstance().isDarkMode();
+                isDarkMode = SessionManager.getInstance().isDarkMode();
                 applyDarkClass();
             });
             menuBtn.setOnAction(e -> { bounceNode(menuBtn); drawerHelper.toggle(); });
@@ -153,6 +157,25 @@ public class PanierController {
         }
 
         javafx.application.Platform.runLater(() -> {
+            // Sync dark mode with parent dashboard (Mootez sets .dark on scene root)
+            if (rootPane.getScene() != null && rootPane.getScene().getRoot().getStyleClass().contains("dark")) {
+                isDarkMode = true; SessionManager.getInstance().setDarkMode(true);
+            } else {
+                isDarkMode = false; SessionManager.getInstance().setDarkMode(false);
+            }
+            applyDarkClass();
+            // Live theme listener
+            try {
+                javafx.scene.Parent sceneRoot = rootPane.getScene().getRoot();
+                sceneRoot.getStyleClass().addListener((javafx.collections.ListChangeListener<String>) c -> {
+                    boolean nowDark = sceneRoot.getStyleClass().contains("dark");
+                    if (nowDark != isDarkMode) {
+                        isDarkMode = nowDark;
+                        SessionManager.getInstance().setDarkMode(isDarkMode);
+                        javafx.application.Platform.runLater(() -> { applyDarkClass(); loadData(); });
+                    }
+                });
+            } catch (Exception ignored) {}
             buildTopbarIcons();
             buildCartSectionIcon();
             buildSummaryIcon();
@@ -789,17 +812,22 @@ public class PanierController {
         if (panierList.isEmpty()) { showAlert("Panier vide", "Ajoutez des articles avant de payer."); return; }
         try {
             double total = panierList.stream().mapToDouble(Panier::getSousTotal).sum() + livraisonFee - discountAmt;
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/hanouti/hanoutiem4/Paiement.fxml"));
-            Parent root = loader.load(); PaiementController ctrl = loader.getController();
-            ctrl.setMontantTotal(Math.max(0, total)); ctrl.setUserEmail(UserSession.getInstance().getUserEmail());
-            Stage stage = (Stage) cartItemsContainer.getScene().getWindow();
-            stage.setTitle("7anouti-E — Paiement"); stage.setScene(new Scene(root, 1000, 850)); stage.setMaximized(false);
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/projet/hanouti/module4/Paiement.fxml"));
+            Parent root = loader.load();
+            PaiementController ctrl = loader.getController();
+            ctrl.setMontantTotal(Math.max(0, total));
+            ctrl.setUserEmail(UserSession.getInstance().getUserEmail());
+            // INTEGRATION FIX: open in new window, don't replace team interface
+            Stage stage = new Stage();
+            stage.setTitle("7anouti-E — Paiement");
+            stage.setScene(new Scene(root, 1000, 850));
+            stage.show();
         } catch (IOException e) { showAlert("Erreur", e.getMessage()); }
     }
 
     private void navigate(String fxml, String title, int w, int h) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/hanouti/hanoutiem4/" + fxml));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/projet/hanouti/module4/" + fxml));
             Parent root = loader.load(); Stage stage = (Stage) cartItemsContainer.getScene().getWindow();
             stage.setTitle(title); stage.setScene(new Scene(root, w, h));
         } catch (IOException e) { showAlert("Erreur navigation", e.getMessage()); }
@@ -1005,7 +1033,7 @@ public class PanierController {
         // ── 2. Code promo qui expire dans moins de 3 jours ───────────
         try {
             if (codePromoDAO != null) {
-                java.sql.Connection conn = com.hanouti.hanoutiem4.util.DBConnection.getInstance().getConnection();
+                java.sql.Connection conn = projet.hanouti.module4.util.DBConnection.getInstance().getConnection();
                 String sql = "SELECT code, date_fin FROM codes_promo WHERE actif = 1 " +
                         "AND date_fin IS NOT NULL AND date_fin > NOW() " +
                         "AND date_fin <= DATE_ADD(NOW(), INTERVAL 3 DAY) LIMIT 1";
@@ -1031,7 +1059,7 @@ public class PanierController {
 
         // ── 4. Rappel dernier paiement ────────────────────────────────
         try {
-            java.sql.Connection conn = com.hanouti.hanoutiem4.util.DBConnection.getInstance().getConnection();
+            java.sql.Connection conn = projet.hanouti.module4.util.DBConnection.getInstance().getConnection();
             String sql = "SELECT montant, methode, date_paiement FROM paiements " +
                     "WHERE user_id = ? AND statut = 'validé' " +
                     "ORDER BY date_paiement DESC LIMIT 1";

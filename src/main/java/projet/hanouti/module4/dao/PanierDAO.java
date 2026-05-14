@@ -1,6 +1,6 @@
-package com.hanouti.hanoutiem4.dao;
-import com.hanouti.hanoutiem4.model.Panier;
-import com.hanouti.hanoutiem4.util.DBConnection;
+package projet.hanouti.module4.dao;
+import projet.hanouti.module4.model.Panier;
+import projet.hanouti.module4.util.DBConnection;
 
 import java.sql.*;
 import java.util.ArrayList;

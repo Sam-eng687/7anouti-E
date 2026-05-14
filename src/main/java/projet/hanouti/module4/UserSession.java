@@ -1,4 +1,4 @@
-package com.hanouti.hanoutiem4;
+package projet.hanouti.module4;
 
 /**
  * Singleton that holds shared app state across all screens.

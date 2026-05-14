@@ -1,7 +1,7 @@
-package com.hanouti.hanoutiem4.dao;
+package projet.hanouti.module4.dao;
 
-import com.hanouti.hanoutiem4.model.Produit;
-import com.hanouti.hanoutiem4.util.DBConnection;
+import projet.hanouti.module4.model.Produit;
+import projet.hanouti.module4.util.DBConnection;
 
 import java.sql.*;
 import java.util.ArrayList;

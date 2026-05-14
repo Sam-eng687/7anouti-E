@@ -1,4 +1,4 @@
-package com.hanouti.hanoutiem4.interfaces;
+package projet.hanouti.module4.interfaces;
 
 import java.util.List;
 

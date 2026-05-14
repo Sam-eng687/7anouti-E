@@ -1,7 +1,7 @@
-package com.hanouti.hanoutiem4.util;
+package projet.hanouti.module4.util;
 
-import com.hanouti.hanoutiem4.UserSession;
-import com.hanouti.hanoutiem4.dao.PanierDAO;
+import projet.hanouti.module4.UserSession;
+import projet.hanouti.module4.dao.PanierDAO;
 import javafx.animation.*;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -380,7 +380,7 @@ public class DrawerHelper {
 
     private void navigate(String fxml, String title) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/hanouti/hanoutiem4/" + fxml));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/projet/hanouti/module4/" + fxml));
             Scene scene = new Scene(loader.load(), 1250, 700);
             Stage stage = (Stage) rootPane.getScene().getWindow();
             stage.setTitle(title);

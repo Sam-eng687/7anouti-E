@@ -1,12 +1,13 @@
-package com.hanouti.hanoutiem4.controller;
+package projet.hanouti.module4.controller;
+import projet.hanouti.common.utils.SessionManager;
 
-import com.hanouti.hanoutiem4.UserSession;
-import com.hanouti.hanoutiem4.dao.PanierDAO;
-import com.hanouti.hanoutiem4.dao.PromotionDAO;
-import com.hanouti.hanoutiem4.dao.WishlistDAO;
-import com.hanouti.hanoutiem4.model.Panier;
-import com.hanouti.hanoutiem4.model.Promotion;
-import com.hanouti.hanoutiem4.model.Wishlist;
+import projet.hanouti.module4.UserSession;
+import projet.hanouti.module4.dao.PanierDAO;
+import projet.hanouti.module4.dao.PromotionDAO;
+import projet.hanouti.module4.dao.WishlistDAO;
+import projet.hanouti.module4.model.Panier;
+import projet.hanouti.module4.model.Promotion;
+import projet.hanouti.module4.model.Wishlist;
 import javafx.animation.*;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -52,7 +53,7 @@ public class WishlistController {
     private PanierDAO    panierDAO;
     private List<Wishlist> wishlistItems;
     private int currentUserId;
-    private com.hanouti.hanoutiem4.util.DrawerHelper drawerHelper;
+    private projet.hanouti.module4.util.DrawerHelper drawerHelper;
 
     // ── Avatar color gradients — cycles by product ID ─────────────────
     private static final String[] AVATAR_GRADIENTS = {
@@ -126,6 +127,11 @@ public class WishlistController {
 
     @FXML
     public void initialize() {
+        // INTEGRATION FIX: hide topbar and drawer
+        try {
+            javafx.scene.Node tb = rootPane != null ? rootPane.lookup(".topbar") : null;
+            if (tb != null) { tb.setVisible(false); ((javafx.scene.layout.Region)tb).setManaged(false); }
+        } catch (Exception ignored) {}
         currentUserId = UserSession.getInstance().getUserId();
 
         try {
@@ -136,7 +142,7 @@ public class WishlistController {
             showAlert("Erreur DB", "Impossible de se connecter à la base de données.");
         }
 
-        isDarkMode = UserSession.getInstance().isDarkMode();
+        isDarkMode = SessionManager.getInstance().isDarkMode();
         applyDarkMode();
         styleBrandTrigger();
 
@@ -146,12 +152,31 @@ public class WishlistController {
         }
 
         javafx.application.Platform.runLater(() -> {
+            // Sync dark mode with parent dashboard (Mootez sets .dark on scene root)
+            if (rootPane.getScene() != null && rootPane.getScene().getRoot().getStyleClass().contains("dark")) {
+                isDarkMode = true; SessionManager.getInstance().setDarkMode(true);
+            } else {
+                isDarkMode = false; SessionManager.getInstance().setDarkMode(false);
+            }
+            applyDarkMode();
+            // Live theme listener
+            try {
+                javafx.scene.Parent sceneRoot = rootPane.getScene().getRoot();
+                sceneRoot.getStyleClass().addListener((javafx.collections.ListChangeListener<String>) c -> {
+                    boolean nowDark = sceneRoot.getStyleClass().contains("dark");
+                    if (nowDark != isDarkMode) {
+                        isDarkMode = nowDark;
+                        SessionManager.getInstance().setDarkMode(isDarkMode);
+                        javafx.application.Platform.runLater(() -> { applyDarkMode(); loadData(); });
+                    }
+                });
+            } catch (Exception ignored) {}
             loadData();
             refreshCartBadge();
             playEntrance(headerBar);
-            drawerHelper = new com.hanouti.hanoutiem4.util.DrawerHelper(rootPane, isDarkMode, "wishlist");
+            drawerHelper = new projet.hanouti.module4.util.DrawerHelper(rootPane, isDarkMode, "wishlist");
             drawerHelper.setThemeChangeCallback(() -> {
-                isDarkMode = UserSession.getInstance().isDarkMode();
+                isDarkMode = SessionManager.getInstance().isDarkMode();
                 applyDarkMode();
             });
         });
@@ -681,7 +706,7 @@ public class WishlistController {
         try {
             if (backBtn != null) bounceNode(backBtn);
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/com/hanouti/hanoutiem4/Panier.fxml"));
+                    getClass().getResource("/projet/hanouti/module4/Panier.fxml"));
             Parent root = loader.load();
             Stage stage = (Stage) wishlistContainer.getScene().getWindow();
             stage.setTitle("7anouti-E \u2014 Mon Panier");
@@ -695,7 +720,7 @@ public class WishlistController {
     private void handleOpenHistorique() {
         try {
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/com/hanouti/hanoutiem4/HistoriquePaiement.fxml"));
+                    getClass().getResource("/projet/hanouti/module4/HistoriquePaiement.fxml"));
             Parent root = loader.load();
             Stage stage = (Stage) wishlistContainer.getScene().getWindow();
             stage.setTitle("7anouti-E \u2014 Historique");
@@ -706,9 +731,9 @@ public class WishlistController {
     // ── Helpers ────────────────────────────────────────────────────────
     private void refreshCartBadge() {
         try {
-            java.util.List<com.hanouti.hanoutiem4.model.Panier> cartItems =
+            java.util.List<projet.hanouti.module4.model.Panier> cartItems =
                     panierDAO.getCartItems(currentUserId);
-            int total = cartItems.stream().mapToInt(com.hanouti.hanoutiem4.model.Panier::getQuantite).sum();
+            int total = cartItems.stream().mapToInt(projet.hanouti.module4.model.Panier::getQuantite).sum();
             double cartTotal = cartItems.stream()
                     .mapToDouble(p -> p.getPrixUnitaire() * p.getQuantite()).sum();
             // label stays as "Panier" (static) — only count badge updates

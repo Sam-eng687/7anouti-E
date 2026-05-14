@@ -1,11 +1,12 @@
-package com.hanouti.hanoutiem4.controller;
+package projet.hanouti.module4.controller;
+import projet.hanouti.common.utils.SessionManager;
 
-import com.hanouti.hanoutiem4.UserSession;
-import com.hanouti.hanoutiem4.dao.PaiementDAO;
-import com.hanouti.hanoutiem4.model.Paiement;
-import com.hanouti.hanoutiem4.service.EmailService;
-import com.hanouti.hanoutiem4.service.StripeService;
-import com.hanouti.hanoutiem4.dao.CodePromoDAO;
+import projet.hanouti.module4.UserSession;
+import projet.hanouti.module4.dao.PaiementDAO;
+import projet.hanouti.module4.model.Paiement;
+import projet.hanouti.module4.service.EmailService;
+import projet.hanouti.module4.service.StripeService;
+import projet.hanouti.module4.dao.CodePromoDAO;
 import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -122,7 +123,9 @@ public class PaiementController {
     @FXML
     public void initialize() {
         currentUserId = UserSession.getInstance().getUserId();
-        isDarkMode = UserSession.getInstance().isDarkMode();
+        isDarkMode = SessionManager.getInstance().isDarkMode();
+        // INTEGRATION FIX: hide drawer button
+        if (menuBtn != null) { menuBtn.setVisible(false); menuBtn.setManaged(false); }
         applyDarkMode();
         btnCarte.setMinWidth(110); btnCIB.setMinWidth(110);
         btnD17.setMinWidth(110);   btnEspeces.setMinWidth(110);
@@ -167,7 +170,7 @@ public class PaiementController {
         labelMontant.setText(String.format("%.2f TND", montant));
     }    public void setUserEmail(String email)      { this.userEmail = email; }
     public void setCodePromo(CodePromoDAO.ResultatCode code) { this.codePromoApplique = code; }
-    @FXML public void handleThemeToggle() { isDarkMode = !isDarkMode; UserSession.getInstance().setDarkMode(isDarkMode); applyDarkMode(); }
+    @FXML public void handleThemeToggle() { isDarkMode = !isDarkMode; SessionManager.getInstance().setDarkMode(isDarkMode); applyDarkMode(); }
 
     private void resetButtons() { btnCarte.setStyle(INACTIVE_STYLE); btnCIB.setStyle(INACTIVE_STYLE); btnD17.setStyle(INACTIVE_STYLE); btnEspeces.setStyle(INACTIVE_STYLE); }
     private void hideAllForms() {
@@ -287,11 +290,11 @@ public class PaiementController {
             paiement.setReferenceTransaction(reference);
             dao.addPaiementForUser(paiement, currentUserId);
             // ✅ Sauvegarder les articles dans lignes_commande
-            com.hanouti.hanoutiem4.dao.PanierDAO panierDAO2 = new com.hanouti.hanoutiem4.dao.PanierDAO();
-            java.util.List<com.hanouti.hanoutiem4.model.Panier> items = panierDAO2.getCartItems(currentUserId);
-            java.sql.Connection conn = com.hanouti.hanoutiem4.util.DBConnection.getInstance().getConnection();
+            projet.hanouti.module4.dao.PanierDAO panierDAO2 = new projet.hanouti.module4.dao.PanierDAO();
+            java.util.List<projet.hanouti.module4.model.Panier> items = panierDAO2.getCartItems(currentUserId);
+            java.sql.Connection conn = projet.hanouti.module4.util.DBConnection.getInstance().getConnection();
             String sql = "INSERT INTO lignes_commande (reference_transaction, produit_id, nom_produit, quantite, prix_unitaire) VALUES (?, ?, ?, ?, ?)";
-            for (com.hanouti.hanoutiem4.model.Panier item : items) {
+            for (projet.hanouti.module4.model.Panier item : items) {
                 try (java.sql.PreparedStatement ps = conn.prepareStatement(sql)) {
                     ps.setString(1, reference);
                     ps.setInt(2, item.getProduitId());
@@ -307,7 +310,7 @@ public class PaiementController {
                 codeDAO.incrementerUtilisation(codePromoApplique.codeId);
             }
 
-            com.hanouti.hanoutiem4.dao.PanierDAO panierDAO = new com.hanouti.hanoutiem4.dao.PanierDAO();
+            projet.hanouti.module4.dao.PanierDAO panierDAO = new projet.hanouti.module4.dao.PanierDAO();
             panierDAO.clearCart(currentUserId);
             EmailService.sendPaymentConfirmation(
                     userEmail, nomClient, reference, selectedMethod, montantApresReduction
@@ -385,7 +388,7 @@ public class PaiementController {
 
     private void navigateTo(String fxmlFile, String title) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/hanouti/hanoutiem4/" + fxmlFile));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/projet/hanouti/module4/" + fxmlFile));
             Scene scene = new Scene(loader.load(), 1000, 850);
             Stage stage = (Stage) btnCarte.getScene().getWindow();
             stage.setTitle(title); stage.setScene(scene); stage.setMaximized(false);
