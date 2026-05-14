@@ -1,0 +1,8 @@
+# Copie ce fichier vers :
+#   Windows : %USERPROFILE%\.hanouti\gemini.properties
+#   puis renomme en gemini.properties et mets ta vraie cle.
+#
+# Ne commite JAMAIS gemini.properties avec une vraie cle.
+
+apiKey=PASTE_YOUR_GOOGLE_AI_STUDIO_KEY_HERE
+model=gemini-2.5-flash

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="root"
+      xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="projet.hanouti.AImarketing.controllers.CampaignsMarketingController"
+      styleClass="marketing-root"
+      stylesheets="@../../styles/AImarketing/marketing.css">
+    <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="am-scroll" VBox.vgrow="ALWAYS">
+        <VBox spacing="24" styleClass="am-page">
+            <HBox alignment="CENTER_LEFT">
+                <VBox spacing="10">
+                    <HBox alignment="CENTER_LEFT" spacing="8">
+                        <Label text="." styleClass="am-dot"/>
+                        <Label text="IA Active" styleClass="am-pill"/>
+                    </HBox>
+                    <Label text="Campagnes Marketing" styleClass="am-title"/>
+                    <Label text="Gerez vos actions. L'IA analyse les resultats automatiquement" styleClass="am-subtitle"/>
+                </VBox>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button fx:id="emailVendorBtn" text="Email Vendeur" styleClass="am-blue-btn"/>
+                <Button fx:id="addCampaignBtn" text="+ Ajouter Campagne" styleClass="am-purple-btn"/>
+            </HBox>
+
+            <HBox fx:id="kpiRow" spacing="16"/>
+
+            <VBox spacing="12">
+                <Label text="Conseils IA Automatiques" styleClass="am-blue-text"/>
+                <HBox fx:id="adviceRow" spacing="12"/>
+            </VBox>
+
+            <VBox spacing="12">
+                <Label text="Vos Campagnes Actives" styleClass="am-blue-text"/>
+                <VBox fx:id="campaignList" spacing="14"/>
+            </VBox>
+            <padding><Insets bottom="24"/></padding>
+        </VBox>
+    </ScrollPane>
+</VBox>

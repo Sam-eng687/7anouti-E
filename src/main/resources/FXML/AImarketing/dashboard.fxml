@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="root"
+      xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="projet.hanouti.AImarketing.controllers.MarketingDashboardController"
+      styleClass="marketing-root"
+      stylesheets="@../../styles/AImarketing/marketing.css">
+    <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="am-scroll" VBox.vgrow="ALWAYS">
+        <VBox spacing="26" styleClass="am-page">
+            <VBox spacing="10" styleClass="am-hero">
+                <HBox alignment="CENTER_LEFT" spacing="8">
+                    <Label text="." styleClass="am-dot"/>
+                    <Label text="Temps Reel" styleClass="am-pill"/>
+                </HBox>
+                <Label text="Dashboard" styleClass="am-title"/>
+                <Label text="Performances produits - Mai 2026 - Donnees directes depuis la base" styleClass="am-subtitle"/>
+            </VBox>
+
+            <HBox fx:id="kpiRow" spacing="16"/>
+
+            <HBox styleClass="am-insight" alignment="CENTER_LEFT" spacing="12">
+                <Label text="." styleClass="am-insight-dot"/>
+                <Label fx:id="insightLabel" text="Chargement des donnees..." styleClass="am-insight-text"/>
+            </HBox>
+
+            <HBox spacing="18">
+                <VBox styleClass="am-panel" spacing="14" HBox.hgrow="ALWAYS">
+                    <Label text="Horaires de Priere" styleClass="am-section-title"/>
+                    <Label text="1445 - Ramadan" styleClass="am-green-text"/>
+                    <VBox spacing="10">
+                        <HBox alignment="CENTER_LEFT"><Label text="Fajr" styleClass="am-row-label"/><Region HBox.hgrow="ALWAYS"/><Label text="04:15" styleClass="am-muted"/></HBox>
+                        <HBox alignment="CENTER_LEFT"><Label text="Dhuhr" styleClass="am-row-label"/><Region HBox.hgrow="ALWAYS"/><Label text="12:20" styleClass="am-muted"/></HBox>
+                        <HBox alignment="CENTER_LEFT"><Label text="Asr" styleClass="am-row-label"/><Region HBox.hgrow="ALWAYS"/><Label text="16:05" styleClass="am-muted"/></HBox>
+                        <HBox alignment="CENTER_LEFT" styleClass="am-highlight-row"><Label text="Maghrib" styleClass="am-highlight-label"/><Region HBox.hgrow="ALWAYS"/><Label text="19:25" styleClass="am-green-text"/></HBox>
+                        <HBox alignment="CENTER_LEFT"><Label text="Isha" styleClass="am-row-label"/><Region HBox.hgrow="ALWAYS"/><Label text="21:00" styleClass="am-muted"/></HBox>
+                    </VBox>
+                </VBox>
+
+                <VBox styleClass="am-panel" spacing="14" HBox.hgrow="ALWAYS">
+                    <Label text="Meteo Tunis" styleClass="am-section-title-blue"/>
+                    <HBox alignment="CENTER_LEFT" spacing="14">
+                        <Label text="20,1 C" styleClass="am-weather-value"/>
+                        <VBox>
+                            <Label text="Peu nuageux" styleClass="am-blue-text"/>
+                            <Label text="ressenti 19 C" styleClass="am-muted"/>
+                        </VBox>
+                    </HBox>
+                    <HBox spacing="10">
+                        <VBox styleClass="am-metric-box" HBox.hgrow="ALWAYS"><Label text="Humidite" styleClass="am-muted"/><Label text="62%" styleClass="am-metric-value"/></VBox>
+                        <VBox styleClass="am-metric-box" HBox.hgrow="ALWAYS"><Label text="Vent" styleClass="am-muted"/><Label text="14,3 km/h" styleClass="am-metric-value"/></VBox>
+                    </HBox>
+                    <HBox spacing="10">
+                        <VBox styleClass="am-metric-box" HBox.hgrow="ALWAYS"><Label text="Lever" styleClass="am-muted"/><Label text="05:13" styleClass="am-metric-value"/></VBox>
+                        <VBox styleClass="am-metric-box" HBox.hgrow="ALWAYS"><Label text="Coucher" styleClass="am-muted"/><Label text="19:18" styleClass="am-metric-value"/></VBox>
+                    </HBox>
+                </VBox>
+            </HBox>
+
+            <HBox spacing="18">
+                <VBox styleClass="am-panel" spacing="8" HBox.hgrow="ALWAYS">
+                    <Label text="Resume IA" styleClass="am-section-title"/>
+                    <Label fx:id="topProductLabel" styleClass="am-card-text" text="Produit phare : N/A"/>
+                    <Label fx:id="totalRevenueLabel" styleClass="am-card-text" text="Revenu total : N/A"/>
+                    <Label fx:id="returnRateLabel" styleClass="am-card-text" text="Taux retour moyen : N/A"/>
+                </VBox>
+            </HBox>
+            <padding><Insets bottom="24"/></padding>
+        </VBox>
+    </ScrollPane>
+</VBox>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="root"
+      xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="projet.hanouti.AImarketing.controllers.ConseilDecisionController"
+      styleClass="marketing-root"
+      stylesheets="@../../styles/AImarketing/marketing.css">
+    <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="am-scroll" VBox.vgrow="ALWAYS">
+        <VBox spacing="26" styleClass="am-page">
+            <HBox alignment="CENTER_LEFT">
+                <VBox spacing="8">
+                    <Label text="Centre de Decision" styleClass="am-title am-title-bar"/>
+                    <Label text="Opportunites detectees - Historique d'interaction" styleClass="am-subtitle"/>
+                </VBox>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="Historique" styleClass="am-ghost-btn"/>
+            </HBox>
+
+            <HBox fx:id="kpiRow" spacing="16"/>
+
+            <HBox spacing="8">
+                <Button fx:id="activeBtn" text="Actifs" styleClass="am-filter-btn selected"/>
+                <Button fx:id="appliedBtn" text="Appliques" styleClass="am-filter-btn"/>
+                <Button fx:id="ignoredBtn" text="Ignores" styleClass="am-filter-btn"/>
+            </HBox>
+
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <Label text="TYPE :" styleClass="am-filter-label"/>
+                <Button fx:id="allTypeBtn" text="Tous" styleClass="am-filter-pill selected"/>
+                <Button fx:id="promotionTypeBtn" text="Promotion" styleClass="am-filter-pill"/>
+                <Button fx:id="destockTypeBtn" text="Destockage" styleClass="am-filter-pill"/>
+                <Button fx:id="bundleTypeBtn" text="Bundle" styleClass="am-filter-pill"/>
+            </HBox>
+
+            <FlowPane fx:id="adviceGrid" hgap="18" vgap="18"/>
+            <padding><Insets bottom="24"/></padding>
+        </VBox>
+    </ScrollPane>
+</VBox>

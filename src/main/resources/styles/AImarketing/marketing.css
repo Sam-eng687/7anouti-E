@@ -1,0 +1,439 @@
+.marketing-root {
+    -am-bg: #080b18;
+    -am-panel: #121625;
+    -am-panel-soft: #0d1424;
+    -am-border: rgba(148, 163, 184, 0.16);
+    -am-text: #f8fafc;
+    -am-muted: #8ba0bc;
+    -am-blue: #38bdf8;
+    -am-green: #10b981;
+    -am-orange: #f97316;
+    -am-violet: #8b5cf6;
+    -am-pink: #f472b6;
+    -fx-background-color: -am-bg;
+    -fx-font-family: "Segoe UI", "Inter", "System";
+}
+
+.marketing-root.light {
+    -am-bg: #eef3f9;
+    -am-panel: #ffffff;
+    -am-panel-soft: #eef6ff;
+    -am-border: rgba(15, 23, 42, 0.10);
+    -am-text: #071224;
+    -am-muted: #52627a;
+    -fx-background-color: -am-bg;
+}
+
+.am-scroll,
+.am-scroll > .viewport {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+}
+
+.am-scroll .scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-pref-width: 8;
+}
+
+.am-scroll .scroll-bar:vertical .thumb {
+    -fx-background-color: rgba(99, 102, 241, 0.35);
+    -fx-background-radius: 4;
+}
+
+.am-page {
+    -fx-background-color: -am-bg;
+    -fx-padding: 28 30 0 30;
+}
+
+.am-hero {
+    -fx-background-color: -am-panel;
+    -fx-border-color: transparent transparent -am-border transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 26 28;
+}
+
+.am-title {
+    -fx-text-fill: -am-text;
+    -fx-font-size: 28px;
+    -fx-font-weight: 900;
+}
+
+.am-title-bar {
+    -fx-border-color: transparent transparent transparent -am-violet;
+    -fx-border-width: 0 0 0 4;
+    -fx-padding: 0 0 0 12;
+    -fx-effect: dropshadow(gaussian, rgba(139, 92, 246, 0.35), 12, 0.2, 0, 0);
+}
+
+.am-subtitle {
+    -fx-text-fill: -am-muted;
+    -fx-font-size: 13px;
+}
+
+.am-dot {
+    -fx-text-fill: #a78bfa;
+    -fx-font-size: 26px;
+    -fx-font-weight: 900;
+}
+
+.am-pill,
+.am-chip,
+.am-mini-chip,
+.am-mini-chip-blue {
+    -fx-background-radius: 999;
+    -fx-font-size: 11px;
+    -fx-font-weight: 800;
+    -fx-padding: 5 12;
+}
+
+.am-pill {
+    -fx-background-color: rgba(139, 92, 246, 0.22);
+    -fx-text-fill: #a78bfa;
+}
+
+.am-chip {
+    -fx-background-color: rgba(139, 92, 246, 0.16);
+    -fx-border-color: rgba(139, 92, 246, 0.45);
+    -fx-border-radius: 999;
+    -fx-text-fill: #a78bfa;
+}
+
+.am-mini-chip {
+    -fx-background-color: rgba(245, 158, 11, 0.17);
+    -fx-text-fill: #fbbf24;
+}
+
+.am-mini-chip-blue {
+    -fx-background-color: rgba(56, 189, 248, 0.16);
+    -fx-text-fill: -am-blue;
+}
+
+.am-kpi {
+    -fx-background-color: -am-panel;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-border-width: 1.5 1 1 1;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.22), 18, 0.12, 0, 7);
+    -fx-min-height: 126;
+}
+
+.marketing-root.light .am-kpi {
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.09), 14, 0.12, 0, 5);
+}
+
+.am-kpi-blue {
+    -fx-border-color: -am-blue -am-border -am-border -am-border;
+}
+
+.am-kpi-green {
+    -fx-border-color: -am-green -am-border -am-border -am-border;
+}
+
+.am-kpi-orange {
+    -fx-border-color: -am-orange -am-border -am-border -am-border;
+}
+
+.am-kpi-violet {
+    -fx-border-color: -am-violet -am-border -am-border -am-border;
+}
+
+.am-kpi-pink {
+    -fx-border-color: -am-pink -am-border -am-border -am-border;
+}
+
+.am-kpi-label {
+    -fx-text-fill: -am-muted;
+    -fx-font-size: 11px;
+    -fx-font-weight: 900;
+}
+
+.am-kpi-value {
+    -fx-font-size: 32px;
+    -fx-font-weight: 900;
+}
+
+.am-kpi-blue .am-kpi-value,
+.am-blue-text,
+.am-section-title-blue {
+    -fx-text-fill: -am-blue;
+}
+
+.am-kpi-green .am-kpi-value,
+.am-green-text {
+    -fx-text-fill: -am-green;
+}
+
+.am-kpi-orange .am-kpi-value {
+    -fx-text-fill: -am-orange;
+}
+
+.am-kpi-violet .am-kpi-value {
+    -fx-text-fill: -am-violet;
+}
+
+.am-kpi-pink .am-kpi-value {
+    -fx-text-fill: -am-pink;
+}
+
+.am-muted {
+    -fx-text-fill: -am-muted;
+    -fx-font-size: 12px;
+}
+
+.am-insight {
+    -fx-background-color: rgba(56, 189, 248, 0.08);
+    -fx-border-color: rgba(56, 189, 248, 0.26);
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+    -fx-padding: 14 18;
+}
+
+.am-insight-dot {
+    -fx-text-fill: -am-blue;
+    -fx-font-size: 28px;
+    -fx-font-weight: 900;
+}
+
+.am-insight-text {
+    -fx-text-fill: -am-text;
+    -fx-font-size: 13px;
+}
+
+.am-panel,
+.am-campaign-card {
+    -fx-background-color: -am-panel;
+    -fx-background-radius: 14;
+    -fx-border-color: -am-border;
+    -fx-border-radius: 14;
+    -fx-border-width: 1;
+}
+
+.am-panel {
+    -fx-padding: 22;
+}
+
+.am-section-title,
+.am-section-title-blue {
+    -fx-font-size: 13px;
+    -fx-font-weight: 900;
+}
+
+.am-section-title {
+    -fx-text-fill: -am-green;
+}
+
+.am-row-label {
+    -fx-text-fill: -am-text;
+    -fx-font-size: 13px;
+}
+
+.am-highlight-row {
+    -fx-background-color: rgba(16, 185, 129, 0.16);
+    -fx-border-color: transparent transparent transparent -am-green;
+    -fx-border-width: 0 0 0 3;
+    -fx-padding: 8 10;
+    -fx-background-radius: 7;
+}
+
+.am-highlight-label {
+    -fx-text-fill: -am-text;
+    -fx-font-size: 13px;
+    -fx-font-weight: 900;
+}
+
+.am-weather-value {
+    -fx-text-fill: -am-text;
+    -fx-font-size: 30px;
+    -fx-font-weight: 900;
+}
+
+.am-metric-box {
+    -fx-background-color: -am-panel-soft;
+    -fx-border-color: -am-border;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-padding: 10;
+}
+
+.am-metric-value {
+    -fx-text-fill: -am-text;
+    -fx-font-size: 15px;
+    -fx-font-weight: 900;
+}
+
+.am-filter-btn,
+.am-filter-pill,
+.am-ghost-btn,
+.am-primary-btn,
+.am-soft-danger-btn,
+.am-soft-info-btn,
+.am-blue-btn,
+.am-purple-btn {
+    -fx-background-insets: 0;
+    -fx-cursor: hand;
+    -fx-font-size: 12px;
+    -fx-font-weight: 800;
+}
+
+.am-filter-btn {
+    -fx-background-color: -am-panel;
+    -fx-border-color: -am-border;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-text-fill: -am-muted;
+    -fx-padding: 10 24;
+}
+
+.am-filter-btn.selected,
+.am-filter-pill.selected {
+    -fx-background-color: rgba(56, 189, 248, 0.13);
+    -fx-border-color: -am-blue;
+    -fx-text-fill: -am-blue;
+}
+
+.am-filter-label {
+    -fx-text-fill: -am-muted;
+    -fx-font-size: 11px;
+    -fx-font-weight: 900;
+}
+
+.am-filter-pill {
+    -fx-background-color: transparent;
+    -fx-border-color: -am-border;
+    -fx-border-radius: 999;
+    -fx-background-radius: 999;
+    -fx-text-fill: -am-muted;
+    -fx-padding: 8 17;
+}
+
+.am-advice-card,
+.am-advice-strip {
+    -fx-background-color: -am-panel;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-width: 1.5;
+}
+
+.am-advice-card {
+    -fx-effect: dropshadow(gaussian, rgba(56, 189, 248, 0.35), 10, 0.18, 0, 3);
+    -fx-min-height: 178;
+}
+
+.type-promo {
+    -fx-border-color: -am-blue;
+}
+
+.type-bundle {
+    -fx-border-color: -am-violet;
+}
+
+.type-stock {
+    -fx-border-color: -am-orange;
+}
+
+.am-card-title {
+    -fx-text-fill: -am-text;
+    -fx-font-size: 15px;
+    -fx-font-weight: 900;
+}
+
+.am-card-text {
+    -fx-text-fill: #b7c7df;
+    -fx-font-size: 13px;
+    -fx-line-spacing: 3;
+}
+
+.marketing-root.light .am-card-text {
+    -fx-text-fill: #71819b;
+}
+
+.am-primary-btn {
+    -fx-background-color: #2563eb;
+    -fx-background-radius: 7;
+    -fx-text-fill: white;
+    -fx-padding: 9 18;
+}
+
+.am-soft-danger-btn {
+    -fx-background-color: rgba(244, 114, 182, 0.14);
+    -fx-background-radius: 7;
+    -fx-text-fill: #f472b6;
+    -fx-padding: 9 18;
+}
+
+.am-soft-info-btn {
+    -fx-background-color: rgba(56, 189, 248, 0.12);
+    -fx-background-radius: 7;
+    -fx-text-fill: -am-blue;
+    -fx-padding: 9 18;
+}
+
+.am-blue-btn {
+    -fx-background-color: linear-gradient(to right, #0ea5e9, #38bdf8);
+    -fx-background-radius: 8;
+    -fx-text-fill: white;
+    -fx-padding: 12 18;
+}
+
+.am-purple-btn {
+    -fx-background-color: linear-gradient(to right, #2563eb, #8b5cf6);
+    -fx-background-radius: 8;
+    -fx-text-fill: white;
+    -fx-padding: 12 18;
+}
+
+.am-ghost-btn {
+    -fx-background-color: rgba(148, 163, 184, 0.08);
+    -fx-border-color: -am-border;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-text-fill: -am-muted;
+    -fx-padding: 8 16;
+}
+
+.am-strip-title {
+    -fx-text-fill: #1d7cff;
+    -fx-font-size: 13px;
+    -fx-font-weight: 900;
+}
+
+.am-campaign-card {
+    -fx-border-width: 1 1 1 4;
+    -fx-border-color: -am-border -am-border -am-border -am-blue;
+}
+
+.am-campaign-note {
+    -fx-background-color: rgba(139, 92, 246, 0.10);
+    -fx-border-color: rgba(139, 92, 246, 0.28);
+    -fx-background-radius: 7;
+    -fx-border-radius: 7;
+    -fx-padding: 9 12;
+    -fx-text-fill: -am-text;
+    -fx-font-size: 12px;
+}
+
+.am-progress-row {
+    -fx-background-color: transparent;
+    -fx-padding: 2 0;
+}
+
+/* Premium marketing hub — tabs */
+.pmh-tab {
+    -fx-font-size: 12px;
+}
+.pmh-tab-active {
+    -fx-background-color: rgba(99, 102, 241, 0.22);
+    -fx-border-color: rgba(165, 180, 252, 0.45);
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-text-fill: -am-text;
+}
+.marketing-root.light .pmh-tab-active {
+    -fx-background-color: rgba(99, 102, 241, 0.12);
+}
+.pmh-conseil-card {
+    -fx-border-color: -am-border;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}

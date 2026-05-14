@@ -1,0 +1,107 @@
+/* ══════════════════════════════════════════════════════
+   7ANOUTI DASHBOARD CSS — NEON PRO EDITION
+   ══════════════════════════════════════════════════════ */
+
+.root-bg {
+    -fx-background-color: #0a0d1a;
+}
+
+.sidebar {
+    -fx-background-color: #0d1020;
+    -fx-border-color: rgba(255,255,255,0.07);
+    -fx-border-width: 0 1 0 0;
+}
+
+.logo-main {
+    -fx-text-fill: white;
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+}
+.logo-sub {
+    -fx-text-fill: #475569;
+    -fx-font-size: 11px;
+}
+
+.nav-label {
+    -fx-text-fill: #475569;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-padding: 20 0 5 0;
+}
+
+.nav-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #94A3B8;
+    -fx-padding: 10 15;
+    -fx-background-radius: 8;
+}
+.nav-btn:hover { -fx-background-color: rgba(255,255,255,0.05); }
+.nav-btn-active {
+    -fx-background-color: rgba(37,99,235,0.1);
+    -fx-text-fill: #38bdf8;
+    -fx-border-color: #2563eb;
+    -fx-border-width: 0 0 0 3;
+}
+
+.kpi-card {
+    -fx-background-color: #111425;
+    -fx-background-radius: 12;
+    -fx-padding: 15;
+    -fx-border-color: rgba(255,255,255,0.05);
+    -fx-border-radius: 12;
+}
+
+.kpi-value { -fx-font-size: 26px; -fx-font-weight: bold; }
+.kpi-blue   { -fx-text-fill: #38bdf8; }
+.kpi-green  { -fx-text-fill: #10b981; }
+.kpi-orange { -fx-text-fill: #f97316; }
+.kpi-violet { -fx-text-fill: #8b5cf6; }
+
+.ia-strip {
+    -fx-background-color: rgba(139,92,246,0.1);
+    -fx-text-fill: #94A3B8;
+    -fx-padding: 10 15;
+    -fx-background-radius: 10;
+    -fx-border-color: rgba(139,92,246,0.3);
+    -fx-border-radius: 10;
+}
+
+.section-card {
+    -fx-background-color: #111425;
+    -fx-padding: 20;
+    -fx-background-radius: 15;
+    -fx-border-color: rgba(255,255,255,0.05);
+}
+
+.card-title { -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; }
+.card-desc { -fx-text-fill: #94A3B8; -fx-font-size: 13px; }
+
+.btn-primary {
+    -fx-background-color: linear-gradient(to right, #2563eb, #8b5cf6);
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+    -fx-padding: 8 15;
+    -fx-cursor: hand;
+}
+.btn-secondary {
+    -fx-background-color: rgba(255,255,255,0.08);
+    -fx-text-fill: #94A3B8;
+    -fx-background-radius: 8;
+    -fx-padding: 9 14;
+    -fx-cursor: hand;
+    -fx-border-color: rgba(255,255,255,0.12);
+    -fx-border-radius: 8;
+}
+.btn-secondary:hover { -fx-background-color: rgba(255,255,255,0.14); -fx-text-fill: white; }
+.btn-danger {
+    -fx-background-color: #DC2626;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-padding: 9 14;
+    -fx-cursor: hand;
+}
+.btn-danger:hover { -fx-background-color: #B91C1C; }
+.db-status-ok  { -fx-text-fill: #4ADE80; -fx-font-size: 11px; -fx-font-weight: bold; }
+.db-status-err { -fx-text-fill: #F87171; -fx-font-size: 11px; -fx-font-weight: bold; }
+.sidebar-sep   { -fx-background-color: rgba(255,255,255,0.08); -fx-pref-height: 1; -fx-max-height: 1; }

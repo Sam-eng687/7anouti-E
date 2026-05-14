@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox prefWidth="450.0" styleClass="dialog-pane" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="projet.hanouti.wejden.gui.ConseilDialogController" stylesheets="@../style.css">
+   <children>
+      <HBox styleClass="dialog-header">
+         <children>
+            <Label fx:id="dialogTitle" id="dialogTitle" styleClass="dialog-header-title" text="Détails du Conseil Marketing" />
+         </children>
+      </HBox>
+      <VBox spacing="15.0">
+         <padding><Insets bottom="30.0" left="30.0" right="30.0" top="30.0" /></padding>
+         <children>
+            <VBox spacing="5.0">
+               <children>
+                  <Label styleClass="form-label" text="Référence Produit" />
+                  <TextField fx:id="txtProduit" id="txtProduit" styleClass="form-control" promptText="Ex: PRD-089" />
+               </children>
+            </VBox>
+            <VBox spacing="5.0">
+               <children>
+                  <Label styleClass="form-label" text="Type de Conseil" />
+                  <ComboBox fx:id="cmbType" id="cmbType" maxWidth="Infinity" styleClass="form-control" />
+               </children>
+            </VBox>
+            <VBox spacing="5.0">
+               <children>
+                  <Label styleClass="form-label" text="Description / Action" />
+                  <TextArea fx:id="txtDesc" id="txtDesc" prefHeight="100.0" styleClass="form-control" wrapText="true" />
+               </children>
+            </VBox>
+            <CheckBox fx:id="chkApplique" id="chkApplique" text="Conseil déjà appliqué" styleClass="form-label" />
+         </children>
+      </VBox>
+   </children>
+</VBox>

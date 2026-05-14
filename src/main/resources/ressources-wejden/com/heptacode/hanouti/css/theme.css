@@ -1,0 +1,45 @@
+/* ══════════════════════════════════════════════════════
+   7ANOUTI THEME — HEPTACODE EDITION
+   ══════════════════════════════════════════════════════ */
+
+.root {
+    -bg-deep: #0a0d1a;
+    -bg-sidebar: #0d1020;
+    -royal: #2563EB;
+    -violet: #8B5CF6;
+    -neon-green: #10B981;
+    -text-1: #F1F5F9;
+    
+    -fx-background-color: -bg-deep;
+}
+
+.sidebar {
+    -fx-background-color: -bg-sidebar;
+    -fx-border-color: rgba(255,255,255,0.07);
+    -fx-border-width: 0 1 0 0;
+}
+
+.logo-main {
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.nav-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #94A3B8;
+    -fx-font-size: 14px;
+    -fx-padding: 12 15;
+    -fx-background-radius: 10;
+}
+
+.nav-btn:hover {
+    -fx-background-color: rgba(255,255,255,0.05);
+    -fx-text-fill: white;
+}
+
+.mod-title {
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}

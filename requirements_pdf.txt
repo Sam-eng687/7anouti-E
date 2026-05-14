@@ -1,0 +1,2 @@
+# Python deps for ressources-wejden/scripts/pdf_export.py (PDF export from 7anouti-E)
+reportlab>=4.0.0,<5

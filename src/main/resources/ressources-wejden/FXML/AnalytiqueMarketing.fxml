@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.chart.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.shape.Circle?>
+
+<VBox fx:id="mainContainer" prefHeight="900.0" prefWidth="1300.0" stylesheets="@../style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="projet.hanouti.wejden.gui.AnalytiqueMarketingController" styleClass="main-bg">
+   <children>
+      
+      <!-- NAVBAR HAUTE (REPLICA MATIN) -->
+      <HBox alignment="CENTER_LEFT" prefHeight="85.0" spacing="20.0" styleClass="navbar">
+         <padding><Insets left="30.0" right="30.0" /></padding>
+         <children>
+            <VBox alignment="CENTER_LEFT">
+               <children>
+                  <Text text="7anouti" styleClass="logo-text" />
+                  <Text text="Intelligence Marketing" styleClass="logo-subtext" />
+               </children>
+            </VBox>
+            
+            <Separator orientation="VERTICAL" prefHeight="40.0" opacity="0.1" />
+            
+            <!-- Tab Navigation -->
+            <HBox alignment="CENTER" spacing="10.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <Button fx:id="btnConseils" onAction="#showConseilsView" styleClass="tab-btn, tab-btn-active" text="💡 Conseils" />
+                  <Button fx:id="btnCampagnes" onAction="#showCampagnesView" styleClass="tab-btn" text="📢 Campagnes" />
+                  <Button fx:id="btnStats" onAction="#showStatsView" styleClass="tab-btn" text="📊 Statistiques" />
+               </children>
+            </HBox>
+            
+            <!-- Quick Actions -->
+            <HBox alignment="CENTER" spacing="12.0">
+               <children>
+                  <Button onAction="#handleAddConseil" styleClass="top-action-btn, btn-blue" text="+ Conseil" />
+                  <Button onAction="#handleAddStat" styleClass="top-action-btn, btn-green" text="+ Campagne" />
+                  <ToggleButton fx:id="themeToggle" onAction="#handleThemeToggle" styleClass="top-action-btn" text="🌙 Sombre" />
+               </children>
+            </HBox>
+         </children>
+      </HBox>
+
+      <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent;">
+         <content>
+            <VBox spacing="30.0" style="-fx-padding: 35 45;">
+               <children>
+                  
+                  <!-- HEADER DE VUE -->
+                  <VBox spacing="8">
+                     <children>
+                        <Text fx:id="viewTitle" text="Analyses &amp; Statistiques" styleClass="view-title" />
+                        <Text fx:id="viewSubtitle" text="Tableau de bord de performance marketing en temps réel" styleClass="view-subtitle" />
+                     </children>
+                  </VBox>
+
+                  <!-- KPI SECTION DYNAMIQUE -->
+                  <HBox fx:id="kpiContainer" spacing="20.0">
+                     <!-- Injecté par le Controller -->
+                  </HBox>
+
+                  <StackPane>
+                     <children>
+                        <!-- VUE CONSEILS -->
+                        <VBox fx:id="conseilsView" spacing="25.0">
+                           <children>
+                              <HBox spacing="20">
+                                 <children>
+                                    <VBox styleClass="mini-kpi, border-blue" HBox.hgrow="ALWAYS"><Text text="TOTAL" styleClass="kpi-label" /><Text fx:id="countTotal" text="0" styleClass="mini-kpi-val" /></VBox>
+                                    <VBox styleClass="mini-kpi, border-green" HBox.hgrow="ALWAYS"><Text text="APPLIQUÉS" styleClass="kpi-label" /><Text fx:id="countAppliques" text="0" styleClass="mini-kpi-val" /></VBox>
+                                    <VBox styleClass="mini-kpi, border-orange" HBox.hgrow="ALWAYS"><Text text="DESTOCKAGE" styleClass="kpi-label" /><Text fx:id="countDestockage" text="0" styleClass="mini-kpi-val" /></VBox>
+                                    <VBox styleClass="mini-kpi, border-pink" HBox.hgrow="ALWAYS"><Text text="URGENTS" styleClass="kpi-label" /><Text fx:id="countUrgents" text="0" styleClass="mini-kpi-val" /></VBox>
+                                 </children>
+                              </HBox>
+                              <FlowPane fx:id="conseilsContainer" hgap="25.0" vgap="25.0" />
+                           </children>
+                        </VBox>
+
+                        <!-- VUE CAMPAGNES -->
+                        <VBox fx:id="campagnesView" spacing="25.0" visible="false" managed="false">
+                           <children>
+                              <FlowPane fx:id="campagnesContainer" hgap="20.0" vgap="20.0" />
+                           </children>
+                        </VBox>
+
+                        <!-- VUE STATS -->
+                        <VBox fx:id="statsView" spacing="30.0" visible="false" managed="false">
+                           <children>
+                              <HBox spacing="25">
+                                 <children>
+                                    <VBox styleClass="chart-card" HBox.hgrow="ALWAYS">
+                                       <children>
+                                          <Text text="Budget vs Revenus par Campagne" styleClass="chart-title" />
+                                          <BarChart fx:id="budgetChart" prefHeight="300.0"><xAxis><CategoryAxis side="BOTTOM" /></xAxis><yAxis><NumberAxis side="LEFT" /></yAxis></BarChart>
+                                       </children>
+                                    </VBox>
+                                    <VBox styleClass="chart-card" prefWidth="450">
+                                       <children>
+                                          <Text text="Répartition des Statuts" styleClass="chart-title" />
+                                          <PieChart fx:id="statusPieChart" prefHeight="300.0" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </HBox>
+                              <VBox styleClass="chart-card">
+                                 <children>
+                                    <Text text="Évolution des Revenus Générés" styleClass="chart-title" />
+                                    <AreaChart fx:id="salesChart" prefHeight="300.0"><xAxis><CategoryAxis side="BOTTOM" /></xAxis><yAxis><NumberAxis side="LEFT" /></yAxis></AreaChart>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </VBox>
+                     </children>
+                  </StackPane>
+               </children>
+            </VBox>
+         </content>
+      </ScrollPane>
+
+      <!-- FOOTER -->
+      <HBox alignment="CENTER_LEFT" prefHeight="45.0" spacing="10.0" styleClass="footer">
+         <padding><Insets left="25.0" right="25.0" /></padding>
+         <children>
+            <Circle radius="4" fill="#10B981" />
+            <Text text="Connecté · Base de données : hanouti" styleClass="footer-text" />
+            <Region HBox.hgrow="ALWAYS" />
+            <Button onAction="#handleExit" styleClass="btn-logout" text="⏻ Déconnexion" />
+         </children>
+      </HBox>
+   </children>
+</VBox>

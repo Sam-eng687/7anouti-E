@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:id="moduleRoot"
+            fx:controller="projet.hanouti.wejden.gui.DashboardController" styleClass="app-root">
+    <left>
+        <VBox prefWidth="240.0" minWidth="240.0" styleClass="sidebar">
+            <children>
+                <VBox styleClass="sidebar-logo">
+                    <children>
+                        <Label text="7anouti" styleClass="logo-main"/>
+                        <Label text="par HeptaCode" styleClass="logo-sub"/>
+                    </children>
+                </VBox>
+                <Label text="Navigation" styleClass="nav-label"/>
+                <Button fx:id="btnStats" onAction="#showStats" styleClass="nav-btn,active" maxWidth="1.7976931348623157E308">
+                    <graphic>
+                        <HBox spacing="12">
+                            <children>
+                                <Label text="ðŸ“Š" styleClass="nav-icon"/>
+                                <VBox spacing="1">
+                                    <children>
+                                        <Label text="Statistiques" styleClass="nav-title"/>
+                                        <Label text="Ventes &amp; Donnees" styleClass="nav-sub"/>
+                                    </children>
+                                </VBox>
+                            </children>
+                        </HBox>
+                    </graphic>
+                </Button>
+                <Button fx:id="btnConseils" onAction="#showConseils" styleClass="nav-btn" maxWidth="1.7976931348623157E308">
+                    <graphic>
+                        <HBox spacing="12">
+                            <children>
+                                <Label text="ðŸ’¡" styleClass="nav-icon"/>
+                                <VBox spacing="1">
+                                    <children>
+                                        <Label text="Conseils IA" styleClass="nav-title"/>
+                                        <Label text="API Gemini/GPT" styleClass="nav-sub"/>
+                                    </children>
+                                </VBox>
+                            </children>
+                        </HBox>
+                    </graphic>
+                </Button>
+                <Button fx:id="btnCampagnes" onAction="#showCampagnes" styleClass="nav-btn" maxWidth="1.7976931348623157E308">
+                    <graphic>
+                        <HBox spacing="12">
+                            <children>
+                                <Label text="ðŸ“¢" styleClass="nav-icon"/>
+                                <VBox spacing="1">
+                                    <children>
+                                        <Label text="Campagnes" styleClass="nav-title"/>
+                                        <Label text="Actions Marketing" styleClass="nav-sub"/>
+                                    </children>
+                                </VBox>
+                            </children>
+                        </HBox>
+                    </graphic>
+                </Button>
+                <Region VBox.vgrow="ALWAYS"/>
+                <VBox spacing="8" styleClass="db-zone">
+                    <children>
+                        <Label fx:id="dbStatusLabel" text="â— MySQL WAMP Actif" styleClass="db-label"/>
+                        <Label text="hanouti Â· MySQL:3306" styleClass="db-name"/>
+                        <Button fx:id="btnTheme" text="â˜€ï¸ Mode Clair" onAction="#toggleTheme" styleClass="btn-mode" maxWidth="1.7976931348623157E308"/>
+                        <Button text="â» Deconnexion" onAction="#handleLogout" styleClass="btn-deconn" maxWidth="1.7976931348623157E308"/>
+                    </children>
+                </VBox>
+            </children>
+        </VBox>
+    </left>
+    <center>
+        <StackPane styleClass="content-area">
+            <children>
+                <ScrollPane fx:id="statsView" fitToWidth="true" styleClass="content-scroll">
+                    <content>
+                        <VBox styleClass="module-wrap" spacing="16">
+                            <children>
+                                <HBox spacing="10" styleClass="mod-header">
+                                    <children>
+                                        <VBox spacing="4">
+                                            <children>
+                                                <Label text="Insights &amp; Performances Intelligentes" styleClass="mod-title"/>
+                                                <Label text="Analyse globale des ventes et des comportements" styleClass="mod-sub"/>
+                                            </children>
+                                        </VBox>
+                                        <Region HBox.hgrow="ALWAYS"/>
+                                        <ComboBox fx:id="periodFilter" styleClass="filter-select"/>
+                                        <Button text="Exporter CSV" onAction="#exportStats" styleClass="btn-export"/>
+                                        <Button text="ðŸ¤– Conseil IA" onAction="#analyzeIA" styleClass="btn-primary"/>
+                                    </children>
+                                </HBox>
+                                <HBox fx:id="statsKpiRow" styleClass="kpi-row" spacing="14"/>
+                                <HBox spacing="10" styleClass="ia-strip">
+                                    <children>
+                                        <Label text="â—" styleClass="ia-strip-dot"/>
+                                        <Label fx:id="iaAlertText" styleClass="ia-strip-text"/>
+                                    </children>
+                                </HBox>
+                                <HBox spacing="14" styleClass="charts-row">
+                                    <children>
+                                        <VBox styleClass="chart-card" spacing="10" HBox.hgrow="ALWAYS">
+                                            <children>
+                                                <Label text="Revenus par Produit (TND)" styleClass="chart-title"/>
+                                                <BarChart fx:id="barChart" prefHeight="280">
+                                                    <xAxis><CategoryAxis/></xAxis>
+                                                    <yAxis><NumberAxis/></yAxis>
+                                                </BarChart>
+                                            </children>
+                                        </VBox>
+                                        <VBox styleClass="chart-card" spacing="10" prefWidth="340">
+                                            <children>
+                                                <Label text="Repartition Strategique" styleClass="chart-title"/>
+                                                <PieChart fx:id="pieChart" prefHeight="280"/>
+                                            </children>
+                                        </VBox>
+                                    </children>
+                                </HBox>
+                                <VBox styleClass="chart-card" spacing="8">
+                                    <children>
+                                        <Label text="Detail des Performances par Produit" styleClass="chart-title"/>
+                                        <TableView fx:id="statsTable" prefHeight="300"/>
+                                    </children>
+                                </VBox>
+                            </children>
+                        </VBox>
+                    </content>
+                </ScrollPane>
+                <ScrollPane fx:id="conseilsView" fitToWidth="true" visible="false" managed="false" styleClass="content-scroll">
+                    <content>
+                        <VBox styleClass="module-wrap" spacing="16">
+                            <children>
+                                <HBox styleClass="mod-header">
+                                    <children>
+                                        <VBox spacing="4">
+                                            <children>
+                                                <Label text="Centre de Decision IA" styleClass="mod-title"/>
+                                                <Label text="Conseils depuis MySQL + moteur IA" styleClass="mod-sub"/>
+                                            </children>
+                                        </VBox>
+                                    </children>
+                                </HBox>
+                                <HBox fx:id="conseilsKpiRow" styleClass="kpi-row" spacing="14"/>
+                                <FlowPane fx:id="conseilsList" styleClass="conseils-grid" hgap="14" vgap="14"/>
+                            </children>
+                        </VBox>
+                    </content>
+                </ScrollPane>
+                <ScrollPane fx:id="campagnesView" fitToWidth="true" visible="false" managed="false" styleClass="content-scroll">
+                    <content>
+                        <VBox styleClass="module-wrap" spacing="16">
+                            <children>
+                                <HBox styleClass="mod-header">
+                                    <children>
+                                        <VBox spacing="4">
+                                            <children>
+                                                <Label text="ðŸ“¢ Campagnes Marketing" styleClass="mod-title"/>
+                                                <Label text="Gestion des actions marketing avec scores IA" styleClass="mod-sub"/>
+                                            </children>
+                                        </VBox>
+                                    </children>
+                                </HBox>
+                                <HBox fx:id="campagnesKpiRow" styleClass="kpi-row" spacing="14"/>
+                                <VBox fx:id="campagnesList" spacing="12"/>
+                            </children>
+                            <padding>
+                                <Insets top="0" right="0" bottom="16" left="0"/>
+                            </padding>
+                        </VBox>
+                    </content>
+                </ScrollPane>
+            </children>
+        </StackPane>
+    </center>
+</BorderPane>
+
