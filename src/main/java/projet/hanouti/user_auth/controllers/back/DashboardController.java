@@ -44,6 +44,9 @@ public class DashboardController implements ModuleNavigator {
     private static final String PF_CATALOGUE_FXML = "/FXML/produit_fournisseur/Catalogue.fxml";
     private static final String PF_DAY_CSS = "/styles/produit_fournisseur/day-theme.css";
     private static final String PF_NIGHT_CSS = "/styles/produit_fournisseur/night-theme.css";
+    private static final String ACHETEUR_COMMANDES_FXML = "/FXML/GestionCommandes/AcheteurCommandes.fxml";
+    private static final String VENDEUR_COMMANDES_FXML = "/FXML/GestionCommandes/VendeurCommandes.fxml";
+    private static final String ADMIN_COMMANDES_FXML = "/FXML/GestionCommandes/AdminCommandes.fxml";
 
     @FXML private AnchorPane rootPane;
     @FXML private VBox sidebar;
@@ -180,7 +183,7 @@ public class DashboardController implements ModuleNavigator {
             addNav(navProducts, "Gestion acheteurs", "Gestion des comptes acheteurs", PLACEHOLDER_FXML);
             addNav(navOrders, "Gestion vendeurs", "Gestion des comptes vendeurs", PLACEHOLDER_FXML);
             addNav(navStats, "Gestion societes de livraison", "Gestion livraison", PLACEHOLDER_FXML);
-            addNav(navSettings, "Gestion commandes", "Supervision commandes", PLACEHOLDER_FXML);
+            addNav(navSettings, "Gestion commandes", "Supervision commandes", ADMIN_COMMANDES_FXML);
             addNav(navSupport, "Historique IA et interactions", "Audit IA", PLACEHOLDER_FXML);
         } else if (role == Role.acheteur) {
             addNav(navUsers, "Dashboard", "Accueil acheteur", AI_ACHAT_FXML,
@@ -189,12 +192,12 @@ public class DashboardController implements ModuleNavigator {
                     controller -> ((AssistantIAController) controller).openAssistantMode());
             addNav(navOrders, "Catalogue des produits", "Explorer les produits", PF_CATALOGUE_FXML);
             addNav(navStats, "Mes favorites", "Produits favoris", PLACEHOLDER_FXML);
-            addNav(navSettings, "Mes commandes", "Suivi commandes", PLACEHOLDER_FXML);
+            addNav(navSettings, "Mes commandes", "Suivi commandes", ACHETEUR_COMMANDES_FXML);
             hideNav(navSupport);
         } else if (role == Role.vendeur) {
             addNav(navUsers, "Dashboard", "Accueil vendeur", PLACEHOLDER_FXML);
             addNav(navProducts, "Ma boutique", "Gestion boutique", PF_GERER_PRODUITS_FXML);
-            addNav(navOrders, "Les commandes", "Commandes recues", PLACEHOLDER_FXML);
+            addNav(navOrders, "Les commandes", "Commandes recues", VENDEUR_COMMANDES_FXML);
             addNav(navStats, "Conseil AI", "Recommandations intelligentes", PLACEHOLDER_FXML);
             addNav(navSettings, "Campagne marketing", "Campagnes commerciales", PLACEHOLDER_FXML);
             addNav(navSupport, "Mes fournisseurs", "Gestion fournisseurs", PF_GERER_FOURNISSEURS_FXML);
@@ -208,8 +211,20 @@ public class DashboardController implements ModuleNavigator {
         }
 
         if (!navItems.isEmpty()) {
-            loadTab(navItems.get(0));
+            loadTab(defaultNavForRole(role));
         }
+    }
+
+    private NavItem defaultNavForRole(Role role) {
+        Button defaultButton = switch (role) {
+            case admin, acheteur -> navSettings;
+            case vendeur -> navOrders;
+            default -> navItems.get(0).button();
+        };
+        return navItems.stream()
+                .filter(item -> item.button() == defaultButton)
+                .findFirst()
+                .orElse(navItems.get(0));
     }
 
     private void addNav(Button button, String title, String subtitle, String fxmlPath) {
@@ -264,6 +279,7 @@ public class DashboardController implements ModuleNavigator {
             if (item.afterLoad() != null) {
                 item.afterLoad().accept(currentModuleController);
             }
+            applyThemeToContent(content);
             applyThemeToCurrentModule();
             contentContainer.getChildren().setAll(content);
         } catch (Exception ex) {
@@ -472,6 +488,11 @@ public class DashboardController implements ModuleNavigator {
     }
 
     private void applyThemeToCurrentModule() {
+        if (contentContainer != null) {
+            for (Node child : contentContainer.getChildren()) {
+                applyThemeToContent(child);
+            }
+        }
         if (currentModuleController instanceof AssistantIAController assistant) {
             assistant.applyTheme(isDarkMode);
         }
@@ -504,7 +525,23 @@ public class DashboardController implements ModuleNavigator {
                 || controller instanceof GererProduitsController
                 || controller instanceof GererFournisseursController
                 || (controller != null && controller.getClass().getPackageName()
-                        .startsWith("projet.hanouti.produit_fournisseur"));
+                .startsWith("projet.hanouti.produit_fournisseur"));
+    }
+
+    private void applyThemeToContent(Node content) {
+        if (content == null) {
+            return;
+        }
+        contentContainer.getStyleClass().remove("light-mode");
+        content.getStyleClass().remove("light-mode");
+        if (!isDarkMode) {
+            if (!contentContainer.getStyleClass().contains("light-mode")) {
+                contentContainer.getStyleClass().add("light-mode");
+            }
+            if (!content.getStyleClass().contains("light-mode")) {
+                content.getStyleClass().add("light-mode");
+            }
+        }
     }
 
     private void refreshHeaderIcons() {

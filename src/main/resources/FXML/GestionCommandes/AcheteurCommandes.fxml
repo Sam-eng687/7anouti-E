@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<!--
+  AcheteurCommandes.fxml
+  • Cliquer une commande → detail panel s'ouvre inline à droite
+  • Champs modifiables directement (adresse, quantité produit, date livraison)
+  • Adresse modifiable par saisie (validée OSM) OU par clic sur la carte (reverse geocoding)
+  • Annuler commande : supprimée de la table + disparaît de la liste
+  • Renvoyer commande si REFUSÉE
+  • Suivre livraison si EXPÉDIÉE
+  • Bouton "Valider les modifications" apparaît dès qu'une modification est détectée
+  Controller : controllers.AcheteurCommandesController
+-->
+<HBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="projet.hanouti.GestionCommandes.controllers.AcheteurCommandesController"
+            stylesheets="@../../styles/GestionCommandes/commandes.css"
+fx:id="root"
+      HBox.hgrow="ALWAYS"
+      style="-fx-background-color:transparent;">
+
+    <!-- ══════════════════════════════════════════
+         COLONNE GAUCHE
+    ══════════════════════════════════════════ -->
+    <VBox styleClass="module-wrap" HBox.hgrow="ALWAYS"
+          prefWidth="0" maxWidth="1.7976931348623157E308" spacing="14">
+
+        <!-- Header -->
+        <HBox styleClass="mod-header" alignment="CENTER_LEFT">
+            <VBox HBox.hgrow="ALWAYS" spacing="3">
+                <Label text="📦  Mes Commandes" styleClass="mod-title"/>
+                <Label fx:id="lblSub" text="Cliquez sur une commande pour voir les détails"
+                       styleClass="mod-sub"/>
+            </VBox>
+        </HBox>
+
+        <!-- VIP strip -->
+        <HBox fx:id="vipStrip" styleClass="ia-strip" alignment="CENTER_LEFT" spacing="10"
+              visible="false" managed="false">
+            <Label text="⭐" style="-fx-font-size:16px;"/>
+            <Label text="Client VIP — vos commandes sont traitées en priorité."
+                   styleClass="ia-strip-text" HBox.hgrow="ALWAYS"/>
+        </HBox>
+
+        <!-- KPIs -->
+        <HBox spacing="10">
+            <VBox styleClass="kpi-card, kpi-royal"  HBox.hgrow="ALWAYS" spacing="4">
+                <Label text="TOTAL"       styleClass="kpi-label"/>
+                <Label fx:id="kpiTotal"   text="0" styleClass="kpi-value"/>
+                <Label text="commandes"   styleClass="kpi-trend"/>
+            </VBox>
+            <VBox styleClass="kpi-card, kpi-orange" HBox.hgrow="ALWAYS" spacing="4">
+                <Label text="EN COURS"    styleClass="kpi-label"/>
+                <Label fx:id="kpiEnCours" text="0" styleClass="kpi-value"/>
+                <Label text="en traitement" styleClass="kpi-trend"/>
+            </VBox>
+            <VBox styleClass="kpi-card, kpi-green"  HBox.hgrow="ALWAYS" spacing="4">
+                <Label text="LIVRÉES"     styleClass="kpi-label"/>
+                <Label fx:id="kpiLivrees" text="0" styleClass="kpi-value"/>
+                <Label text="reçues"      styleClass="kpi-trend"/>
+            </VBox>
+        </HBox>
+
+        <!-- Filters -->
+        <HBox spacing="8" alignment="CENTER_LEFT">
+            <TextField fx:id="searchField" promptText="🔍  Rechercher..."
+                       styleClass="search-field" HBox.hgrow="ALWAYS"
+                       onKeyReleased="#onSearch"/>
+            <ComboBox fx:id="filterStatut" styleClass="filter-select"
+                      promptText="Statut" onAction="#onFilter" prefWidth="155"/>
+            <Button text="↺" styleClass="btn-annuler"
+                    onAction="#onReset" style="-fx-padding:8 12;"/>
+        </HBox>
+
+        <Label fx:id="lblCount" text="0 commande(s)" styleClass="detail-label"/>
+
+        <!-- List -->
+        <ListView fx:id="listCommandes" styleClass="list-view"
+                  VBox.vgrow="ALWAYS" onMouseClicked="#onCommandeClicked"/>
+    </VBox>
+
+    <!-- ══════════════════════════════════════════
+         COLONNE DROITE — DETAIL INLINE
+    ══════════════════════════════════════════ -->
+    <VBox fx:id="detailPanel" styleClass="detail-panel"
+          HBox.hgrow="ALWAYS" prefWidth="0" spacing="0">
+
+        <!-- EMPTY STATE -->
+        <VBox fx:id="emptyState" alignment="CENTER"
+              VBox.vgrow="ALWAYS" spacing="12"
+              style="-fx-padding:40;">
+            <Label text="📋" style="-fx-font-size:48px;"/>
+            <Label text="Sélectionnez une commande"
+                   styleClass="detail-title" style="-fx-opacity:0.4;"/>
+            <Label text="Cliquez sur une commande dans la liste pour voir ses détails et la modifier."
+                   styleClass="cmd-date" wrapText="true"
+                   style="-fx-text-alignment:center; -fx-opacity:0.4;"/>
+        </VBox>
+
+        <!-- DETAIL CONTENT -->
+        <ScrollPane fx:id="detailContent" fitToWidth="true"
+                    VBox.vgrow="ALWAYS" styleClass="content-scroll"
+                    hbarPolicy="NEVER" visible="false" managed="false">
+            <VBox spacing="14" style="-fx-padding:20;">
+
+                <!-- ── Header commande ── -->
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <VBox HBox.hgrow="ALWAYS" spacing="4">
+                        <Label fx:id="detNumero" text="" styleClass="detail-title"/>
+                        <Label fx:id="detDate"   text="" styleClass="cmd-date"/>
+                    </VBox>
+                    <Label fx:id="detStatut" text="" styleClass="statut-badge"/>
+                </HBox>
+
+                <Separator styleClass="detail-sep"/>
+
+                <!-- ── Infos de base ── -->
+                <VBox styleClass="section-card" spacing="10">
+                    <Label text="INFORMATIONS" styleClass="section-title"/>
+                    <GridPane hgap="12" vgap="10">
+
+                        <Label text="Mode :"     styleClass="detail-label"
+                               GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                        <Label fx:id="detPaiement" styleClass="detail-value"
+                               GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                        <Label text="Total :"    styleClass="detail-label"
+                               GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                        <Label fx:id="detTotal" styleClass="cmd-total"
+                               GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                        <columnConstraints>
+                            <ColumnConstraints minWidth="70" maxWidth="80"/>
+                            <ColumnConstraints hgrow="ALWAYS"/>
+                        </columnConstraints>
+                    </GridPane>
+                </VBox>
+
+                <!-- ── Adresse modifiable + Carte interactive ── -->
+                <VBox styleClass="section-card" spacing="8">
+                    <HBox alignment="CENTER_LEFT" spacing="8">
+                        <Label text="📍  ADRESSE DE LIVRAISON" styleClass="section-title"
+                               HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="adresseValidIcon" text="" style="-fx-font-size:13px;"/>
+                    </HBox>
+
+                    <!-- Saisie manuelle de l'adresse -->
+                    <TextField fx:id="detAdresse" styleClass="editable-field"
+                               promptText="Saisissez ou sélectionnez sur la carte..."
+                               onAction="#onAdresseChanged"
+                               onKeyReleased="#onAdresseKeyReleased"/>
+
+                    <Label fx:id="adresseHint"
+                           text="💡 Saisissez une adresse (Entrée) ou cliquez un point sur la carte"
+                           styleClass="cmd-date" wrapText="true"/>
+
+                    <!-- Carte OpenStreetMap interactive (clic → mise à jour adresse) -->
+                    <StackPane fx:id="mapContainer"
+                               prefHeight="200" minHeight="160"
+                               style="-fx-background-color:#1a2030; -fx-background-radius:8;">
+                        <Label fx:id="mapPlaceholder"
+                               text="🗺️  La carte s'affiche après validation de l'adresse"
+                               styleClass="cmd-date" wrapText="true"
+                               style="-fx-text-alignment:center; -fx-padding:20;"/>
+                    </StackPane>
+
+                    <!-- Indicateur de chargement reverse geocoding -->
+                    <Label fx:id="mapClickHint"
+                           text="🖱️  Cliquez sur la carte pour choisir votre point de livraison exact"
+                           styleClass="cmd-date" wrapText="true"
+                           visible="false" managed="false"/>
+                </VBox>
+
+                <!-- ── Date de livraison préférée ── -->
+                <VBox styleClass="section-card" spacing="8">
+                    <Label text="📅  DATE DE LIVRAISON PRÉFÉRÉE" styleClass="section-title"/>
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <DatePicker fx:id="detDatePref"
+                                    styleClass="filter-select"
+                                    HBox.hgrow="ALWAYS"
+                                    onAction="#onDatePrefChanged"/>
+                        <Button text="Effacer" styleClass="btn-annuler"
+                                onAction="#onClearDatePref"
+                                style="-fx-padding:7 12;"/>
+                    </HBox>
+                    <Label text="💡 Optionnel — laissez vide pour livraison standard"
+                           styleClass="cmd-date"/>
+                </VBox>
+
+                <!-- ── Produits commandés (quantité modifiable) ── -->
+                <VBox styleClass="section-card" spacing="8">
+                    <HBox alignment="CENTER_LEFT">
+                        <Label text="🛍️  PRODUITS" styleClass="section-title"
+                               HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="detNbProduits" text="" styleClass="cmd-date"/>
+                    </HBox>
+                    <!-- ListView de lignes avec quantité modifiable inline -->
+                    <ListView fx:id="listLignes" styleClass="list-view"
+                              prefHeight="150" maxHeight="200"/>
+                    <Label text="💡 Cliquez sur la quantité d'un produit pour la modifier"
+                           styleClass="cmd-date"/>
+                </VBox>
+
+                <!-- ── Société de livraison ── -->
+                <VBox styleClass="section-card" spacing="6">
+                    <Label text="🚚  LIVRAISON" styleClass="section-title"/>
+                    <Label fx:id="detSociete" text="—" styleClass="detail-value"/>
+                    <Label fx:id="detStatutLiv" text="" styleClass="cmd-date"/>
+                </VBox>
+
+                <!-- ── Motif refus ── -->
+                <VBox fx:id="motifBox" styleClass="section-card" spacing="6"
+                      visible="false" managed="false"
+                      style="-fx-border-color:rgba(239,68,68,0.35); -fx-border-width:1; -fx-border-radius:10;">
+                    <Label text="❌  MOTIF DU REFUS" styleClass="detail-label"
+                           style="-fx-text-fill:#F87171;"/>
+                    <Label fx:id="detMotif" text="" styleClass="detail-value" wrapText="true"/>
+                </VBox>
+
+                <!-- ══════════════════════════════════════════
+                     BOUTON VALIDER LES MODIFICATIONS
+                     Apparaît dès qu'une modification est détectée
+                ══════════════════════════════════════════ -->
+                <VBox fx:id="validationBox" spacing="6"
+                      visible="false" managed="false"
+                      style="-fx-background-color:rgba(34,197,94,0.08);
+                             -fx-border-color:rgba(34,197,94,0.4);
+                             -fx-border-width:1; -fx-border-radius:10;
+                             -fx-padding:12;">
+                    <HBox alignment="CENTER_LEFT" spacing="8">
+                        <Label text="✏️" style="-fx-font-size:14px;"/>
+                        <Label fx:id="validationHint"
+                               text="Des modifications sont en attente"
+                               styleClass="cmd-date" HBox.hgrow="ALWAYS"
+                               style="-fx-text-fill:#4ade80;"/>
+                    </HBox>
+                    <Button fx:id="btnValiderModifs"
+                            text="💾  Valider les modifications" maxWidth="Infinity"
+                            styleClass="btn-confirm" onAction="#onValiderModifications"
+                            style="-fx-padding:11 0; -fx-font-size:13px; -fx-font-weight:bold;"/>
+                    <Button fx:id="btnAnnulerModifs"
+                            text="✕  Annuler les changements" maxWidth="Infinity"
+                            styleClass="btn-annuler" onAction="#onAnnulerModifications"
+                            style="-fx-padding:8 0; -fx-font-size:12px;"/>
+                </VBox>
+
+                <!-- ── ACTIONS ── -->
+                <VBox spacing="8">
+
+                    <!-- Annuler commande (si pas expédiée) -->
+                    <Button fx:id="btnAnnuler"
+                            text="🚫  Annuler la commande" maxWidth="Infinity"
+                            styleClass="btn-refuse" onAction="#onAnnuler"
+                            visible="false" managed="false"
+                            style="-fx-padding:10 0;"/>
+
+                    <!-- Suivre livraison (si expédiée) -->
+                    <Button fx:id="btnSuivre"
+                            text="📍  Suivre ma livraison en temps réel" maxWidth="Infinity"
+                            styleClass="btn-assign" onAction="#onSuivreLivraison"
+                            visible="false" managed="false"
+                            style="-fx-padding:10 0;"/>
+
+                    <!-- Renvoyer au vendeur (si refusée) -->
+                    <VBox fx:id="renvoyerBox" spacing="8"
+                          visible="false" managed="false">
+                        <Label text="RENVOYER LA COMMANDE" styleClass="section-title"/>
+                        <Label text="Modifiez l'adresse ou les quantités ci-dessus, puis renvoyez."
+                               styleClass="cmd-date" wrapText="true"/>
+                        <Button text="🔄  Renvoyer au vendeur" maxWidth="Infinity"
+                                styleClass="btn-confirm" onAction="#onRenvoyer"
+                                style="-fx-padding:10 0;"/>
+                    </VBox>
+
+                    <!-- Télécharger facture (si livrée) -->
+                    <Button fx:id="btnFacture"
+                            text="📄  Télécharger la facture" maxWidth="Infinity"
+                            styleClass="btn-annuler" onAction="#onFacture"
+                            visible="false" managed="false"
+                            style="-fx-padding:10 0;"/>
+                </VBox>
+
+            </VBox>
+        </ScrollPane>
+    </VBox>
+
+</HBox>
