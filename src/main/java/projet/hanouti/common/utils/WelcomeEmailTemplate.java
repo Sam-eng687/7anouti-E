@@ -117,6 +117,7 @@ public class WelcomeEmailTemplate {
             case "acheteur" -> "Acheteur";
             case "vendeur" -> "Vendeur";
             case "livreur" -> "Livreur";
+            case "fournisseur" -> "Fournisseur";
             case "admin" -> "Administrateur";
             default -> "Utilisateur";
         };
@@ -129,6 +130,7 @@ public class WelcomeEmailTemplate {
             case "acheteur" -> "Vous pouvez découvrir les produits, passer vos commandes et suivre vos achats facilement.";
             case "vendeur" -> "Vous pouvez préparer votre espace vendeur, gérer vos produits et développer votre activité.";
             case "livreur" -> "Vous pouvez accéder à votre espace livreur et préparer vos futures missions de livraison.";
+            case "fournisseur" -> "Vous disposez du double tableau de bord marketing et des exports de rapports.";
             case "admin" -> "Vous avez accès à l’espace d’administration pour superviser la plateforme.";
             default -> "Votre espace personnel est prêt.";
         };

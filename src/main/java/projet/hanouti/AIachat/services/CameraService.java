@@ -69,10 +69,10 @@ public class CameraService {
         cancelBtn.setStyle("-fx-background-color:transparent;-fx-border-color:#2A3452;-fx-border-radius:10;-fx-background-radius:10;-fx-text-fill:#8B9DC3;-fx-font-size:13px;-fx-padding:8 20 8 20;-fx-cursor:hand;");
 
         HBox buttons = new HBox(12, captureBtn, cancelBtn);
-        buttons.setAlignment(Pos.CENTER);
+        buttons.setAlignment(javafx.geometry.Pos.CENTER);
 
         VBox root = new VBox(14, preview, statusLabel, buttons);
-        root.setAlignment(Pos.CENTER);
+        root.setAlignment(javafx.geometry.Pos.CENTER);
         root.setPadding(new Insets(20));
         root.setStyle("-fx-background-color:#0C0F18;");
 

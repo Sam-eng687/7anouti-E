@@ -551,7 +551,7 @@ public class AssistantIAController {
 
         VBox root = new VBox(20);
         root.setPadding(new Insets(28, 32, 24, 32));
-        root.setAlignment(Pos.CENTER);
+        root.setAlignment(javafx.geometry.Pos.CENTER);
         root.setStyle(
                 "-fx-background-color:" + bg + ";" +
                         "-fx-border-color:" + border + ";" +
@@ -628,7 +628,7 @@ public class AssistantIAController {
         btnCancel.setOnAction(e -> popup.close());
 
         HBox btnRow = new HBox(12, btnWebcam, btnFile);
-        btnRow.setAlignment(Pos.CENTER);
+        btnRow.setAlignment(javafx.geometry.Pos.CENTER);
 
         root.getChildren().addAll(title, subtitle, btnRow, btnCancel);
 
@@ -1660,7 +1660,7 @@ public class AssistantIAController {
                 + "-fx-text-fill:white;-fx-background-radius:20;");
 
         HBox badgeRow = new HBox(4, catBadge, discBadge);
-        badgeRow.setAlignment(Pos.CENTER_LEFT);
+        badgeRow.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
 
         // Buyer-facing title (from M7 AI)
         Label titre = new Label(conseil.getTitreAcheteur());
@@ -1739,7 +1739,7 @@ public class AssistantIAController {
 
         // ── Bundle header — inset 8px, 4-sided radius, height tracks card width like normal cards ──
         VBox header = new VBox(4);
-        header.setAlignment(Pos.CENTER);
+        header.setAlignment(javafx.geometry.Pos.CENTER);
         header.setMaxWidth(Double.MAX_VALUE);
         header.setStyle("-fx-background-color:linear-gradient(to bottom right,#2563EB,#8B5CF6);"
                 + "-fx-background-radius:12;");
@@ -1793,7 +1793,7 @@ public class AssistantIAController {
                 + "-fx-text-fill:white;-fx-background-radius:20;");
 
         HBox badgeRow = new HBox(4, bundleBadge, discBadge);
-        badgeRow.setAlignment(Pos.CENTER_LEFT);
+        badgeRow.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
 
         // Buyer title (bold, prominent)
         Label titre = new Label(conseil.getTitreAcheteur());
@@ -1979,7 +1979,7 @@ public class AssistantIAController {
         // Cart button
         Button addBtn = buildAddToCartButton(p);
         HBox priceLine = new HBox(10, price, addBtn);
-        priceLine.setAlignment(Pos.CENTER_LEFT);
+        priceLine.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
 
         // "Similaire" tag - replaces the budget tag
         Label similarTag = new Label("📷 Similaire");
@@ -2158,7 +2158,7 @@ public class AssistantIAController {
         fallback.setMinHeight(height);
         fallback.setMaxHeight(height);
         fallback.setMaxWidth(Double.MAX_VALUE);
-        fallback.setAlignment(Pos.CENTER);
+        fallback.setAlignment(javafx.geometry.Pos.CENTER);
         fallback.setStyle("-fx-background-color:" + categoryGradient(p.getCategorie())
                 + ";-fx-background-radius:" + RADIUS + ";");
         fallback.getChildren().add(makeCategoryFallback(p.getCategorie(), iconSize));
@@ -2278,7 +2278,7 @@ public class AssistantIAController {
         Region bottomSpacer = new Region();
         HBox.setHgrow(bottomSpacer, Priority.ALWAYS);
         HBox bottomRow = new HBox(rating, bottomSpacer, heartBtn);
-        bottomRow.setAlignment(Pos.CENTER_LEFT);
+        bottomRow.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
 
         content.getChildren().addAll(badge, name, spacer, priceBox, addBtn, bottomRow);
         card.getChildren().addAll(imgWrapper, content);
@@ -2336,7 +2336,7 @@ public class AssistantIAController {
             Button addBtn = buildAddToCartButton(p);
             priceLine = new HBox(10, price, addBtn);
         }
-        priceLine.setAlignment(Pos.CENTER_LEFT);
+        priceLine.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
 
         Label budgetTag = new Label(sp.overBudget ? "⚠ dépasse budget" : "✓ dans budget");
         budgetTag.setStyle("-fx-font-size:10px;-fx-text-fill:" + accent + ";");
@@ -2354,7 +2354,7 @@ public class AssistantIAController {
         Region bottomSpacer = new Region();
         HBox.setHgrow(bottomSpacer, Priority.ALWAYS);
         HBox bottomRow = new HBox(rating, bottomSpacer, heartBtn);
-        bottomRow.setAlignment(Pos.CENTER_LEFT);
+        bottomRow.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
 
         content.getChildren().addAll(badge, name, desc, spacer, priceLine, budgetTag, bottomRow);
         card.getChildren().addAll(imgWrapper, content);
@@ -2448,7 +2448,7 @@ public class AssistantIAController {
         Region headerSpacer = new Region();
         HBox.setHgrow(headerSpacer, Priority.ALWAYS);
         HBox header = new HBox(title, headerSpacer, closeBtn);
-        header.setAlignment(Pos.CENTER_LEFT);
+        header.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
         header.setPadding(new Insets(16, 16, 8, 16));
 
         // ── Separator ─────────────────────────────────────────────────────────
@@ -2490,7 +2490,7 @@ public class AssistantIAController {
                     "-fx-text-fill:white;-fx-background-radius:20;");
             badgeRow.getChildren().add(promoBadge);
         }
-        badgeRow.setAlignment(Pos.CENTER_LEFT);
+        badgeRow.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
 
         // Product name
         Label name = new Label(safeText(p.getLibelle(), "Produit sans nom"));
@@ -2658,7 +2658,7 @@ public class AssistantIAController {
 
         HBox row = new HBox();
         row.setPadding(new Insets(3, 28, 3, 28));
-        row.setAlignment(isUser ? Pos.CENTER_RIGHT : Pos.CENTER_LEFT);
+        row.setAlignment(isUser ? javafx.geometry.Pos.CENTER_RIGHT : javafx.geometry.Pos.CENTER_LEFT);
         row.setOpacity(0);
 
         Label bubble = new Label(isUser ? message : "");

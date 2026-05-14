@@ -1,4 +1,5 @@
--- Reference SQL for AIachat integration.
+-- Reference SQL for AIachat integration (subset).
+-- For the full database in one shot, use: sql/7anouti_e_full_schema.sql
 -- This file is not run automatically by the Java application.
 -- It targets the integrated database used by MyBD: 7anouti_e.
 

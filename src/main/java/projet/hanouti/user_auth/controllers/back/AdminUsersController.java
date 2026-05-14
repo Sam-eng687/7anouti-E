@@ -63,7 +63,7 @@ public class AdminUsersController {
     }
 
     private void setupFilters() {
-        filterRole.setItems(FXCollections.observableArrayList("Tous", "admin", "acheteur", "vendeur", "livreur"));
+        filterRole.setItems(FXCollections.observableArrayList("Tous", "admin", "acheteur", "vendeur", "livreur", "fournisseur"));
         filterRole.setValue("Tous");
         filterStatus.setItems(FXCollections.observableArrayList("Tous", "Unbanned", "Banned"));
         filterStatus.setValue("Tous");
@@ -115,6 +115,7 @@ public class AdminUsersController {
                     case "vendeur" -> badge.getStyleClass().add("role-vendeur");
                     case "acheteur" -> badge.getStyleClass().add("role-acheteur");
                     case "livreur" -> badge.getStyleClass().add("role-livreur");
+                    case "fournisseur" -> badge.getStyleClass().add("role-fournisseur");
                 }
                 setGraphic(badge);
                 setText(null);
@@ -128,7 +129,7 @@ public class AdminUsersController {
             private final HBox box = new HBox(8, viewBtn, editBtn, banBtn);
 
             {
-                box.setAlignment(Pos.CENTER);
+                box.setAlignment(javafx.geometry.Pos.CENTER);
                 viewBtn.setOnAction(e -> openDetail(getTableView().getItems().get(getIndex()), false));
                 editBtn.setOnAction(e -> openDetail(getTableView().getItems().get(getIndex()), true));
                 banBtn.setOnAction(e -> toggleBan(getTableView().getItems().get(getIndex())));
@@ -163,7 +164,7 @@ public class AdminUsersController {
     }
 
     private void setupDetailOverlay() {
-        detailRole.setItems(FXCollections.observableArrayList("admin", "acheteur", "vendeur", "livreur"));
+        detailRole.setItems(FXCollections.observableArrayList("admin", "acheteur", "vendeur", "livreur", "fournisseur"));
         detailStatus.setItems(FXCollections.observableArrayList("Unbanned", "Banned"));
         closeDetailBtn.setOnAction(e -> closeDetail());
         detailCancelBtn.setOnAction(e -> closeDetail());

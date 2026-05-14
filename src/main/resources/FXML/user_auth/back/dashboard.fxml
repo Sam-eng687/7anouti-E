@@ -46,6 +46,16 @@
                     <tooltip><Tooltip text="Dashboard"/></tooltip>
                 </Button>
 
+                <Button fx:id="navPremiumWejden" styleClass="nav-btn" maxWidth="Infinity" alignment="BASELINE_LEFT"
+                        visible="false" managed="false">
+                    <graphic>
+                        <HBox spacing="12" alignment="CENTER_LEFT">
+                            <Label text="Dashboard Premium" styleClass="nav-label"/>
+                        </HBox>
+                    </graphic>
+                    <tooltip><Tooltip text="Stats, conseils IA, campagnes, export CSV (module Wejden)"/></tooltip>
+                </Button>
+
                 <Button fx:id="navProducts" styleClass="nav-btn" maxWidth="Infinity" alignment="BASELINE_LEFT">
                     <graphic>
                         <HBox spacing="12" alignment="CENTER_LEFT">
@@ -130,6 +140,12 @@
                     <Text fx:id="headerSubtitle" text="Module pret pour integration" styleClass="header-subtitle"/>
                 </VBox>
                 <HBox alignment="CENTER_RIGHT" spacing="12" styleClass="header-profile">
+                    <Label fx:id="marketingIaBadge" text="⚡ IA Active" managed="false" visible="false"
+                           styleClass="marketing-ia-badge"/>
+                    <Button fx:id="marketingPdfBtn" text="⬇" managed="false" visible="false"
+                            styleClass="marketing-pdf-btn">
+                        <tooltip><Tooltip text="Telecharger le rapport PDF complet"/></tooltip>
+                    </Button>
                     <VBox alignment="CENTER_RIGHT" spacing="1">
                         <Label fx:id="adminNameLabel" text="Utilisateur" styleClass="admin-name"/>
                         <Label fx:id="adminRoleLabel" text="" styleClass="admin-role"/>

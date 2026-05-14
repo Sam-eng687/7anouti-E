@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -14,12 +15,16 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import projet.hanouti.AIachat.controllers.AssistantIAController;
+import projet.hanouti.AImarketing.interfaces.ThemeAware;
 import projet.hanouti.common.utils.SessionManager;
 import projet.hanouti.common.utils.UiIcons;
 import projet.hanouti.user_auth.entities.User;
 import projet.hanouti.user_auth.enums.Role;
-import projet.hanouti.user_auth.enums.Status;
 import projet.hanouti.user_auth.services.UserCRUD;
+import projet.hanouti.wejden.gui.HanoutiDashboard;
+import projet.hanouti.wejden.utils.PDFExportManager;
+
+import javafx.stage.Stage;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -32,11 +37,19 @@ public class DashboardController {
     private static final String ADMIN_USERS_FXML = "/FXML/user_auth/back/tabs/admin_users.fxml";
     private static final String PLACEHOLDER_FXML = "/FXML/user_auth/back/tabs/module_placeholder.fxml";
     private static final String AI_ACHAT_FXML = "/FXML/AIachat/assistant_ia.fxml";
+    private static final String AI_MARKETING_DASHBOARD_FXML = "/FXML/AImarketing/dashboard.fxml";
+    /** Dashboard FXML Wejden (module fournisseur / legacy). */
+    private static final String WEJDEN_PREMIUM_DASHBOARD_FXML = "/ressources-wejden/FXML/Dashboard.fxml";
+    /** Prefixe : contenu Java {@link HanoutiDashboard} integre (pas un fichier FXML). */
+    private static final String EMBED_HANOUTI_PREFIX = "embed:hanouti:";
+    private static final String EMBED_HANOUTI_STATS = EMBED_HANOUTI_PREFIX + "stats";
+    private static final String EMBED_HANOUTI_CONSEILS = EMBED_HANOUTI_PREFIX + "conseils";
+    private static final String EMBED_HANOUTI_CAMPAGNES = EMBED_HANOUTI_PREFIX + "campagnes";
 
     @FXML private AnchorPane rootPane;
     @FXML private VBox sidebar;
     @FXML private ImageView sidebarLogo;
-    @FXML private Button navUsers, navProducts, navOrders, navStats, navSettings, navSupport;
+    @FXML private Button navUsers, navPremiumWejden, navProducts, navOrders, navStats, navSettings, navSupport;
     @FXML private Button themeToggleBtn, logoutBtn, notifBtn, cartBtn, hamburgerBtn;
     @FXML private Label themeIcon, themeLabel;
     @FXML private MenuButton profileMenu;
@@ -44,6 +57,8 @@ public class DashboardController {
     @FXML private HBox headerBar;
     @FXML private Text headerTitle, headerSubtitle;
     @FXML private Label adminNameLabel, adminRoleLabel, adminAvatarLetter;
+    @FXML private Label marketingIaBadge;
+    @FXML private Button marketingPdfBtn;
     @FXML private ImageView adminAvatar;
     @FXML private StackPane contentContainer;
 
@@ -62,6 +77,10 @@ public class DashboardController {
     private boolean sidebarOpen = false;
     private User connectedUser;
     private Object currentModuleController;
+    private HanoutiDashboard hanoutiMarketingEmbed;
+    private StackPane hanoutiMarketingRoot;
+    /** Evite une boucle infinie si la Scene/Window n'est jamais prete. */
+    private int hanoutiEmbedStageWaitTicks;
 
     @FXML
     public void initialize() {
@@ -87,6 +106,7 @@ public class DashboardController {
         setupHeaderActions();
         setupProfileOverlay();
         setupShellChrome();
+        setupMarketingShellTools();
         setupRoleNavigation(connectedUser.getRole());
 
         logoutBtn.setVisible(false);
@@ -125,7 +145,7 @@ public class DashboardController {
     }
 
     private void setupProfileOverlay() {
-        profileDetailRole.setItems(FXCollections.observableArrayList("admin", "acheteur", "vendeur", "livreur"));
+        profileDetailRole.setItems(FXCollections.observableArrayList("admin", "acheteur", "vendeur", "livreur", "fournisseur"));
         profileDetailStatus.setItems(FXCollections.observableArrayList("Unbanned", "Banned"));
         profileCloseDetailBtn.setOnAction(e -> closeProfileEdit());
         profileDetailCancelBtn.setOnAction(e -> closeProfileEdit());
@@ -158,9 +178,38 @@ public class DashboardController {
         adminAvatar.setClip(new Circle(19, 19, 19));
     }
 
+    private void setupMarketingShellTools() {
+        setMarketingShellToolsVisible(false);
+        if (marketingPdfBtn != null) {
+            marketingPdfBtn.setOnAction(e -> {
+                Stage stage = rootPane.getScene() != null ? (Stage) rootPane.getScene().getWindow() : null;
+                if (stage == null) {
+                    return;
+                }
+                PDFExportManager.setDarkMode(isDarkMode);
+                PDFExportManager.exportRapportComplet(stage);
+            });
+        }
+    }
+
+    private void setMarketingShellToolsVisible(boolean visible) {
+        if (marketingIaBadge != null) {
+            marketingIaBadge.setVisible(visible);
+            marketingIaBadge.setManaged(visible);
+        }
+        if (marketingPdfBtn != null) {
+            marketingPdfBtn.setVisible(visible);
+            marketingPdfBtn.setManaged(visible);
+        }
+    }
+
     private void setupRoleNavigation(Role role) {
         navItems.clear();
         resetNavVisibility();
+
+        if (navPremiumWejden != null) {
+            hideNav(navPremiumWejden);
+        }
 
         if (role == Role.admin) {
             addNav(navUsers, "Dashboard global", "Vue globale plateforme", ADMIN_USERS_FXML);
@@ -179,12 +228,22 @@ public class DashboardController {
             addNav(navSettings, "Mes commandes", "Suivi commandes", PLACEHOLDER_FXML);
             hideNav(navSupport);
         } else if (role == Role.vendeur) {
-            addNav(navUsers, "Dashboard", "Accueil vendeur", PLACEHOLDER_FXML);
+            addNav(navUsers, "dashboard", "Stats, graphes, LIVE, recherche, export PDF", EMBED_HANOUTI_STATS);
+            if (navPremiumWejden != null) {
+                hideNav(navPremiumWejden);
+            }
             addNav(navProducts, "Ma boutique", "Gestion boutique", PLACEHOLDER_FXML);
             addNav(navOrders, "Les commandes", "Commandes recues", PLACEHOLDER_FXML);
-            addNav(navStats, "Conseil AI", "Recommandations intelligentes", PLACEHOLDER_FXML);
-            addNav(navSettings, "Campagne marketing", "Campagnes commerciales", PLACEHOLDER_FXML);
+            addNav(navStats, "Conseil decision", "IA — recommandations & alertes", EMBED_HANOUTI_CONSEILS);
+            addNav(navSettings, "Campagnes marketing", "Actions, scores IA, PDF", EMBED_HANOUTI_CAMPAGNES);
             addNav(navSupport, "Mes fournisseurs", "Gestion fournisseurs", PLACEHOLDER_FXML);
+        } else if (role == Role.fournisseur) {
+            addNav(navUsers, "Dashboard", "Vue marketing synthetique (7anouti-E)", AI_MARKETING_DASHBOARD_FXML);
+            addNav(navProducts, "Dashboard Premium", "Stats, conseils IA, campagnes, export CSV (Wejden)", WEJDEN_PREMIUM_DASHBOARD_FXML);
+            hideNav(navOrders);
+            hideNav(navStats);
+            hideNav(navSettings);
+            hideNav(navSupport);
         } else if (role == Role.livreur) {
             addNav(navUsers, "Dashboard", "Accueil livreur", PLACEHOLDER_FXML);
             addNav(navProducts, "Mes livreurs", "Gestion livreurs", PLACEHOLDER_FXML);
@@ -195,8 +254,52 @@ public class DashboardController {
         }
 
         if (!navItems.isEmpty()) {
-            loadTab(navItems.get(0));
+            scheduleInitialTabLoad();
         }
+    }
+
+    /**
+     * Pendant {@link FXMLLoader#load()}, {@code rootPane} n'a souvent pas encore de {@link Scene}
+     * (le parent n'est branche qu'apres {@code initialize()}). On attend Scene + Window pour
+     * les modules embed qui ont besoin d'un {@link Stage} (Hanouti).
+     */
+    private void scheduleInitialTabLoad() {
+        NavItem first = navItems.get(0);
+        Runnable loadFirst = () -> loadTab(first);
+
+        Scene scene = rootPane.getScene();
+        if (scene != null) {
+            runWhenWindowReady(scene, loadFirst);
+            return;
+        }
+        javafx.beans.value.ChangeListener<Scene> sceneListener = new javafx.beans.value.ChangeListener<>() {
+            @Override
+            public void changed(javafx.beans.value.ObservableValue<? extends Scene> obs, Scene oldS, Scene newS) {
+                if (newS != null) {
+                    rootPane.sceneProperty().removeListener(this);
+                    runWhenWindowReady(newS, loadFirst);
+                }
+            }
+        };
+        rootPane.sceneProperty().addListener(sceneListener);
+    }
+
+    private void runWhenWindowReady(Scene scene, Runnable action) {
+        if (scene.getWindow() != null) {
+            javafx.application.Platform.runLater(action);
+            return;
+        }
+        javafx.beans.value.ChangeListener<javafx.stage.Window> winListener = new javafx.beans.value.ChangeListener<>() {
+            @Override
+            public void changed(javafx.beans.value.ObservableValue<? extends javafx.stage.Window> obs,
+                                javafx.stage.Window oldW, javafx.stage.Window newW) {
+                if (newW != null) {
+                    scene.windowProperty().removeListener(this);
+                    javafx.application.Platform.runLater(action);
+                }
+            }
+        };
+        scene.windowProperty().addListener(winListener);
     }
 
     private void addNav(Button button, String title, String subtitle, String fxmlPath) {
@@ -232,9 +335,15 @@ public class DashboardController {
     }
 
     private void loadTab(NavItem item) {
+        setMarketingShellToolsVisible(false);
         setActiveNav(item.button());
         headerTitle.setText(item.title());
         headerSubtitle.setText(item.subtitle());
+
+        if (item.fxmlPath().startsWith(EMBED_HANOUTI_PREFIX)) {
+            loadHanoutiMarketingEmbed(item);
+            return;
+        }
 
         try {
             java.net.URL fxml = getClass().getResource(item.fxmlPath());
@@ -250,6 +359,7 @@ public class DashboardController {
                 item.afterLoad().accept(currentModuleController);
             }
             applyThemeToCurrentModule();
+            contentContainer.getStyleClass().remove("content-area-embed-flush");
             contentContainer.getChildren().setAll(content);
         } catch (Exception ex) {
             showContentError(item.title(), "Impossible de charger le module.");
@@ -257,7 +367,41 @@ public class DashboardController {
         }
     }
 
+    private void loadHanoutiMarketingEmbed(NavItem item) {
+        Scene sc = rootPane.getScene();
+        if (sc == null || sc.getWindow() == null || !(sc.getWindow() instanceof Stage)) {
+            if (hanoutiEmbedStageWaitTicks++ < 120) {
+                javafx.application.Platform.runLater(() -> loadHanoutiMarketingEmbed(item));
+            } else {
+                hanoutiEmbedStageWaitTicks = 0;
+                showContentError(item.title(), "Fenetre non prete. Reessayez cet onglet.");
+            }
+            return;
+        }
+        hanoutiEmbedStageWaitTicks = 0;
+        Stage stage = (Stage) sc.getWindow();
+        try {
+            String module = item.fxmlPath().substring(EMBED_HANOUTI_PREFIX.length());
+            if (hanoutiMarketingEmbed == null) {
+                hanoutiMarketingEmbed = new HanoutiDashboard();
+                hanoutiMarketingRoot = hanoutiMarketingEmbed.createShellEmbedRoot(stage);
+            }
+            hanoutiMarketingEmbed.applyShellTheme(isDarkMode);
+            hanoutiMarketingEmbed.navigateEmbedTo(module);
+            currentModuleController = hanoutiMarketingEmbed;
+            applyThemeToCurrentModule();
+            contentContainer.getStyleClass().remove("content-area-embed-flush");
+            contentContainer.getStyleClass().add("content-area-embed-flush");
+            contentContainer.getChildren().setAll(hanoutiMarketingRoot);
+            setMarketingShellToolsVisible(true);
+        } catch (Exception ex) {
+            showContentError(item.title(), "Impossible de charger le module marketing.");
+            ex.printStackTrace();
+        }
+    }
+
     private void showContentError(String title, String message) {
+        setMarketingShellToolsVisible(false);
         Label heading = new Label(title);
         heading.getStyleClass().add("stat-value");
 
@@ -271,6 +415,7 @@ public class DashboardController {
 
         StackPane wrapper = new StackPane(card);
         wrapper.getStyleClass().add("content-area");
+        contentContainer.getStyleClass().remove("content-area-embed-flush");
         contentContainer.getChildren().setAll(wrapper);
     }
 
@@ -284,6 +429,9 @@ public class DashboardController {
     }
 
     private Button[] allNavButtons() {
+        if (navPremiumWejden != null) {
+            return new Button[]{navUsers, navPremiumWejden, navProducts, navOrders, navStats, navSettings, navSupport};
+        }
         return new Button[]{navUsers, navProducts, navOrders, navStats, navSettings, navSupport};
     }
 
@@ -416,11 +564,19 @@ public class DashboardController {
         }
         refreshHeaderIcons();
         applyThemeToCurrentModule();
+        PDFExportManager.setDarkMode(isDarkMode);
+        if (hanoutiMarketingEmbed != null && currentModuleController != hanoutiMarketingEmbed) {
+            hanoutiMarketingEmbed.applyShellTheme(isDarkMode);
+        }
     }
 
     private void applyThemeToCurrentModule() {
         if (currentModuleController instanceof AssistantIAController assistant) {
             assistant.applyTheme(isDarkMode);
+        } else if (currentModuleController instanceof HanoutiDashboard hanouti) {
+            hanouti.applyShellTheme(isDarkMode);
+        } else if (currentModuleController instanceof ThemeAware themeAware) {
+            themeAware.applyTheme(isDarkMode);
         }
     }
 

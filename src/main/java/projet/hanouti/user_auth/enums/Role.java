@@ -4,6 +4,8 @@ public enum Role {
     admin,
    acheteur,
     vendeur,
-    livreur
+    livreur,
+    /** Espace fournisseur : double dashboard marketing + export rapports */
+    fournisseur
 }
 

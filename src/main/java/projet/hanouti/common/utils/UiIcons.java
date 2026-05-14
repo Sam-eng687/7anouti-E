@@ -40,7 +40,7 @@ public final class UiIcons {
         path.setScaleY(size / 24.0);
 
         StackPane box = new StackPane(path);
-        box.setAlignment(Pos.CENTER);
+        box.setAlignment(javafx.geometry.Pos.CENTER);
         box.setMinSize(size, size);
         box.setPrefSize(size, size);
         box.setMaxSize(size, size);

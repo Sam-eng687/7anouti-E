@@ -294,7 +294,7 @@ public class UserCRUD implements CRUDuser<User> {
 
         String hashedPassword = hashPassword(newPassword);
 
-        String sql = "UPDATE user SET mot_de_pass = ? WHERE e_mail = ?";
+        String sql = "UPDATE users SET mot_de_pass = ? WHERE e_mail = ?";
 
         try (PreparedStatement pst = connection.prepareStatement(sql)) {
 

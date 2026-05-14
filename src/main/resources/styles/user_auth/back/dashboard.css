@@ -275,6 +275,34 @@
     -fx-font-size: 12px;
 }
 .header-profile { -fx-padding: 0; }
+
+.marketing-ia-badge {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #10B981;
+    -fx-background-color: rgba(16,185,129,0.12);
+    -fx-padding: 6 14;
+    -fx-border-color: rgba(16,185,129,0.35);
+    -fx-border-width: 1;
+    -fx-border-radius: 99;
+    -fx-background-radius: 99;
+}
+.marketing-pdf-btn {
+    -fx-font-size: 15px;
+    -fx-text-fill: #38BDF8;
+    -fx-background-color: rgba(56,189,248,0.12);
+    -fx-background-radius: 10;
+    -fx-border-color: rgba(56,189,248,0.35);
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-cursor: hand;
+    -fx-min-width: 40;
+    -fx-min-height: 40;
+    -fx-max-width: 40;
+    -fx-max-height: 40;
+    -fx-padding: 0;
+}
+
 .admin-name {
     -fx-text-fill: -t1;
     -fx-font-size: 13px;
@@ -325,6 +353,9 @@
 .content-scroll .scroll-bar:vertical .decrement-arrow { -fx-shape: ""; -fx-padding: 0; }
 
 .content-area { -fx-padding: 24 30; }
+
+/* Contenu marketing Wejden intégré : coller au bord du panneau (pas de marge grise) */
+.content-area.content-area-embed-flush { -fx-padding: 0; }
 
 /* ============================================================
    STATS
@@ -487,9 +518,11 @@
 .role-vendeur  { -fx-background-color: rgba(99,102,241,0.12); -fx-text-fill: #4F46E5; }
 .role-acheteur { -fx-background-color: rgba(20,184,166,0.12); -fx-text-fill: #0D9488; }
 .role-livreur  { -fx-background-color: rgba(249,115,22,0.12); -fx-text-fill: #EA580C; }
+.role-fournisseur { -fx-background-color: rgba(168,85,247,0.14); -fx-text-fill: #7C3AED; }
 .dash-root.dark .role-vendeur  { -fx-background-color: rgba(129,140,248,0.15); -fx-text-fill: #A5B4FC; }
 .dash-root.dark .role-acheteur { -fx-background-color: rgba(45,212,191,0.15);  -fx-text-fill: #5EEAD4; }
 .dash-root.dark .role-livreur  { -fx-background-color: rgba(251,146,60,0.15);  -fx-text-fill: #FB923C; }
+.dash-root.dark .role-fournisseur { -fx-background-color: rgba(192,132,252,0.18); -fx-text-fill: #E9D5FF; }
 
 /* ============================================================
    ACTION BUTTONS — ICONES SEULES (cercle coloré)
