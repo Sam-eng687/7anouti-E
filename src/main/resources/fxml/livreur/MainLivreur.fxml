@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<!--
+    Fenêtre principale du Livreur normal.
+    Sidebar gauche fixe + zone de contenu droite (StackPane).
+    Les 2 vues (Dashboard / Mes Livraisons) sont chargées
+    dynamiquement dans le StackPane par MainLivreurController.
+-->
+<HBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="tn.hanouti.livreur.controller.MainLivreurController"
+      style="-fx-background-color: -bg-deep;"
+      prefWidth="1200" prefHeight="720">
+
+    <!-- ══════════════════════════════════════
+         SIDEBAR GAUCHE
+    ══════════════════════════════════════ -->
+    <VBox prefWidth="220" minWidth="200" spacing="0"
+          style="-fx-background-color: #090D1F;
+                 -fx-border-color: rgba(59,130,246,0.12);
+                 -fx-border-width: 0 1 0 0;">
+
+        <!-- Logo / titre -->
+        <VBox style="-fx-padding: 28 20 24 20; -fx-spacing: 4;
+                     -fx-border-color: rgba(59,130,246,0.10);
+                     -fx-border-width: 0 0 1 0;">
+            <Label text="7anouti-E"
+                   style="-fx-font-size: 20px; -fx-font-weight: 800;
+                          -fx-text-fill: #38BDF8;"/>
+            <Label text="Espace Livreur"
+                   style="-fx-font-size: 11px; -fx-text-fill: #4A5577;"/>
+        </VBox>
+
+        <!-- Navigation items -->
+        <VBox spacing="4" style="-fx-padding: 16 12;">
+
+            <Button fx:id="btnNavDashboard"
+                    text="📊   Dashboard"
+                    maxWidth="Infinity"
+                    onAction="#afficherDashboard"
+                    styleClass="nav-btn-active"/>
+
+            <Button fx:id="btnNavLivraisons"
+                    text="🚚   Mes Livraisons"
+                    maxWidth="Infinity"
+                    onAction="#afficherLivraisons"
+                    styleClass="nav-btn"/>
+
+        </VBox>
+
+        <!-- Spacer -->
+        <VBox VBox.vgrow="ALWAYS"/>
+
+        <!-- Mode switch + infos bas -->
+        <VBox style="-fx-padding: 16 12 20 12; -fx-spacing: 10;
+                     -fx-border-color: rgba(59,130,246,0.10);
+                     -fx-border-width: 1 0 0 0;">
+            <Button fx:id="btnModeSwitch"
+                    text="☀️  Mode jour"
+                    maxWidth="Infinity"
+                    onAction="#switchMode"
+                    styleClass="nav-btn"/>
+            <Label fx:id="labelNomUser"
+                   text="Livreur"
+                   style="-fx-font-size: 12px; -fx-font-weight: 700;
+                          -fx-text-fill: #F0F4FF; -fx-padding: 4 8 0 8;"/>
+            <Label text="🚚 Livreur"
+                   style="-fx-font-size: 10px; -fx-text-fill: #4A5577;
+                          -fx-padding: 0 8;"/>
+        </VBox>
+
+    </VBox>
+
+    <!-- ══════════════════════════════════════
+         ZONE DE CONTENU (vues chargées ici)
+    ══════════════════════════════════════ -->
+    <StackPane fx:id="contentArea" HBox.hgrow="ALWAYS"
+               style="-fx-background-color: -bg-deep;"/>
+
+</HBox>
+

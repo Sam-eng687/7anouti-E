@@ -17,6 +17,7 @@ target/
 .classpath
 .factorypath
 .project
+
 .settings
 .springBeans
 .sts4-cache
@@ -36,3 +37,6 @@ build/
 
 ### Mac OS ###
 .DS_Store
+whatsapp-service/node_modules/
+whatsapp-service/auth_info/
+7anouti-e/

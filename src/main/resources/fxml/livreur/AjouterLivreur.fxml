@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="14"
+      style="-fx-background-color: #16213e; -fx-padding: 25; -fx-min-width: 360;"
+      xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="tn.hanouti.livreur.controller.AjouterLivreurController">
+
+    <!-- Titre -->
+    <Label text="+ Nouveau livreur"
+           style="-fx-text-fill: white; -fx-font-size: 17; -fx-font-weight: bold;"/>
+
+    <!-- Photo -->
+    <Label text="Photo du livreur" style="-fx-text-fill: #aaa; -fx-font-size: 12;"/>
+    <HBox spacing="12" style="-fx-alignment: center-left;">
+        <ImageView fx:id="photoPreview"
+                   fitWidth="64" fitHeight="64"
+                   preserveRatio="true"
+                   style="-fx-effect: dropshadow(gaussian, #4f46e5, 6, 0, 0, 0);"/>
+        <Button fx:id="btnParcourir" text="📁 Parcourir"
+                onAction="#choisirPhoto"
+                style="-fx-background-color: #2a2a4a; -fx-text-fill: #aaa; -fx-border-color: #4f46e5; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 8 14;"/>
+        <Label fx:id="labelPhoto" text="Aucune photo sélectionnée"
+               style="-fx-text-fill: #666; -fx-font-size: 11;"/>
+    </HBox>
+
+    <!-- Nom -->
+    <Label text="Nom du livreur" style="-fx-text-fill: #aaa; -fx-font-size: 12;"/>
+    <TextField fx:id="nomField" promptText="Ex : Ali Ben Salem"
+               style="-fx-background-color: #2a2a4a; -fx-text-fill: white; -fx-prompt-text-fill: #555;
+                     -fx-border-color: #4f46e5; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 8;"/>
+
+    <!-- Téléphone -->
+    <Label text="Téléphone (8 chiffres)" style="-fx-text-fill: #aaa; -fx-font-size: 12;"/>
+    <TextField fx:id="telField" promptText="Ex : 23456789"
+               style="-fx-background-color: #2a2a4a; -fx-text-fill: white; -fx-prompt-text-fill: #555;
+                     -fx-border-color: #4f46e5; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 8;"/>
+
+    <!-- Date de naissance -->
+    <Label text="Date de naissance" style="-fx-text-fill: #aaa; -fx-font-size: 12;"/>
+    <DatePicker fx:id="dateNaissancePicker" promptText="JJ/MM/AAAA"
+                style="-fx-background-color: #2a2a4a; -fx-border-color: #4f46e5; -fx-border-radius: 6; -fx-background-radius: 6;"/>
+
+    <!-- Véhicule -->
+    <Label text="Type de véhicule" style="-fx-text-fill: #aaa; -fx-font-size: 12;"/>
+    <ComboBox fx:id="vehiculeCombo" prefWidth="Infinity"
+              style="-fx-background-color: #2a2a4a; -fx-border-color: #4f46e5; -fx-border-radius: 6; -fx-background-radius: 6;"/>
+
+    <!-- Message erreur -->
+    <Label fx:id="messageLabel" text=""
+           style="-fx-text-fill: #e74c3c; -fx-font-size: 12;"/>
+
+    <!-- Boutons -->
+    <HBox spacing="10" style="-fx-alignment: center-right; -fx-padding: 8 0 0 0;">
+        <Button fx:id="btnAnnuler" text="Annuler"
+                onAction="#annuler"
+                style="-fx-background-color: transparent; -fx-text-fill: #aaa;
+                     -fx-border-color: #444; -fx-border-radius: 6; -fx-padding: 8 20;"/>
+        <Button fx:id="btnAjouter" text="Ajouter"
+                onAction="#ajouter"
+                style="-fx-background-color: #4f46e5; -fx-text-fill: white;
+                     -fx-background-radius: 6; -fx-padding: 8 20;"/>
+    </HBox>
+
+</VBox>
+

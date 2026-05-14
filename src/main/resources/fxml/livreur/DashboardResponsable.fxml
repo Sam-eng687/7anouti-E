@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<HBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="tn.hanouti.livreur.controller.DashboardResponsableController"
+      prefHeight="720" prefWidth="1200"
+      style="-fx-background-color: #070B18;">
+
+    <!-- ══ Sidebar ══ -->
+    <VBox prefWidth="220" minWidth="200"
+          style="-fx-background-color: #090D1F;
+                 -fx-border-color: rgba(59,130,246,0.10);
+                 -fx-border-width: 0 1 0 0;">
+
+        <!-- Logo -->
+        <VBox style="-fx-padding: 24 20 18 20; -fx-spacing: 4;
+                     -fx-border-color: rgba(59,130,246,0.10);
+                     -fx-border-width: 0 0 1 0;">
+            <Label text="7anouti-E"
+                   style="-fx-font-size: 18px; -fx-font-weight: 800; -fx-text-fill: #38BDF8;"/>
+            <Label text="Responsable Livraison"
+                   style="-fx-font-size: 10px; -fx-text-fill: #4A5577;"/>
+        </VBox>
+
+        <!-- Nav -->
+        <VBox spacing="4" style="-fx-padding: 16 12;">
+            <Button fx:id="btnNavDashboard" text="📊  Dashboard"
+                    maxWidth="Infinity" onAction="#navDashboard"
+                    style="-fx-background-color: rgba(59,130,246,0.15);
+                           -fx-text-fill: #38BDF8; -fx-font-weight: 700;
+                           -fx-font-size: 13px; -fx-padding: 10 14;
+                           -fx-background-radius: 10; -fx-border-color: transparent;
+                           -fx-alignment: center-left; -fx-cursor: hand;"/>
+            <Button fx:id="btnNavLivreurs" text="👥  Livreurs"
+                    maxWidth="Infinity" onAction="#navLivreurs"
+                    style="-fx-background-color: transparent;
+                           -fx-text-fill: #8892B0; -fx-font-size: 13px;
+                           -fx-padding: 10 14; -fx-background-radius: 10;
+                           -fx-border-color: transparent;
+                           -fx-alignment: center-left; -fx-cursor: hand;"/>
+            <Button fx:id="btnNavLivraisons" text="📦  Livraisons"
+                    maxWidth="Infinity" onAction="#navLivraisons"
+                    style="-fx-background-color: transparent;
+                           -fx-text-fill: #8892B0; -fx-font-size: 13px;
+                           -fx-padding: 10 14; -fx-background-radius: 10;
+                           -fx-border-color: transparent;
+                           -fx-alignment: center-left; -fx-cursor: hand;"/>
+        </VBox>
+
+        <!-- Spacer -->
+        <VBox VBox.vgrow="ALWAYS"/>
+
+        <!-- Profil + mode en bas -->
+        <VBox style="-fx-padding: 12 16 20 16; -fx-spacing: 10;
+                     -fx-border-color: rgba(59,130,246,0.10);
+                     -fx-border-width: 1 0 0 0;">
+            <Button fx:id="btnModeSwitch" text="☀️  Mode jour"
+                    maxWidth="Infinity" onAction="#switchMode"
+                    style="-fx-background-color: rgba(255,255,255,0.04);
+                           -fx-text-fill: #8892B0; -fx-font-size: 12px;
+                           -fx-padding: 8 14; -fx-background-radius: 10;
+                           -fx-border-color: rgba(59,130,246,0.15);
+                           -fx-border-width: 1; -fx-border-radius: 10;
+                           -fx-cursor: hand;"/>
+            <Label fx:id="labelNomResponsable" text="Responsable"
+                   style="-fx-font-size: 12px; -fx-font-weight: 700; -fx-text-fill: #F0F4FF;"/>
+            <Label text="👑 Responsable"
+                   style="-fx-font-size: 10px; -fx-text-fill: #4A5577;"/>
+        </VBox>
+
+    </VBox>
+
+    <!-- ══ Main content ══ -->
+    <VBox HBox.hgrow="ALWAYS" spacing="0"
+          style="-fx-background-color: #070B18;">
+
+        <!-- Header -->
+        <HBox style="-fx-background-color: #090D1F; -fx-padding: 18 28 18 28;
+                     -fx-border-color: rgba(59,130,246,0.10);
+                     -fx-border-width: 0 0 1 0;"
+              alignment="CENTER_LEFT" spacing="12">
+            <VBox HBox.hgrow="ALWAYS" spacing="4">
+                <Label fx:id="labelPageTitre" text="📊  Dashboard Responsable"
+                       style="-fx-font-size: 22px; -fx-font-weight: 700; -fx-text-fill: #F0F4FF;"/>
+                <Label fx:id="labelPageSub" text="Vue d'ensemble de l'équipe et des livraisons"
+                       style="-fx-font-size: 12px; -fx-text-fill: #4A5577;"/>
+            </VBox>
+        </HBox>
+
+        <!-- Zone de contenu dynamique — swappée par la sidebar -->
+        <StackPane fx:id="contentArea" VBox.vgrow="ALWAYS">
+
+            <!-- ── Vue Dashboard (défaut) ── -->
+            <VBox fx:id="vueDashboard" spacing="0" VBox.vgrow="ALWAYS">
+
+                <!-- KPI Cards -->
+                <HBox spacing="12" style="-fx-padding: 20 28 8 28;">
+                    <VBox styleClass="kpi-card, kpi-royal" HBox.hgrow="ALWAYS" spacing="5">
+                        <Label text="TOTAL LIVREURS" styleClass="kpi-label"/>
+                        <Label fx:id="kpiTotal" text="0" styleClass="kpi-value"/>
+                        <Label text="dans l'équipe" styleClass="kpi-trend"/>
+                    </VBox>
+                    <VBox styleClass="kpi-card, kpi-green" HBox.hgrow="ALWAYS" spacing="5">
+                        <Label text="DISPONIBLES" styleClass="kpi-label"/>
+                        <Label fx:id="kpiDisponibles" text="0" styleClass="kpi-value"/>
+                        <Label text="prêts à livrer" styleClass="kpi-trend"/>
+                    </VBox>
+                    <VBox styleClass="kpi-card, kpi-orange" HBox.hgrow="ALWAYS" spacing="5">
+                        <Label text="EN LIVRAISON" styleClass="kpi-label"/>
+                        <Label fx:id="kpiEnLivraison" text="0" styleClass="kpi-value"/>
+                        <Label text="en cours" styleClass="kpi-trend"/>
+                    </VBox>
+                    <VBox styleClass="kpi-card, kpi-violet" HBox.hgrow="ALWAYS" spacing="5">
+                        <Label text="EN ATTENTE" styleClass="kpi-label"/>
+                        <Label fx:id="kpiEnAttente" text="0" styleClass="kpi-value"/>
+                        <Label text="à affecter" styleClass="kpi-trend"/>
+                    </VBox>
+                </HBox>
+
+                <!-- Content -->
+                <HBox spacing="14" VBox.vgrow="ALWAYS"
+                      style="-fx-padding: 8 28 20 28;">
+
+                    <!-- Left -->
+                    <VBox HBox.hgrow="ALWAYS" spacing="12">
+
+                        <!-- Tableau livreurs -->
+                        <VBox spacing="0"
+                              style="-fx-background-color: -bg-card; -fx-background-radius: 14;
+                                     -fx-border-color: -border; -fx-border-width: 1; -fx-border-radius: 14;">
+                            <HBox style="-fx-padding: 14 18 10 18;" alignment="CENTER_LEFT" spacing="8">
+                                <Label text="👥" style="-fx-font-size: 16px;"/>
+                                <Label text="ÉTAT DE L'ÉQUIPE" styleClass="kpi-label"
+                                       style="-fx-font-size: 11px;"/>
+                            </HBox>
+                            <Separator/>
+                            <HBox style="-fx-padding: 8 18;">
+                                <Label prefWidth="190" text="NOM" styleClass="table-header-label"/>
+                                <Label prefWidth="110" text="TÉLÉPHONE" styleClass="table-header-label"/>
+                                <Label prefWidth="80"  text="VÉHICULE" styleClass="table-header-label"/>
+                                <Label prefWidth="90"  text="DISPO" styleClass="table-header-label"/>
+                                <Label prefWidth="70"  text="SCORE" styleClass="table-header-label"/>
+                            </HBox>
+                            <ListView fx:id="listLivreurs" prefHeight="180" styleClass="list-view"/>
+                        </VBox>
+
+                        <!-- Livraisons en attente -->
+                        <VBox spacing="0" VBox.vgrow="ALWAYS"
+                              style="-fx-background-color: -bg-card; -fx-background-radius: 14;
+                                     -fx-border-color: -border; -fx-border-width: 1; -fx-border-radius: 14;">
+                            <HBox style="-fx-padding: 14 18 10 18;" alignment="CENTER_LEFT" spacing="8">
+                                <Label text="📦" style="-fx-font-size: 16px;"/>
+                                <Label text="LIVRAISONS EN ATTENTE" styleClass="kpi-label"
+                                       style="-fx-font-size: 11px;"/>
+                                <Label HBox.hgrow="ALWAYS"/>
+                                <Label fx:id="lblAttente" text="0 en attente" styleClass="badge-yellow"/>
+                            </HBox>
+                            <Separator/>
+                            <HBox style="-fx-padding: 8 18;">
+                                <Label prefWidth="130" text="COMMANDE" styleClass="table-header-label"/>
+                                <Label prefWidth="300" text="ADRESSE CLIENT" styleClass="table-header-label"/>
+                                <Label prefWidth="120" text="ACTION" styleClass="table-header-label"/>
+                            </HBox>
+                            <ListView fx:id="listAttente" VBox.vgrow="ALWAYS"
+                                      prefHeight="160" styleClass="list-view"/>
+                        </VBox>
+
+                    </VBox>
+
+                    <!-- Right -->
+                    <VBox prefWidth="300" minWidth="280" spacing="12">
+
+                        <VBox spacing="12"
+                              style="-fx-background-color: -bg-card; -fx-background-radius: 14;
+                                     -fx-border-color: -border; -fx-border-width: 1; -fx-border-radius: 14;
+                                     -fx-padding: 16 18;">
+                            <HBox alignment="CENTER_LEFT" spacing="8">
+                                <Label text="⭐" style="-fx-font-size: 16px;"/>
+                                <Label text="SCORES DE L'ÉQUIPE" styleClass="kpi-label"
+                                       style="-fx-font-size: 11px;"/>
+                            </HBox>
+                            <Separator/>
+                            <VBox fx:id="scoresBars" spacing="10"/>
+                        </VBox>
+
+                        <VBox spacing="0" VBox.vgrow="ALWAYS"
+                              style="-fx-background-color: -bg-card; -fx-background-radius: 14;
+                                     -fx-border-color: -border; -fx-border-width: 1; -fx-border-radius: 14;">
+                            <HBox style="-fx-padding: 14 18 10 18;" alignment="CENTER_LEFT" spacing="8">
+                                <Label text="🕐" style="-fx-font-size: 16px;"/>
+                                <Label text="ACTIVITÉ RÉCENTE" styleClass="kpi-label"
+                                       style="-fx-font-size: 11px;"/>
+                            </HBox>
+                            <Separator/>
+                            <ListView fx:id="listActivite" VBox.vgrow="ALWAYS"
+                                      prefHeight="200" styleClass="list-view"/>
+                        </VBox>
+
+                    </VBox>
+
+                </HBox>
+
+            </VBox>
+
+            <!-- ── Vue Livreurs / Livraisons (chargée dynamiquement) ── -->
+            <VBox fx:id="vueContenu" VBox.vgrow="ALWAYS"
+                  visible="false" managed="false"/>
+
+        </StackPane>
+
+        <Label fx:id="messageLabel"
+               style="-fx-font-size: 12px; -fx-padding: 0 28 8 28;"/>
+
+    </VBox>
+
+</HBox>
+

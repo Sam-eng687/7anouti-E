@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.web.*?>
+<?import javafx.geometry.*?>
+
+<HBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="tn.hanouti.livreur.controller.TrackingCarteController"
+      prefHeight="680.0" prefWidth="1100.0"
+      style="-fx-background-color: #070B18;">
+
+    <!-- ══ Left sidebar: order + driver info ══ -->
+    <VBox prefWidth="320" minWidth="300" spacing="0"
+          style="-fx-background-color: #0E1328;
+                 -fx-border-color: rgba(59,130,246,0.10);
+                 -fx-border-width: 0 1 0 0;">
+
+        <!-- Header -->
+        <VBox style="-fx-padding: 22 22 16 22; -fx-spacing: 6;
+                     -fx-border-color: rgba(59,130,246,0.10);
+                     -fx-border-width: 0 0 1 0;">
+            <Label text="🗺  Suivi en direct"
+                   style="-fx-font-size: 16px; -fx-font-weight: 800;
+                          -fx-text-fill: #F0F4FF;"/>
+            <Label text="Mise à jour automatique toutes les 4 secondes"
+                   style="-fx-font-size: 11px; -fx-text-fill: #4A5577;"/>
+        </VBox>
+
+        <!-- Scrollable info content -->
+        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
+                    style="-fx-background-color: transparent; -fx-border-color: transparent;
+                           -fx-background: transparent;">
+            <VBox spacing="0">
+
+                <!-- ── Order card ── -->
+                <VBox style="-fx-padding: 20 22 16 22; -fx-spacing: 14;
+                             -fx-border-color: rgba(59,130,246,0.10);
+                             -fx-border-width: 0 0 1 0;">
+
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <Label text="📦" style="-fx-font-size: 26px;"/>
+                        <VBox spacing="4">
+                            <Label fx:id="labelNumeroCommande"
+                                   style="-fx-font-size: 16px; -fx-font-weight: 800;
+                                          -fx-text-fill: #F0F4FF;"/>
+                            <Label fx:id="labelStatut" text="En livraison"
+                                   style="-fx-background-color: rgba(56,189,248,0.15);
+                                          -fx-text-fill: #38BDF8;
+                                          -fx-background-radius: 20;
+                                          -fx-padding: 3 12;
+                                          -fx-font-size: 11px; -fx-font-weight: 700;"/>
+                        </VBox>
+                    </HBox>
+
+                    <VBox spacing="3">
+                        <Label text="ADRESSE DE LIVRAISON"
+                               style="-fx-text-fill: #4A5577; -fx-font-size: 10px;
+                                      -fx-font-weight: 700;"/>
+                        <Label fx:id="labelAdresse" text="—"
+                               style="-fx-font-size: 12px; -fx-text-fill: #F0F4FF;"
+                               wrapText="true"/>
+                    </VBox>
+
+                    <VBox spacing="3">
+                        <Label text="ARRIVÉE ESTIMÉE"
+                               style="-fx-text-fill: #4A5577; -fx-font-size: 10px;
+                                      -fx-font-weight: 700;"/>
+                        <Label fx:id="labelEta" text="—"
+                               style="-fx-font-size: 22px; -fx-font-weight: 800;
+                                      -fx-text-fill: #10B981;"/>
+                    </VBox>
+
+                </VBox>
+
+                <!-- ── Driver card ── -->
+                <VBox style="-fx-padding: 20 22 16 22; -fx-spacing: 14;
+                             -fx-border-color: rgba(59,130,246,0.10);
+                             -fx-border-width: 0 0 1 0;">
+
+                    <Label text="VOTRE LIVREUR"
+                           style="-fx-text-fill: #4A5577; -fx-font-size: 10px;
+                                  -fx-font-weight: 700;"/>
+
+                    <HBox spacing="14" alignment="CENTER_LEFT">
+                        <!-- Avatar circle -->
+                        <StackPane minWidth="48" minHeight="48" maxWidth="48" maxHeight="48"
+                                   style="-fx-background-color: rgba(59,130,246,0.15);
+                                          -fx-background-radius: 50;">
+                            <Label text="👤"
+                                   style="-fx-font-size: 22px;"/>
+                        </StackPane>
+                        <VBox spacing="4">
+                            <Label fx:id="labelNomLivreur" text="—"
+                                   style="-fx-font-size: 15px; -fx-font-weight: 700;
+                                          -fx-text-fill: #F0F4FF;"/>
+                            <Label fx:id="labelVehicule" text="—"
+                                   style="-fx-font-size: 12px; -fx-text-fill: #8892B0;"/>
+                        </VBox>
+                    </HBox>
+
+                    <HBox spacing="10" alignment="CENTER_LEFT"
+                          style="-fx-background-color: rgba(255,255,255,0.03);
+                                 -fx-background-radius: 10; -fx-padding: 10 14;">
+                        <Label text="📞" style="-fx-font-size: 16px;"/>
+                        <Label fx:id="labelTelephone" text="—"
+                               style="-fx-font-size: 14px; -fx-font-weight: 700;
+                                      -fx-text-fill: #38BDF8;"/>
+                    </HBox>
+
+                </VBox>
+
+                <!-- ── Progress tracker ── -->
+                <VBox style="-fx-padding: 20 22 16 22; -fx-spacing: 14;
+                             -fx-border-color: rgba(59,130,246,0.10);
+                             -fx-border-width: 0 0 1 0;">
+
+                    <Label text="PROGRESSION"
+                           style="-fx-text-fill: #4A5577; -fx-font-size: 10px;
+                                  -fx-font-weight: 700;"/>
+
+                    <HBox spacing="0" alignment="CENTER">
+                        <VBox alignment="CENTER" spacing="5">
+                            <Label fx:id="dot1" text="●"
+                                   style="-fx-text-fill: #10B981; -fx-font-size: 20;"/>
+                            <Label text="Confirmée"
+                                   style="-fx-font-size: 10px; -fx-text-fill: #10B981;"/>
+                        </VBox>
+                        <Label text="──────"
+                               style="-fx-text-fill: #38BDF8; -fx-font-size: 11px;"/>
+                        <VBox alignment="CENTER" spacing="5">
+                            <Label fx:id="dot2" text="●"
+                                   style="-fx-text-fill: #38BDF8; -fx-font-size: 20;"/>
+                            <Label text="En route"
+                                   style="-fx-font-size: 10px; -fx-text-fill: #38BDF8;"/>
+                        </VBox>
+                        <Label text="──────"
+                               style="-fx-text-fill: #4A5577; -fx-font-size: 11px;"/>
+                        <VBox alignment="CENTER" spacing="5">
+                            <Label fx:id="dot3" text="●"
+                                   style="-fx-text-fill: #4A5577; -fx-font-size: 20;"/>
+                            <Label text="Livrée"
+                                   style="-fx-font-size: 10px; -fx-text-fill: #4A5577;"/>
+                        </VBox>
+                    </HBox>
+
+                </VBox>
+
+                <!-- ── Live indicator ── -->
+                <HBox style="-fx-padding: 16 22 8 22;" spacing="10" alignment="CENTER_LEFT">
+                    <Label text="●"
+                           style="-fx-text-fill: #10B981; -fx-font-size: 10px;"/>
+                    <Label text="Localisation en direct — mise à jour toutes les 4 s"
+                           style="-fx-font-size: 11px; -fx-text-fill: #4A5577;"/>
+                </HBox>
+
+                <!-- ── Simulation button ── -->
+                <VBox style="-fx-padding: 0 22 16 22;" spacing="8">
+                    <Button fx:id="btnSimuler"
+                            text="🚗  Simuler approche (auto)"
+                            maxWidth="Infinity"
+                            onAction="#simulerApproche"
+                            style="-fx-background-color: rgba(249,115,22,0.12);
+                                   -fx-text-fill: #F97316;
+                                   -fx-border-color: rgba(249,115,22,0.30);
+                                   -fx-border-width: 1;
+                                   -fx-border-radius: 10;
+                                   -fx-background-radius: 10;
+                                   -fx-padding: 10 0;
+                                   -fx-font-size: 13px;
+                                   -fx-font-weight: 700;
+                                   -fx-cursor: hand;"/>
+                    <Label text="Déplace le livreur de 7 km → 60 m en 20 étapes"
+                           style="-fx-font-size: 10px; -fx-text-fill: #4A5577;
+                                  -fx-text-alignment: center;"
+                           maxWidth="Infinity"/>
+                </VBox>
+
+                <!-- Message label -->
+                <Label fx:id="messageLabel"
+                       style="-fx-font-size: 11px; -fx-padding: 0 22 12 22;
+                              -fx-text-fill: #F472B6;"
+                       wrapText="true"/>
+
+            </VBox>
+        </ScrollPane>
+
+    </VBox>
+
+    <!-- ══ Map area ══ -->
+    <VBox HBox.hgrow="ALWAYS" spacing="0"
+          style="-fx-background-color: #070B18;">
+
+        <!-- Map header bar -->
+        <HBox style="-fx-padding: 14 20; -fx-background-color: #0E1328;
+                     -fx-border-color: rgba(59,130,246,0.10);
+                     -fx-border-width: 0 0 1 0;"
+              alignment="CENTER_LEFT" spacing="12">
+            <Label text="🗺" style="-fx-font-size: 18px;"/>
+            <Label text="Carte de suivi en temps réel"
+                   style="-fx-font-size: 14px; -fx-font-weight: 700;
+                          -fx-text-fill: #F0F4FF;"/>
+            <Label HBox.hgrow="ALWAYS"/>
+            <Label text="● LIVE"
+                   style="-fx-background-color: rgba(16,185,129,0.15);
+                          -fx-text-fill: #10B981;
+                          -fx-background-radius: 20;
+                          -fx-padding: 4 12;
+                          -fx-font-size: 11px; -fx-font-weight: 700;"/>
+        </HBox>
+
+        <!-- WebView map -->
+        <WebView fx:id="mapView" VBox.vgrow="ALWAYS"/>
+
+    </VBox>
+
+</HBox>
+

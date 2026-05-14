@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Suivi Livraison</title>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <!-- Leaflet Routing Machine CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css"/>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Leaflet Routing Machine — draws real road routes -->
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.min.js"></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { width: 100%; height: 100%; background: #070B18; }
+        #map { width: 100%; height: 100%; position: absolute; top: 0; left: 0; }
+
+        /* ── Hide the routing machine's default panel ── */
+        .leaflet-routing-container { display: none !important; }
+
+        /* ── Driver pulse animation ── */
+        @keyframes pulse {
+            0%   { box-shadow: 0 0 0 0 rgba(56,189,248,0.7); }
+            70%  { box-shadow: 0 0 0 14px rgba(56,189,248,0); }
+            100% { box-shadow: 0 0 0 0 rgba(56,189,248,0); }
+        }
+        @keyframes destPulse {
+            0%   { box-shadow: 0 0 0 0 rgba(249,115,22,0.7); }
+            70%  { box-shadow: 0 0 0 14px rgba(249,115,22,0); }
+            100% { box-shadow: 0 0 0 0 rgba(249,115,22,0); }
+        }
+
+        .driver-marker {
+            width: 20px; height: 20px;
+            background: #38BDF8;
+            border-radius: 50%;
+            border: 3px solid #fff;
+            animation: pulse 2s infinite;
+        }
+        .driver-outer {
+            width: 36px; height: 36px;
+            background: rgba(56,189,248,0.15);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .dest-marker {
+            width: 20px; height: 20px;
+            background: #F97316;
+            border-radius: 50%;
+            border: 3px solid #fff;
+            animation: destPulse 2.5s infinite;
+        }
+        .dest-outer {
+            width: 36px; height: 36px;
+            background: rgba(249,115,22,0.15);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        /* ── Info banner ── */
+        #banner {
+            position: absolute;
+            bottom: 20px; left: 50%;
+            transform: translateX(-50%);
+            background: rgba(14,19,40,0.95);
+            color: #F0F4FF;
+            padding: 12px 24px;
+            border-radius: 14px;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            z-index: 1000;
+            border: 1px solid rgba(56,189,248,0.25);
+            backdrop-filter: blur(12px);
+            max-width: 460px;
+            text-align: center;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        /* ── Legend ── */
+        #legend {
+            position: absolute;
+            top: 14px; right: 14px;
+            background: rgba(14,19,40,0.92);
+            color: #F0F4FF;
+            padding: 14px 18px;
+            border-radius: 12px;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 12px;
+            z-index: 1000;
+            border: 1px solid rgba(56,189,248,0.18);
+            line-height: 2;
+            backdrop-filter: blur(8px);
+        }
+        .leg-row { display: flex; align-items: center; gap: 8px; }
+        .leg-dot {
+            width: 11px; height: 11px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        /* ── Custom Leaflet popup ── */
+        .leaflet-popup-content-wrapper {
+            background: rgba(14,19,40,0.96) !important;
+            color: #F0F4FF !important;
+            border: 1px solid rgba(56,189,248,0.25) !important;
+            border-radius: 10px !important;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+        }
+        .leaflet-popup-tip {
+            background: rgba(14,19,40,0.96) !important;
+        }
+        .leaflet-popup-content {
+            font-family: 'Segoe UI', sans-serif !important;
+            font-size: 13px !important;
+            margin: 10px 14px !important;
+        }
+    </style>
+</head>
+<body>
+
+<div id="map"></div>
+<div id="banner">Chargement de la carte...</div>
+<div id="legend">
+    <div class="leg-row">
+        <div class="leg-dot" style="background:#38BDF8;"></div>
+        <span>Livreur (temps réel)</span>
+    </div>
+    <div class="leg-row">
+        <div class="leg-dot" style="background:#F97316;"></div>
+        <span>Votre adresse</span>
+    </div>
+    <div class="leg-row">
+        <div class="leg-dot" style="background:#8B5CF6; border-radius:2px;"></div>
+        <span>Itinéraire</span>
+    </div>
+</div>
+
+<script>
+    // ── Map init — dark CartoDB tile layer (free, no key) ──────
+    var map = L.map('map', {
+        zoomControl: false,
+        attributionControl: true
+    }).setView([36.8500, 10.1700], 13);
+
+    // CartoDB Dark Matter — best free dark map tile
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/">CARTO</a>',
+        subdomains: 'abcd',
+        maxZoom: 19
+    }).addTo(map);
+
+    // Fallback: if CartoDB tiles fail (WebView SSL issue), try OpenStreetMap
+    map.on('tileerror', function() {
+        if (!map._osmFallback) {
+            map._osmFallback = true;
+            map.eachLayer(function(layer) { if (layer._url) map.removeLayer(layer); });
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+                maxZoom: 19
+            }).addTo(map);
+        }
+    });
+
+    // Custom zoom control — bottom right
+    L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+    // ── Custom icons ───────────────────────────────────────────
+    var driverIcon = L.divIcon({
+        html: '<div class="driver-outer"><div class="driver-marker"></div></div>',
+        iconSize: [36, 36],
+        iconAnchor: [18, 18],
+        className: ''
+    });
+
+    var destIcon = L.divIcon({
+        html: '<div class="dest-outer"><div class="dest-marker"></div></div>',
+        iconSize: [36, 36],
+        iconAnchor: [18, 18],
+        className: ''
+    });
+
+    // ── State ──────────────────────────────────────────────────
+    var driverMarker = null;
+    var destMarker   = null;
+    var routeControl = null;
+    var clientLat    = null;
+    var clientLon    = null;
+
+    // ── initialiserCarte — called once from Java ───────────────
+    function initialiserCarte(dLat, dLon, cLat, cLon, nomLivreur, adresseClient) {
+        clientLat = cLat;
+        clientLon = cLon;
+
+        // Driver marker
+        driverMarker = L.marker([dLat, dLon], { icon: driverIcon })
+            .addTo(map)
+            .bindPopup(
+                '<b style="color:#38BDF8">🛵 ' + (nomLivreur || 'Livreur') + '</b>' +
+                '<br><span style="color:#8892B0;font-size:11px">Position en direct</span>'
+            );
+
+        // Destination marker
+        destMarker = L.marker([cLat, cLon], { icon: destIcon })
+            .addTo(map)
+            .bindPopup(
+                '<b style="color:#F97316">📍 Votre adresse</b>' +
+                '<br><span style="color:#8892B0;font-size:11px">' +
+                (adresseClient || '') + '</span>'
+            );
+
+        // Real road route via OSRM (free, no key)
+        tracerItineraire(dLat, dLon, cLat, cLon);
+
+        // Fit both markers
+        map.fitBounds(
+            L.latLngBounds([dLat, dLon], [cLat, cLon]),
+            { padding: [60, 60] }
+        );
+
+        var dist = haversineKm(dLat, dLon, cLat, cLon);
+        setBanner('🛵 ' + (nomLivreur || 'Livreur') +
+                  '  •  ' + dist.toFixed(1) + ' km de votre adresse');
+    }
+
+    // ── deplacerLivreur — called every 4 s from Java ──────────
+    function deplacerLivreur(newLat, newLon) {
+        if (!driverMarker) return;
+
+        var from = driverMarker.getLatLng();
+        var steps = 20;
+        var dLat = (newLat - from.lat) / steps;
+        var dLon = (newLon - from.lng) / steps;
+        var step = 0;
+
+        var iv = setInterval(function () {
+            step++;
+            driverMarker.setLatLng([from.lat + dLat * step,
+                                    from.lng + dLon * step]);
+            if (step >= steps) {
+                clearInterval(iv);
+                driverMarker.setLatLng([newLat, newLon]);
+                if (clientLat !== null) {
+                    tracerItineraire(newLat, newLon, clientLat, clientLon);
+                    var dist = haversineKm(newLat, newLon, clientLat, clientLon);
+                    setBanner('🛵 Livreur à ' + dist.toFixed(1) + ' km de votre adresse');
+                }
+            }
+        }, 50);
+    }
+
+    // ── Real road route via OSRM (free) ───────────────────────
+    function tracerItineraire(dLat, dLon, cLat, cLon) {
+        if (routeControl) {
+            map.removeControl(routeControl);
+        }
+        routeControl = L.Routing.control({
+            waypoints: [
+                L.latLng(dLat, dLon),
+                L.latLng(cLat, cLon)
+            ],
+            router: L.Routing.osrmv1({
+                serviceUrl: 'https://router.project-osrm.org/route/v1'
+            }),
+            lineOptions: {
+                styles: [
+                    { color: '#8B5CF6', weight: 5, opacity: 0.85 }
+                ],
+                extendToWaypoints: true,
+                missingRouteTolerance: 0
+            },
+            show: false,
+            addWaypoints: false,
+            draggableWaypoints: false,
+            fitSelectedRoutes: false,
+            createMarker: function() { return null; } // use our own markers
+        }).addTo(map);
+    }
+
+    // ── Haversine distance (km) ────────────────────────────────
+    function haversineKm(lat1, lon1, lat2, lon2) {
+        var R = 6371;
+        var dLat = (lat2 - lat1) * Math.PI / 180;
+        var dLon = (lon2 - lon1) * Math.PI / 180;
+        var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI/180) * Math.cos(lat2 * Math.PI/180) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    }
+
+    // ── Banner helper ──────────────────────────────────────────
+    function setBanner(text) {
+        document.getElementById('banner').textContent = text;
+    }
+</script>
+</body>
+</html>

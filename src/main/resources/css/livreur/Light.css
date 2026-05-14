@@ -1,0 +1,577 @@
+/* ═══════════════════════════════════════════════════════════════
+   MODE JOUR — 7anouti-E Module 6  ✦  Design Premium
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Variables globales ── */
+.root {
+    -bg-deep:    #F4F6FB;
+    -bg-card:    #FFFFFF;
+    -bg-sidebar: #1E3A5F;
+    -bg-item:    #F8FAFF;
+    -bg-hover:   #EEF3FF;
+    -bg-input:   #F8FAFF;
+
+    -royal:      #2563EB;
+    -royal-soft: #1d4ed8;
+    -violet:     #7C3AED;
+    -green:      #16A34A;
+    -rose:       #E11D48;
+    -orange:     #EA580C;
+    -cyan:       #0284C7;
+    -gold:       #D97706;
+
+    -text-1:     #0F172A;
+    -text-2:     #475569;
+    -text-3:     #94A3B8;
+    -border:     #E2E8F0;
+    -border-s:   #CBD5E1;
+
+    -fx-font-family: "Segoe UI", "Calibri", "Arial", sans-serif;
+    -fx-background-color: -bg-deep;
+}
+
+/* ══════════════════════════════════════
+   CONTENEUR PRINCIPAL
+══════════════════════════════════════ */
+.module-wrap {
+    -fx-background-color: -bg-deep;
+    -fx-padding: 0;
+}
+
+/* ══════════════════════════════════════
+   HEADER
+══════════════════════════════════════ */
+.mod-header {
+    -fx-background-color: -bg-sidebar;
+    -fx-padding: 18 28 18 28;
+    -fx-border-color: transparent;
+    -fx-spacing: 12;
+}
+
+.mod-title {
+    -fx-font-size: 22px;
+    -fx-font-weight: 700;
+    -fx-text-fill: white;
+}
+
+.mod-sub {
+    -fx-font-size: 12px;
+    -fx-text-fill: #93C5FD;
+}
+
+/* ══════════════════════════════════════
+   KPI CARDS
+══════════════════════════════════════ */
+.kpi-row {
+    -fx-padding: 20 28 8 28;
+}
+
+.kpi-card {
+    -fx-background-color: -bg-card;
+    -fx-border-color: -border;
+    -fx-border-width: 1;
+    -fx-border-radius: 16;
+    -fx-background-radius: 16;
+    -fx-padding: 20 22;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 12, 0, 0, 4);
+}
+
+.kpi-card:hover {
+    -fx-border-color: -border-s;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.10), 16, 0, 0, 6);
+}
+
+.kpi-label {
+    -fx-text-fill: -text-3;
+    -fx-font-size: 10px;
+    -fx-font-weight: 700;
+}
+
+.kpi-value {
+    -fx-font-size: 36px;
+    -fx-font-weight: 800;
+}
+
+.kpi-trend {
+    -fx-text-fill: -text-3;
+    -fx-font-size: 11px;
+}
+
+.kpi-royal .kpi-value  { -fx-text-fill: -royal; }
+.kpi-green .kpi-value  { -fx-text-fill: -green; }
+.kpi-orange .kpi-value { -fx-text-fill: -orange; }
+.kpi-violet .kpi-value { -fx-text-fill: -violet; }
+
+/* ══════════════════════════════════════
+   TAB PANE
+══════════════════════════════════════ */
+.tab-pane {
+    -fx-padding: 0 28 20 28;
+}
+
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: -bg-deep;
+}
+
+.tab-pane .tab {
+    -fx-background-color: transparent;
+    -fx-padding: 10 22;
+    -fx-cursor: hand;
+    -fx-border-color: transparent;
+    -fx-border-width: 0 0 2 0;
+}
+
+.tab-pane .tab:selected {
+    -fx-background-color: -bg-card;
+    -fx-border-color: transparent transparent -royal transparent;
+    -fx-border-width: 0 0 2 0;
+}
+
+.tab-pane .tab .tab-label {
+    -fx-text-fill: -text-3;
+    -fx-font-weight: 700;
+    -fx-font-size: 13px;
+}
+
+.tab-pane .tab:selected .tab-label {
+    -fx-text-fill: -royal;
+}
+
+.tab-pane .tab:hover .tab-label {
+    -fx-text-fill: -text-1;
+}
+
+.tab-pane > .tab-content-area {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+/* ══════════════════════════════════════
+   SEARCH FIELD
+══════════════════════════════════════ */
+.search-field,
+.input-field,
+TextField {
+    -fx-background-color: -bg-card;
+    -fx-text-fill: -text-1;
+    -fx-prompt-text-fill: -text-3;
+    -fx-border-color: -border;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 10 14;
+    -fx-font-size: 13px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.04), 4, 0, 0, 2);
+}
+
+.search-field:focused,
+.input-field:focused,
+TextField:focused {
+    -fx-border-color: -royal;
+    -fx-background-color: white;
+    -fx-effect: dropshadow(three-pass-box, rgba(37,99,235,0.12), 8, 0, 0, 0);
+}
+
+/* ══════════════════════════════════════
+   COMBOBOX
+══════════════════════════════════════ */
+.filter-select,
+ComboBox {
+    -fx-background-color: -bg-card;
+    -fx-border-color: -border;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.04), 4, 0, 0, 2);
+}
+
+ComboBox .list-cell {
+    -fx-text-fill: -text-1;
+    -fx-background-color: transparent;
+    -fx-font-size: 13px;
+    -fx-padding: 6 10;
+}
+
+ComboBox .arrow-button {
+    -fx-background-color: transparent;
+}
+
+ComboBox .arrow {
+    -fx-background-color: -text-2;
+}
+
+ComboBox:focused {
+    -fx-border-color: -royal;
+}
+
+.combo-box-popup .list-view {
+    -fx-background-color: white;
+    -fx-border-color: -border-s;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.10), 16, 0, 0, 6);
+}
+
+.combo-box-popup .list-cell {
+    -fx-text-fill: -text-1;
+    -fx-background-color: transparent;
+    -fx-padding: 8 14;
+    -fx-font-size: 13px;
+}
+
+.combo-box-popup .list-cell:hover {
+    -fx-background-color: -bg-hover;
+}
+
+.combo-box-popup .list-cell:selected {
+    -fx-background-color: #DBEAFE;
+    -fx-text-fill: -royal;
+}
+
+/* ══════════════════════════════════════
+   LISTVIEW
+══════════════════════════════════════ */
+.list-view,
+ListView {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+    -fx-background-insets: 0;
+}
+
+.list-view .list-cell,
+ListView .list-cell {
+    -fx-background-color: white;
+    -fx-border-color: transparent transparent -border transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 0;
+    -fx-text-fill: -text-1;
+}
+
+.list-view .list-cell:hover,
+ListView .list-cell:hover {
+    -fx-background-color: -bg-hover;
+    -fx-cursor: hand;
+}
+
+.list-view .list-cell:selected,
+ListView .list-cell:selected {
+    -fx-background-color: #DBEAFE;
+    -fx-border-color: transparent transparent -border-s transparent;
+}
+
+.list-view .list-cell:selected:hover,
+ListView .list-cell:selected:hover {
+    -fx-background-color: #BFDBFE;
+}
+
+.list-view > .virtual-flow,
+.list-view > .virtual-flow > .clipped-container {
+    -fx-background-color: transparent;
+}
+
+/* ══════════════════════════════════════
+   SCROLLBAR
+══════════════════════════════════════ */
+.scroll-bar {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 0 2;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: rgba(0,0,0,0.12);
+    -fx-background-radius: 6;
+}
+
+.scroll-bar .thumb:hover {
+    -fx-background-color: rgba(0,0,0,0.22);
+}
+
+.scroll-bar .track,
+.scroll-bar .track-background,
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button,
+.scroll-bar .increment-arrow,
+.scroll-bar .decrement-arrow {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+/* ══════════════════════════════════════
+   SCROLL PANE
+══════════════════════════════════════ */
+.content-scroll,
+ScrollPane {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-background: transparent;
+}
+
+.content-scroll > .viewport,
+ScrollPane > .viewport {
+    -fx-background-color: transparent;
+}
+
+/* ══════════════════════════════════════
+   TABLE HEADER
+══════════════════════════════════════ */
+.table-header-row {
+    -fx-background-color: #F8FAFC;
+    -fx-padding: 8 20;
+    -fx-border-color: transparent transparent -border transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.table-header-label {
+    -fx-text-fill: -text-3;
+    -fx-font-size: 10px;
+    -fx-font-weight: 700;
+}
+
+/* ══════════════════════════════════════
+   DETAIL PANEL
+══════════════════════════════════════ */
+.detail-panel {
+    -fx-background-color: -bg-card;
+    -fx-border-color: transparent transparent transparent -border;
+    -fx-border-width: 0 0 0 1;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 16, 0, -4, 0);
+}
+
+/* ══════════════════════════════════════
+   BOUTONS
+══════════════════════════════════════ */
+.btn-primary {
+    -fx-background-color: linear-gradient(to right, -royal, -violet);
+    -fx-text-fill: white;
+    -fx-font-weight: 700;
+    -fx-padding: 10 18;
+    -fx-background-radius: 10;
+    -fx-cursor: hand;
+    -fx-font-size: 13px;
+    -fx-border-color: transparent;
+}
+
+.btn-primary:hover {
+    -fx-background-color: linear-gradient(to right, -royal-soft, #6d28d9);
+}
+
+.btn-success {
+    -fx-background-color: linear-gradient(to right, -green, #059669);
+    -fx-text-fill: white;
+    -fx-font-weight: 700;
+    -fx-padding: 10 18;
+    -fx-background-radius: 10;
+    -fx-cursor: hand;
+    -fx-font-size: 13px;
+    -fx-border-color: transparent;
+}
+
+.btn-success:hover {
+    -fx-background-color: linear-gradient(to right, #059669, #047857);
+}
+
+.btn-danger {
+    -fx-background-color: #FEF2F2;
+    -fx-text-fill: -rose;
+    -fx-border-color: #FECACA;
+    -fx-border-width: 1;
+    -fx-padding: 10 18;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-cursor: hand;
+    -fx-font-size: 13px;
+}
+
+.btn-danger:hover {
+    -fx-background-color: #FEE2E2;
+}
+
+.btn-secondary {
+    -fx-background-color: white;
+    -fx-text-fill: -text-2;
+    -fx-border-color: -border;
+    -fx-border-width: 1;
+    -fx-padding: 10 18;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-cursor: hand;
+    -fx-font-size: 13px;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: -bg-hover;
+    -fx-border-color: -border-s;
+}
+
+.btn-mode-switch {
+    -fx-background-color: rgba(255,255,255,0.15);
+    -fx-text-fill: white;
+    -fx-border-color: rgba(255,255,255,0.25);
+    -fx-border-width: 1;
+    -fx-padding: 8 16;
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-cursor: hand;
+    -fx-font-size: 12px;
+}
+
+.btn-mode-switch:hover {
+    -fx-background-color: rgba(255,255,255,0.25);
+}
+
+Button {
+    -fx-cursor: hand;
+}
+
+/* ══════════════════════════════════════
+   BADGES
+══════════════════════════════════════ */
+.badge-green {
+    -fx-background-color: #DCFCE7;
+    -fx-text-fill: #15803D;
+    -fx-background-radius: 20;
+    -fx-padding: 4 12;
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+}
+
+.badge-red {
+    -fx-background-color: #FEE2E2;
+    -fx-text-fill: -rose;
+    -fx-background-radius: 20;
+    -fx-padding: 4 12;
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+}
+
+.badge-blue {
+    -fx-background-color: #DBEAFE;
+    -fx-text-fill: -royal;
+    -fx-background-radius: 20;
+    -fx-padding: 4 12;
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+}
+
+.badge-yellow {
+    -fx-background-color: #FFEDD5;
+    -fx-text-fill: -orange;
+    -fx-background-radius: 20;
+    -fx-padding: 4 12;
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+}
+
+/* ══════════════════════════════════════
+   DIALOG
+══════════════════════════════════════ */
+.dialog-pane {
+    -fx-background-color: white;
+    -fx-border-color: -border;
+    -fx-border-radius: 16;
+    -fx-background-radius: 16;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 24, 0, 0, 8);
+}
+
+/* ══════════════════════════════════════
+   DATE PICKER
+══════════════════════════════════════ */
+DatePicker {
+    -fx-background-color: -bg-card;
+    -fx-border-color: -border;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+DatePicker .text-field {
+    -fx-background-color: transparent;
+    -fx-text-fill: -text-1;
+}
+
+DatePicker .arrow-button {
+    -fx-background-color: transparent;
+}
+
+/* ══════════════════════════════════════
+   SEPARATOR
+══════════════════════════════════════ */
+.separator .line {
+    -fx-border-color: -border;
+    -fx-border-width: 1 0 0 0;
+}
+
+/* ══════════════════════════════════════
+   LABELS
+══════════════════════════════════════ */
+.page-title {
+    -fx-font-size: 26px;
+    -fx-font-weight: 800;
+    -fx-text-fill: -text-1;
+}
+
+.db-label {
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+    -fx-text-fill: -green;
+}
+
+.db-name {
+    -fx-font-size: 11px;
+    -fx-text-fill: -text-3;
+}
+
+.deconn-label {
+    -fx-text-fill: -rose;
+    -fx-font-size: 12px;
+    -fx-cursor: hand;
+    -fx-font-weight: 700;
+}
+
+GridPane {
+    -fx-background-color: transparent;
+}
+
+VBox, HBox {
+    -fx-background-color: transparent;
+}
+
+/* ══════════════════════════════════════
+   SIDEBAR NAV BUTTONS
+══════════════════════════════════════ */
+.nav-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: -text-2;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-padding: 10 14;
+    -fx-background-radius: 10;
+    -fx-border-color: transparent;
+    -fx-alignment: CENTER_LEFT;
+    -fx-cursor: hand;
+}
+
+.nav-btn:hover {
+    -fx-background-color: -bg-hover;
+    -fx-text-fill: -text-1;
+}
+
+.nav-btn-active {
+    -fx-background-color: #DBEAFE;
+    -fx-text-fill: -royal;
+    -fx-font-size: 13px;
+    -fx-font-weight: 700;
+    -fx-padding: 10 14;
+    -fx-background-radius: 10;
+    -fx-border-color: #BFDBFE;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-alignment: CENTER_LEFT;
+    -fx-cursor: hand;
+}
+
+.nav-btn-active:hover {
+    -fx-background-color: #BFDBFE;
+}

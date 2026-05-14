@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="tn.hanouti.livreur.controller.SuiviLivraisonController"
+      fx:id="root"
+      styleClass="module-wrap"
+      spacing="0">
+
+    <!-- ── Header ── -->
+    <HBox styleClass="mod-header" alignment="CENTER_LEFT" spacing="12">
+        <VBox HBox.hgrow="ALWAYS" spacing="4">
+            <Label text="🚚  Mes Livraisons" styleClass="mod-title"/>
+            <Label text="Consultez et gérez vos livraisons assignées" styleClass="mod-sub"/>
+        </VBox>
+    </HBox>
+
+    <!-- ── KPI Cards ── -->
+    <HBox spacing="12" styleClass="kpi-row">
+        <VBox styleClass="kpi-card, kpi-royal" HBox.hgrow="ALWAYS" spacing="5">
+            <Label text="TOTAL" styleClass="kpi-label"/>
+            <Label fx:id="labelTotal" text="0" styleClass="kpi-value"/>
+            <Label text="livraisons" styleClass="kpi-trend"/>
+        </VBox>
+        <VBox styleClass="kpi-card, kpi-orange" HBox.hgrow="ALWAYS" spacing="5">
+            <Label text="EN COURS" styleClass="kpi-label"/>
+            <Label fx:id="labelEnCours" text="0" styleClass="kpi-value"/>
+            <Label text="affectées" styleClass="kpi-trend"/>
+        </VBox>
+        <VBox styleClass="kpi-card, kpi-green" HBox.hgrow="ALWAYS" spacing="5">
+            <Label text="LIVRÉES" styleClass="kpi-label"/>
+            <Label fx:id="labelLivrees" text="0" styleClass="kpi-value"/>
+            <Label text="terminées" styleClass="kpi-trend"/>
+        </VBox>
+    </HBox>
+
+    <!-- ── Filtres ── -->
+    <HBox spacing="10" alignment="CENTER_LEFT"
+          style="-fx-padding: 8 28 8 28;">
+        <ComboBox fx:id="filtreStatut" prefWidth="200"
+                  styleClass="filter-select" promptText="Tous les statuts"/>
+        <Label fx:id="lblCount" text="0 livraison(s)"
+               styleClass="mod-sub" HBox.hgrow="ALWAYS"/>
+    </HBox>
+
+    <!-- ── Contenu : liste + panel détail ── -->
+    <HBox spacing="0" VBox.vgrow="ALWAYS"
+          style="-fx-padding: 0 28 20 28;">
+
+        <!-- Liste livraisons -->
+        <VBox HBox.hgrow="ALWAYS" spacing="0"
+              style="-fx-background-color: -bg-card;
+                     -fx-background-radius: 14 0 0 14;
+                     -fx-border-color: -border;
+                     -fx-border-width: 1 0 1 1;
+                     -fx-border-radius: 14 0 0 14;">
+
+            <!-- En-têtes -->
+            <HBox styleClass="table-header-row"
+                  style="-fx-background-radius: 14 0 0 0;
+                         -fx-padding: 10 20;">
+                <Label prefWidth="120" text="ID COMMANDE" styleClass="table-header-label"/>
+                <Label prefWidth="260" text="ADRESSE CLIENT" styleClass="table-header-label"/>
+                <Label prefWidth="140" text="TEMPS ESTIMÉ" styleClass="table-header-label"/>
+                <Label prefWidth="120" text="STATUT" styleClass="table-header-label"/>
+            </HBox>
+
+            <ListView fx:id="listView" VBox.vgrow="ALWAYS"
+                      styleClass="list-view"
+                      onMouseClicked="#onLivraisonClicked"/>
+        </VBox>
+
+        <!-- Panel détail livraison -->
+        <VBox fx:id="quickPanel"
+              prefWidth="300" minWidth="280" spacing="0"
+              style="-fx-background-color: -bg-card;
+                     -fx-border-color: -border;
+                     -fx-border-width: 1;
+                     -fx-border-radius: 0 14 14 0;
+                     -fx-background-radius: 0 14 14 0;">
+
+            <!-- Vide -->
+            <VBox fx:id="quickEmpty" alignment="CENTER"
+                  VBox.vgrow="ALWAYS" spacing="12"
+                  style="-fx-padding: 30;">
+                <Label text="📦"
+                       style="-fx-font-size: 44px;"/>
+                <Label text="Sélectionnez une livraison"
+                       styleClass="mod-sub"
+                       style="-fx-opacity: 0.6; -fx-font-size: 13px; -fx-font-weight: 600;"/>
+                <Label text="Cliquez sur une ligne pour voir les détails"
+                       styleClass="mod-sub"
+                       style="-fx-opacity: 0.35; -fx-font-size: 11px; -fx-text-alignment: center;"
+                       wrapText="true"/>
+            </VBox>
+
+            <!-- Détail -->
+            <ScrollPane fx:id="quickDetail" fitToWidth="true"
+                        VBox.vgrow="ALWAYS" styleClass="content-scroll"
+                        visible="false" managed="false">
+                <VBox spacing="14" style="-fx-padding: 20;">
+
+                    <!-- Icône commande + ID + statut -->
+                    <VBox alignment="CENTER" spacing="8"
+                          style="-fx-padding: 10 0 6 0;">
+                        <Label text="📦"
+                               style="-fx-font-size: 38px;"/>
+                        <Label fx:id="qCmd" text=""
+                               style="-fx-font-size: 17px; -fx-font-weight: 800;
+                                      -fx-text-fill: -text-1;"/>
+                        <Label fx:id="qStatut" text="" styleClass="badge-blue"/>
+                    </VBox>
+
+                    <Separator/>
+
+                    <!-- Infos -->
+                    <VBox spacing="10">
+
+                        <!-- Adresse -->
+                        <VBox spacing="3">
+                            <Label text="ADRESSE CLIENT" styleClass="kpi-label"/>
+                            <Label fx:id="qAdresse" text="—"
+                                   styleClass="mod-sub"
+                                   style="-fx-font-size: 12px; -fx-text-fill: -text-1;"
+                                   wrapText="true"/>
+                        </VBox>
+
+                        <!-- Heure -->
+                        <VBox spacing="3">
+                            <Label text="HEURE ESTIMÉE" styleClass="kpi-label"/>
+                            <Label fx:id="qHeure" text="—"
+                                   style="-fx-font-size: 13px; -fx-font-weight: 700;
+                                          -fx-text-fill: -green;"/>
+                        </VBox>
+
+                        <!-- Temps restant -->
+                        <VBox spacing="3">
+                            <Label text="DURÉE" styleClass="kpi-label"/>
+                            <Label fx:id="qTemps" text=""
+                                   style="-fx-font-size: 12px; -fx-text-fill: -text-2;"/>
+                        </VBox>
+
+                    </VBox>
+
+                    <Separator/>
+
+                    <!-- Boutons -->
+                    <VBox spacing="8">
+                        <Button fx:id="btnLivree" text="✅  Marquer comme livrée"
+                                maxWidth="Infinity" styleClass="btn-success"
+                                onAction="#onMarquerLivree"
+                                style="-fx-padding: 11 0;"
+                                visible="false" managed="false"/>
+                    </VBox>
+
+                </VBox>
+            </ScrollPane>
+
+        </VBox>
+    </HBox>
+
+    <!-- Message -->
+    <Label fx:id="messageLabel"
+           style="-fx-font-size: 12px; -fx-padding: 0 28 8 28;"/>
+
+</VBox>
+

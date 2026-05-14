@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<!--
+    Vue "Livraisons" du Responsable.
+    Liste toutes les livraisons EN_ATTENTE et permet d'affecter
+    un livreur disponible à chacune.
+    Controller : GestionLivraisonsController
+-->
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="tn.hanouti.livreur.controller.GestionLivraisonsController"
+      styleClass="module-wrap"
+      spacing="0">
+
+    <!-- ══ Header ══ -->
+    <HBox styleClass="mod-header" alignment="CENTER_LEFT" spacing="12">
+        <VBox HBox.hgrow="ALWAYS" spacing="4">
+            <Label text="📦  Gestion des Livraisons" styleClass="mod-title"/>
+            <Label text="Affectez les livraisons en attente aux livreurs disponibles"
+                   styleClass="mod-sub"/>
+        </VBox>
+        <Button text="🔄  Actualiser"
+                styleClass="btn-secondary"
+                onAction="#rafraichir"
+                style="-fx-padding: 8 14;"/>
+    </HBox>
+
+    <!-- ══ KPI ══ -->
+    <HBox spacing="12" styleClass="kpi-row">
+        <VBox styleClass="kpi-card, kpi-orange" HBox.hgrow="ALWAYS" spacing="5">
+            <Label text="EN ATTENTE" styleClass="kpi-label"/>
+            <Label fx:id="kpiEnAttente" text="0" styleClass="kpi-value"/>
+            <Label text="à affecter" styleClass="kpi-trend"/>
+        </VBox>
+        <VBox styleClass="kpi-card, kpi-royal" HBox.hgrow="ALWAYS" spacing="5">
+            <Label text="AFFECTÉES" styleClass="kpi-label"/>
+            <Label fx:id="kpiAffectees" text="0" styleClass="kpi-value"/>
+            <Label text="en cours de livraison" styleClass="kpi-trend"/>
+        </VBox>
+        <VBox styleClass="kpi-card, kpi-green" HBox.hgrow="ALWAYS" spacing="5">
+            <Label text="LIVRÉES" styleClass="kpi-label"/>
+            <Label fx:id="kpiLivrees" text="0" styleClass="kpi-value"/>
+            <Label text="terminées" styleClass="kpi-trend"/>
+        </VBox>
+        <VBox styleClass="kpi-card, kpi-violet" HBox.hgrow="ALWAYS" spacing="5">
+            <Label text="DISPONIBLES" styleClass="kpi-label"/>
+            <Label fx:id="kpiDisponibles" text="0" styleClass="kpi-value"/>
+            <Label text="livreurs prêts" styleClass="kpi-trend"/>
+        </VBox>
+    </HBox>
+
+    <!-- ══ Hint ══ -->
+    <Label text="💡  Cliquez sur une livraison EN ATTENTE pour sélectionner un livreur disponible et confirmer l'affectation."
+           styleClass="mod-sub"
+           style="-fx-padding: 4 28 4 28; -fx-font-size: 11px;"/>
+
+    <!-- ══ Main content : liste + panel affectation ══ -->
+    <HBox spacing="0" VBox.vgrow="ALWAYS"
+          style="-fx-padding: 0 28 20 28;">
+
+        <!-- Liste livraisons -->
+        <VBox HBox.hgrow="ALWAYS" spacing="0"
+              style="-fx-background-color: -bg-card;
+                     -fx-background-radius: 14 0 0 14;
+                     -fx-border-color: -border;
+                     -fx-border-width: 1 0 1 1;
+                     -fx-border-radius: 14 0 0 14;">
+
+            <!-- Filtre statut -->
+            <HBox style="-fx-padding: 12 16 8 16;" spacing="10" alignment="CENTER_LEFT">
+                <ComboBox fx:id="filtreStatut" prefWidth="200"
+                          styleClass="filter-select" promptText="Tous les statuts"/>
+                <Label fx:id="lblCount" text="0 livraison(s)"
+                       styleClass="mod-sub" HBox.hgrow="ALWAYS"/>
+            </HBox>
+
+            <!-- En-têtes -->
+            <HBox styleClass="table-header-row" style="-fx-padding: 8 18;">
+                <Label prefWidth="130" text="COMMANDE" styleClass="table-header-label"/>
+                <Label prefWidth="300" text="ADRESSE CLIENT" styleClass="table-header-label"/>
+                <Label prefWidth="110" text="LIVREUR" styleClass="table-header-label"/>
+                <Label prefWidth="110" text="STATUT" styleClass="table-header-label"/>
+            </HBox>
+
+            <ListView fx:id="listLivraisons" VBox.vgrow="ALWAYS"
+                      styleClass="list-view"
+                      onMouseClicked="#onLivraisonCliquee"/>
+        </VBox>
+
+        <!-- Panel affectation -->
+        <VBox prefWidth="320" minWidth="300" spacing="0"
+              style="-fx-background-color: -bg-card;
+                     -fx-border-color: -border;
+                     -fx-border-width: 1;
+                     -fx-border-radius: 0 14 14 0;
+                     -fx-background-radius: 0 14 14 0;">
+
+            <!-- État vide -->
+            <VBox fx:id="panelVide" alignment="CENTER"
+                  VBox.vgrow="ALWAYS" spacing="12"
+                  style="-fx-padding: 30;">
+                <Label text="📦" style="-fx-font-size: 48px;"/>
+                <Label text="Sélectionnez une livraison"
+                       styleClass="mod-sub"
+                       style="-fx-opacity: 0.6; -fx-font-size: 13px; -fx-font-weight: 600;"/>
+                <Label text="Cliquez sur une livraison EN ATTENTE pour l'affecter"
+                       styleClass="mod-sub"
+                       style="-fx-opacity: 0.35; -fx-font-size: 11px; -fx-text-alignment: center;"
+                       wrapText="true"/>
+            </VBox>
+
+            <!-- Contenu affectation -->
+            <ScrollPane fx:id="panelAffectation" fitToWidth="true"
+                        VBox.vgrow="ALWAYS" styleClass="content-scroll"
+                        visible="false" managed="false">
+                <VBox spacing="14" style="-fx-padding: 20;">
+
+                    <!-- Info commande -->
+                    <VBox alignment="CENTER" spacing="6"
+                          style="-fx-padding: 6 0 4 0;">
+                        <Label text="📦" style="-fx-font-size: 36px;"/>
+                        <Label fx:id="affectCmd"
+                               style="-fx-font-size: 16px; -fx-font-weight: 800;
+                                      -fx-text-fill: -text-1;"/>
+                        <Label text="EN ATTENTE" styleClass="badge-yellow"/>
+                    </VBox>
+
+                    <VBox spacing="3">
+                        <Label text="ADRESSE CLIENT" styleClass="kpi-label"/>
+                        <Label fx:id="affectAdresse" text="—"
+                               style="-fx-font-size: 12px; -fx-text-fill: -text-1;"
+                               wrapText="true"/>
+                    </VBox>
+
+                    <Separator/>
+
+                    <!-- Liste livreurs disponibles -->
+                    <VBox spacing="6">
+                        <HBox alignment="CENTER_LEFT" spacing="8">
+                            <Label text="LIVREURS DISPONIBLES" styleClass="kpi-label"/>
+                            <Label HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="lblNbDispo" text="0 dispo"
+                                   styleClass="badge-green"/>
+                        </HBox>
+                        <ListView fx:id="listeDispo" prefHeight="200"
+                                  styleClass="list-view"/>
+                    </VBox>
+
+                    <Separator/>
+
+                    <!-- Bouton confirmer -->
+                    <Button text="✅  Confirmer l'affectation"
+                            maxWidth="Infinity"
+                            styleClass="btn-success"
+                            onAction="#confirmerAffectation"
+                            style="-fx-padding: 12 0; -fx-font-size: 13px;"/>
+
+                    <!-- Message inline -->
+                    <Label fx:id="messageLabel"
+                           style="-fx-font-size: 12px;"
+                           wrapText="true"/>
+
+                </VBox>
+            </ScrollPane>
+
+        </VBox>
+    </HBox>
+
+</VBox>
+
