@@ -29,7 +29,7 @@ public class ProduitServices {
      * categorie        →  categorie   (stored UPPERCASE in DB, returned as-is)
      */
     private Produit mapRow(ResultSet rs) throws SQLException {
-        double noteRaw = rs.getDouble("note_moy");
+        double noteRaw = rs.getDouble("moyenne");
         Double note    = rs.wasNull() ? null : noteRaw;
 
         Produit p = new Produit(
@@ -83,7 +83,7 @@ public class ProduitServices {
     public List<Produit> getByCategories(List<String> categories) {
         if (categories == null || categories.isEmpty()) return getTopRated();
         List<Produit> list = new ArrayList<>();
-        String query = "SELECT * FROM produit WHERE quantite_stock > 0 AND statut = 'ACTIF' ORDER BY note_moy DESC";
+        String query = "SELECT * FROM produit WHERE quantite_stock > 0 AND statut = 'ACTIF' ORDER BY moyenne DESC";
         try (PreparedStatement pst = getConnection().prepareStatement(query);
              ResultSet rs = pst.executeQuery()) {
             while (rs.next() && list.size() < 6) {
@@ -101,7 +101,7 @@ public class ProduitServices {
     public List<Produit> getTopRated() {
         List<Produit> list = new ArrayList<>();
         // note_moy is the real column name
-        String query = "SELECT * FROM produit WHERE quantite_stock > 0 AND statut = 'ACTIF' ORDER BY note_moy DESC LIMIT 18";
+        String query = "SELECT * FROM produit WHERE quantite_stock > 0 AND statut = 'ACTIF' ORDER BY moyenne DESC LIMIT 18";
         try (PreparedStatement pst = getConnection().prepareStatement(query);
              ResultSet rs = pst.executeQuery()) {
             while (rs.next()) list.add(mapRow(rs));

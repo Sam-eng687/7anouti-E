@@ -14,7 +14,8 @@ public class WishlistService {
         return MyBD.getInstance().getConnection();
     }
 
-    // ── CREATE ────────────────────────────────────────────────────────────────
+    // ──
+    // CREATE ────────────────────────────────────────────────────────────────
 
     /**
      * Adds a product to the user's wishlist.
