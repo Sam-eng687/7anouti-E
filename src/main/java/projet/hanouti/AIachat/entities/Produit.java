@@ -13,7 +13,7 @@ package projet.hanouti.AIachat.entities;
  * │ prix            │ prix        / getPrix()                  │
  * │ quantite_stock  │ quantiteStock / getQuantiteStock()       │
  * │ categorie       │ categorie   / getCategorie()  UPPERCASE  │
- * │ note_moy        │ noteMoyenne / getNoteMoyenne() ← mapped  │
+ * │ moyenne        │ noteMoyenne / getNoteMoyenne() ← mapped  │
  * └─────────────────┴──────────────────────────────────────────┘
  *
  * The field name "libelle" is kept intentionally so that ScoringService,
@@ -28,7 +28,7 @@ public class Produit {
     private double  prix;
     private int     quantiteStock;
     private String  categorie;      // DB stores UPPERCASE: MEDICAMENT, ALIMENTAIRE, ELECTRONIQUE, HYGIENE, DECOR, MAKEUP, AUTRE
-    private Double  noteMoyenne;    // DB: note_moy - nullable
+    private Double  noteMoyenne;    // DB: moyenne - nullable
     private String  imageUrl;       // DB: image_url - nullable, product photo path or URL
 
     public Produit() {}

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="projet.hanouti.produit_fournisseur.controllers.GererProduitsController"
+            styleClass="page-root">
+
+    <top>
+        <VBox styleClass="filter-bar">
+            <padding><Insets top="20" left="32" right="32" bottom="16"/></padding>
+            <Label text="Gerer mes Produits" styleClass="page-title"/>
+            <Label text="Recherchez, modifiez ou supprimez vos produits"
+                   styleClass="page-subtitle"/>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <padding><Insets top="14"/></padding>
+                <TextField fx:id="searchField"
+                           promptText="Rechercher par nom..."
+                           styleClass="search-field" prefWidth="240"
+                           onKeyReleased="#applyFilters"/>
+                <ComboBox fx:id="filterCategorie" promptText="Categorie"
+                          styleClass="filter-combo" prefWidth="150"
+                          onAction="#applyFilters"/>
+                <ComboBox fx:id="filterStatut" promptText="Statut"
+                          styleClass="filter-combo" prefWidth="120"
+                          onAction="#applyFilters"/>
+                <TextField fx:id="filterPrixMin" promptText="Prix min"
+                           styleClass="filter-field-small" prefWidth="80"
+                           onKeyReleased="#applyFilters"/>
+                <Label text="" styleClass="filter-sep"/>
+                <TextField fx:id="filterPrixMax" promptText="Prix max"
+                           styleClass="filter-field-small" prefWidth="80"
+                           onKeyReleased="#applyFilters"/>
+                <Button text="Reinitialiser" styleClass="btn-reset"
+                        onAction="#resetFilters"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="lblCount" text="0 produit(s)"
+                       styleClass="result-count"/>
+                <Button text="  Ajouter un Produit"
+                        styleClass="btn-primary"
+                        onAction="#ouvrirAjouter"/>
+                <Button text="  Exporter PDF"
+                        styleClass="btn-export"
+                        onAction="#exportPdf"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="scroll-clean">
+            <VBox fx:id="listContainer" spacing="12" styleClass="catalogue-root">
+                <padding><Insets top="20" left="32" right="32" bottom="32"/></padding>
+            </VBox>
+        </ScrollPane>
+    </center>
+
+    <right>
+        <VBox fx:id="editPanel" styleClass="form-panel"
+              prefWidth="0" spacing="0"
+              managed="false" visible="false">
+            <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
+                        styleClass="scroll-clean">
+                <VBox spacing="12">
+                    <padding><Insets top="20" left="18" right="18" bottom="20"/></padding>
+                    <HBox alignment="CENTER_LEFT">
+                        <Label text="Modifier Produit" styleClass="form-title"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="X" styleClass="btn-close"
+                                onAction="#closeEdit"/>
+                    </HBox>
+                    <Separator/>
+                    <Label text="Nom *" styleClass="field-label"/>
+                    <TextField fx:id="editNom" styleClass="form-field"/>
+                    <Label fx:id="editErrNom" styleClass="error-label"
+                           visible="false" managed="false"/>
+                    <Label text="Prix *" styleClass="field-label"/>
+                    <TextField fx:id="editPrix" styleClass="form-field"/>
+                    <Label fx:id="editErrPrix" styleClass="error-label"
+                           visible="false" managed="false"/>
+                    <Label text="Stock *" styleClass="field-label"/>
+                    <TextField fx:id="editStock" styleClass="form-field"/>
+                    <Label fx:id="editErrStock" styleClass="error-label"
+                           visible="false" managed="false"/>
+                    <Label text="Seuil alerte" styleClass="field-label"/>
+                    <TextField fx:id="editSeuil" styleClass="form-field"/>
+                    <Label text="Categorie *" styleClass="field-label"/>
+                    <ComboBox fx:id="editCat" styleClass="form-combo"
+                              maxWidth="Infinity"/>
+                    <Label fx:id="editErrCat" styleClass="error-label"
+                           visible="false" managed="false"/>
+                    <Label text="Statut" styleClass="field-label"/>
+                    <ComboBox fx:id="editStatut" styleClass="form-combo"
+                              maxWidth="Infinity"/>
+                    <Label text="Description" styleClass="field-label"/>
+                    <TextArea fx:id="editDescription" styleClass="form-field"
+                              prefRowCount="3"/>
+                    <Button text="Mettre a jour" styleClass="btn-primary"
+                            maxWidth="Infinity" onAction="#submitEdit"/>
+                </VBox>
+            </ScrollPane>
+        </VBox>
+    </right>
+
+</BorderPane>

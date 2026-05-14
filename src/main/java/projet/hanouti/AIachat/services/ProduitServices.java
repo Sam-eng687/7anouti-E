@@ -25,7 +25,7 @@ public class ProduitServices {
      * Real DB columns  →  Java field
      * ─────────────────────────────────
      * nom              →  libelle
-     * note_moy         →  noteMoyenne
+     * moyenne         →  noteMoyenne
      * categorie        →  categorie   (stored UPPERCASE in DB, returned as-is)
      */
     private Produit mapRow(ResultSet rs) throws SQLException {
@@ -100,7 +100,7 @@ public class ProduitServices {
 
     public List<Produit> getTopRated() {
         List<Produit> list = new ArrayList<>();
-        // note_moy is the real column name
+// moyenne is the real column name
         String query = "SELECT * FROM produit WHERE quantite_stock > 0 AND statut = 'ACTIF' ORDER BY moyenne DESC LIMIT 18";
         try (PreparedStatement pst = getConnection().prepareStatement(query);
              ResultSet rs = pst.executeQuery()) {

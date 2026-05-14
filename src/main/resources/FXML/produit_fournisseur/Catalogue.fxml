@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<BorderPane fx:id="catalogueRoot"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="projet.hanouti.produit_fournisseur.controllers.CatalogueController"
+            styleClass="page-root">
+
+    <top>
+        <VBox styleClass="filter-bar">
+            <padding><Insets top="20" left="32" right="32" bottom="16"/></padding>
+
+            <!-- Row 1: search + category + count -->
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <TextField fx:id="searchField"
+                           promptText="Rechercher un produit..."
+                           styleClass="search-field" prefWidth="280"
+                           onKeyReleased="#applyFilters"/>
+                <ComboBox fx:id="filterCategorie"
+                          promptText="Toutes categories"
+                          styleClass="filter-combo" prefWidth="180"
+                          onAction="#applyFilters"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="lblCount" text="0 produit(s)"
+                       styleClass="result-count"/>
+            </HBox>
+
+            <!-- Row 2: price sort + price range -->
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <padding><Insets top="8"/></padding>
+                <Label text="Trier par prix:"
+                       style="-fx-font-size:12px;-fx-text-fill:#555;"/>
+                <ComboBox fx:id="sortPrix"
+                          promptText="Ordre..."
+                          styleClass="filter-combo" prefWidth="170"
+                          onAction="#applyFilters"/>
+                <Separator orientation="VERTICAL" prefHeight="24"/>
+                <Label text="Prix min (TND):"
+                       style="-fx-font-size:12px;-fx-text-fill:#555;"/>
+                <TextField fx:id="fieldPrixMin"
+                           promptText="0"
+                           styleClass="form-field" prefWidth="80"
+                           onKeyReleased="#applyFilters"/>
+                <Label text=" max:"
+                       style="-fx-font-size:12px;-fx-text-fill:#555;"/>
+                <TextField fx:id="fieldPrixMax"
+                           promptText=""
+                           styleClass="form-field" prefWidth="80"
+                           onKeyReleased="#applyFilters"/>
+                <Button text="Reinitialiser"
+                        styleClass="btn-secondary"
+                        onAction="#resetFilters"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="scroll-clean">
+            <VBox fx:id="catalogueContainer" spacing="28"
+                  styleClass="catalogue-root">
+                <padding><Insets top="24" left="32" right="32" bottom="40"/></padding>
+            </VBox>
+        </ScrollPane>
+    </center>
+
+</BorderPane>

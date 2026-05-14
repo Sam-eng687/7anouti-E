@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.*?>
+
+<ScrollPane fitToWidth="true" styleClass="page-scroll"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="projet.hanouti.produit_fournisseur.controllers.AjouterProduitController">
+    <VBox spacing="0" styleClass="page-root">
+
+        <VBox styleClass="page-header" spacing="4">
+            <padding><Insets top="28" left="36" right="36" bottom="20"/></padding>
+            <Label text="Ajouter un Produit" styleClass="page-title"/>
+            <Label text="Remplissez les informations ou laissez l'IA analyser une photo"
+                   styleClass="page-subtitle"/>
+        </VBox>
+
+        <HBox spacing="20" styleClass="form-container">
+            <padding><Insets top="20" left="36" right="36" bottom="36"/></padding>
+
+            <!-- LEFT: form fields -->
+            <VBox spacing="14" HBox.hgrow="ALWAYS" styleClass="form-card">
+                <padding><Insets top="24" left="24" right="24" bottom="24"/></padding>
+                <Label text="Informations du Produit" styleClass="form-section-title"/>
+                <Separator/>
+
+                <!-- AI SCAN SECTION -->
+                <VBox spacing="8" styleClass="ia-scan-box">
+                    <Label text="  Analyse automatique par IA"
+                           style="-fx-font-size:13px;-fx-font-weight:bold;-fx-text-fill:#2563EB;"/>
+                    <Label text="Prenez une photo du produit  l'IA remplit le formulaire automatiquement."
+                           style="-fx-font-size:11px;-fx-text-fill:#94A3B8;"/>
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <ImageView fx:id="imagePreview"
+                                   fitWidth="90" fitHeight="90"
+                                   preserveRatio="true"/>
+                        <VBox spacing="8">
+                            <HBox spacing="8">
+                                <Button text="  Choisir une image"
+                                        styleClass="btn-secondary"
+                                        onAction="#browseImage"/>
+                                <Button fx:id="btnScanAI"
+                                        text="  Analyser avec IA"
+                                        styleClass="btn-primary"
+                                        onAction="#scanWithAI"/>
+                            </HBox>
+                            <Label fx:id="lblAiStatus" text=""
+                                   style="-fx-font-size:11px;-fx-text-fill:#94A3B8;"/>
+                        </VBox>
+                    </HBox>
+                </VBox>
+
+                <Separator/>
+
+                <Label text="Nom du produit *" styleClass="field-label"/>
+                <TextField fx:id="fieldNom" promptText="Ex: Doliprane 1000mg"
+                           styleClass="form-field"/>
+                <Label fx:id="errNom" styleClass="error-label"
+                       visible="false" managed="false"/>
+
+                <Label text="Description" styleClass="field-label"/>
+                <TextArea fx:id="fieldDescription"
+                          promptText="Description detaillee..."
+                          styleClass="form-field" prefRowCount="3"/>
+
+                <HBox spacing="14">
+                    <VBox spacing="6" HBox.hgrow="ALWAYS">
+                        <Label text="Prix (TND) *" styleClass="field-label"/>
+                        <TextField fx:id="fieldPrix" promptText="0.00"
+                                   styleClass="form-field"/>
+                        <Label fx:id="errPrix" styleClass="error-label"
+                               visible="false" managed="false"/>
+                    </VBox>
+                    <VBox spacing="6" HBox.hgrow="ALWAYS">
+                        <Label text="Quantite en stock *" styleClass="field-label"/>
+                        <TextField fx:id="fieldStock" promptText="0"
+                                   styleClass="form-field"/>
+                        <Label fx:id="errStock" styleClass="error-label"
+                               visible="false" managed="false"/>
+                    </VBox>
+                </HBox>
+
+                <HBox spacing="14">
+                    <VBox spacing="6" HBox.hgrow="ALWAYS">
+                        <Label text="Categorie *" styleClass="field-label"/>
+                        <ComboBox fx:id="comboCat" promptText="Selectionner..."
+                                  styleClass="form-combo" maxWidth="Infinity"/>
+                        <Label fx:id="errCat" styleClass="error-label"
+                               visible="false" managed="false"/>
+                    </VBox>
+                    <VBox spacing="6" HBox.hgrow="ALWAYS">
+                        <Label text="Seuil alerte stock" styleClass="field-label"/>
+                        <TextField fx:id="fieldSeuil" promptText="5"
+                                   styleClass="form-field"/>
+                    </VBox>
+                </HBox>
+
+                <HBox spacing="14">
+                    <VBox spacing="6" HBox.hgrow="ALWAYS">
+                        <Label text="Fournisseur *" styleClass="field-label"/>
+                        <ComboBox fx:id="comboFournisseur"
+                                  promptText="Selectionner un fournisseur..."
+                                  styleClass="form-combo" maxWidth="Infinity"/>
+                    </VBox>
+                    <VBox spacing="6" HBox.hgrow="ALWAYS">
+                        <Label text="Statut" styleClass="field-label"/>
+                        <ComboBox fx:id="comboStatut" promptText="ACTIF"
+                                  styleClass="form-combo" maxWidth="Infinity"/>
+                    </VBox>
+                </HBox>
+
+                <Label text="Image du produit" styleClass="field-label"/>
+                <HBox spacing="8">
+                    <TextField fx:id="fieldImage"
+                               promptText="Chemin local ou URL"
+                               styleClass="form-field"
+                               HBox.hgrow="ALWAYS"/>
+                    <Button text="Parcourir"
+                            styleClass="btn-secondary"
+                            onAction="#browseImage"/>
+                </HBox>
+            </VBox>
+
+            <!-- RIGHT: preview + buttons -->
+            <VBox spacing="14" prefWidth="260" styleClass="form-card">
+                <padding><Insets top="24" left="20" right="20" bottom="24"/></padding>
+                <Label text="Apercu" styleClass="form-section-title"/>
+                <Separator/>
+                <VBox styleClass="preview-box" spacing="10">
+                    <padding><Insets top="14" left="14" right="14" bottom="14"/></padding>
+                    <Label fx:id="previewNom"   text="Nom du produit"
+                           styleClass="preview-title"/>
+                    <Label fx:id="previewCat"   text="Categorie"
+                           styleClass="preview-badge-label"/>
+                    <Label fx:id="previewPrix"  text="0.00 TND"
+                           styleClass="preview-price"/>
+                    <Label fx:id="previewStock" text="Stock: 0"
+                           styleClass="preview-stock"/>
+                </VBox>
+                <Region VBox.vgrow="ALWAYS"/>
+                <Button text="Enregistrer le Produit"
+                        styleClass="btn-primary"
+                        maxWidth="Infinity"
+                        onAction="#submitForm"/>
+                <Button text="Reinitialiser"
+                        styleClass="btn-secondary"
+                        maxWidth="Infinity"
+                        onAction="#resetForm"/>
+            </VBox>
+
+        </HBox>
+    </VBox>
+</ScrollPane>
