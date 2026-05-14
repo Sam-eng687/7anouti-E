@@ -112,10 +112,37 @@ public class DashboardController {
 
         editProfileItem.setOnAction(e -> openProfileEdit(connectedUser));
         logoutProfileItem.setOnAction(e -> navigateToLogin());
-        paymentHistoryItem.setOnAction(e ->
-                showInfo("Historique", "Historique paiement pret pour integration."));
+        paymentHistoryItem.setOnAction(e -> {
+            try {
+                java.net.URL fxml = getClass().getResource("/projet/hanouti/module4/HistoriquePaiement.fxml");
+                if (fxml == null) { showInfo("Historique", "HistoriquePaiement.fxml introuvable."); return; }
+                javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(fxml);
+                javafx.scene.Parent content2 = loader.load();
+                currentModuleController = loader.getController();
+                applyThemeToCurrentModule();
+                contentContainer.getChildren().setAll(content2);
+                headerTitle.setText("Historique paiements");
+                headerSubtitle.setText("Vos paiements");
+            } catch (Exception ex) {
+                showError("Historique", "Impossible de charger l historique: " + ex.getMessage());
+            }
+        });
         notifBtn.setOnAction(e ->
                 showInfo("Notifications", "Centre notifications pret pour integration."));
+
+        cartBtn.setOnAction(e -> {
+            try {
+                java.net.URL fxml = getClass().getResource("/projet/hanouti/module4/Panier.fxml");
+                if (fxml == null) { showInfo("Panier", "Panier.fxml introuvable."); return; }
+                javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(fxml);
+                javafx.scene.Parent content2 = loader.load();
+                currentModuleController = loader.getController();
+                applyThemeToCurrentModule();
+                contentContainer.getChildren().setAll(content2);
+            } catch (Exception ex) {
+                showError("Panier", "Impossible de charger le panier: " + ex.getMessage());
+            }
+        });
 
         boolean buyer = connectedUser.getRole() == Role.acheteur;
         cartBtn.setVisible(buyer);
@@ -175,8 +202,8 @@ public class DashboardController {
             addNav(navProducts, "AI Achats", "Assistant intelligent", AI_ACHAT_FXML,
                     controller -> ((AssistantIAController) controller).openAssistantMode());
             addNav(navOrders, "Catalogue des produits", "Explorer les produits", PLACEHOLDER_FXML);
-            addNav(navStats, "Mes favorites", "Produits favoris", PLACEHOLDER_FXML);
-            addNav(navSettings, "Mes commandes", "Suivi commandes", PLACEHOLDER_FXML);
+            addNav(navStats, "Mes favorites", "Produits favoris", "/projet/hanouti/module4/wishlist.fxml");
+            addNav(navSettings, "Mes commandes", "Suivi commandes", "/projet/hanouti/module4/HistoriquePaiement.fxml");
             hideNav(navSupport);
         } else if (role == Role.vendeur) {
             addNav(navUsers, "Dashboard", "Accueil vendeur", PLACEHOLDER_FXML);
