@@ -207,7 +207,7 @@ public class ProduitService implements IService<Produit> {
         p.setStatut       (rs.getString("statut"));
         Timestamp ts = rs.getTimestamp("date_ajout");
         if (ts != null) p.setDateAjout(ts.toLocalDateTime());
-        p.setMoyenne(getOptionalFloat(rs, "moyenne", getOptionalFloat(rs, "note_moy", 0)));
+        p.setMoyenne(getOptionalFloat(rs, "moyenne", getOptionalFloat(rs, "moyenne", 0)));
         return p;
     }
 
@@ -266,7 +266,7 @@ public class ProduitService implements IService<Produit> {
             ensureRatingTable(cn);
             upsertBuyerRating(cn, idAcheteur, idProduit, newNote);
             boolean updated = updateRatingColumnIfExists(cn, idProduit, "moyenne");
-            updated = updateRatingColumnIfExists(cn, idProduit, "note_moy") || updated;
+            updated = updateRatingColumnIfExists(cn, idProduit, "moyenne") || updated;
             if (!updated) {
                 throw new SQLException("Colonne moyenne introuvable.");
             }

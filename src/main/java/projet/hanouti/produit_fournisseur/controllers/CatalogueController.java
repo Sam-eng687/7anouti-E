@@ -13,12 +13,15 @@ import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import projet.hanouti.produit_fournisseur.entities.Produit;
 import projet.hanouti.produit_fournisseur.services.ProduitService;
+import projet.hanouti.produit_fournisseur.services.WishlistService;
 import projet.hanouti.produit_fournisseur.utils.SessionManager;
 
 import java.io.File;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class CatalogueController {
@@ -33,6 +36,8 @@ public class CatalogueController {
     @FXML private BorderPane       catalogueRoot;
 
     private final ProduitService ps = new ProduitService();
+    private final WishlistService wishlistService = new WishlistService();
+    private final Set<Integer> wishlistProductIds = new HashSet<>();
     private List<Produit> allProduits;
     private List<Produit> filteredProduits;
 
@@ -57,8 +62,17 @@ public class CatalogueController {
 
         allProduits      = ps.getAllActiveProducts();
         filteredProduits = allProduits;
+        preloadWishlist();
         buildDetailPanel();
         renderPage();
+    }
+
+    private void preloadWishlist() {
+        wishlistProductIds.clear();
+        int userId = SessionManager.getCurrentAcheteurId();
+        if (userId > 0) {
+            wishlistProductIds.addAll(wishlistService.getByUser(userId));
+        }
     }
 
     //  Panier 
@@ -281,28 +295,14 @@ public class CatalogueController {
 
         Separator sep4 = new Separator();
 
-        Button heartBtn = new Button("\u2661  Ajouter aux favoris");
+        boolean inWishlist = wishlistProductIds.contains(p.getIdProduit());
+        Button heartBtn = new Button();
         heartBtn.setMaxWidth(Double.MAX_VALUE);
-        heartBtn.setStyle(
-                "-fx-background-color:#FFEEEE;-fx-text-fill:#CC2222;" +
-                        "-fx-font-size:12px;-fx-background-radius:8;" +
-                        "-fx-padding:10 14;-fx-cursor:hand;-fx-border-color:transparent;");
-        final boolean[] liked = {false};
+        applyDetailHeartState(heartBtn, inWishlist);
         heartBtn.setOnAction(e -> {
-            liked[0] = !liked[0];
-            if (liked[0]) {
-                heartBtn.setText("\u2665  Ajoute aux favoris");
-                heartBtn.setStyle(
-                        "-fx-background-color:#CC2222;-fx-text-fill:white;" +
-                                "-fx-font-size:12px;-fx-background-radius:8;" +
-                                "-fx-padding:10 14;-fx-cursor:hand;-fx-border-color:transparent;");
-            } else {
-                heartBtn.setText("\u2661  Ajouter aux favoris");
-                heartBtn.setStyle(
-                        "-fx-background-color:#FFEEEE;-fx-text-fill:#CC2222;" +
-                                "-fx-font-size:12px;-fx-background-radius:8;" +
-                                "-fx-padding:10 14;-fx-cursor:hand;-fx-border-color:transparent;");
-            }
+            boolean nowInWishlist = toggleWishlist(p);
+            applyDetailHeartState(heartBtn, nowInWishlist);
+            e.consume();
         });
 
         Button cartBtn = new Button("Ajouter au panier");
@@ -660,24 +660,12 @@ public class CatalogueController {
         Label stock = new Label("Stock: " + p.getQuantiteStock());
         stock.getStyleClass().add(stockStyle);
 
-        Button heartBtn = new Button("\u2661");
-        heartBtn.setStyle(
-                "-fx-background-color:#F5F5F5;-fx-text-fill:#CC2222;" +
-                        "-fx-font-size:17px;-fx-font-weight:bold;-fx-background-radius:24;" +
-                        "-fx-min-width:48px;-fx-min-height:48px;" +
-                        "-fx-max-width:48px;-fx-max-height:48px;" +
-                        "-fx-cursor:hand;-fx-border-color:transparent;");
-        final boolean[] liked = {false};
+        boolean inWishlist = wishlistProductIds.contains(p.getIdProduit());
+        Button heartBtn = new Button();
+        applyCardHeartState(heartBtn, inWishlist);
         heartBtn.setOnAction(e -> {
-            liked[0] = !liked[0];
-            heartBtn.setText(liked[0] ? "\u2665" : "\u2661");
-            heartBtn.setStyle(
-                    "-fx-background-color:" + (liked[0] ? "#CC2222" : "#F5F5F5") + ";" +
-                            "-fx-text-fill:" + (liked[0] ? "white" : "#CC2222") + ";" +
-                            "-fx-font-size:17px;-fx-font-weight:bold;-fx-background-radius:24;" +
-                            "-fx-min-width:48px;-fx-min-height:48px;" +
-                            "-fx-max-width:48px;-fx-max-height:48px;" +
-                            "-fx-cursor:hand;-fx-border-color:transparent;");
+            boolean nowInWishlist = toggleWishlist(p);
+            applyCardHeartState(heartBtn, nowInWishlist);
             e.consume();
         });
         Button cartBtn = new Button("Ajouter au panier");
@@ -772,6 +760,61 @@ public class CatalogueController {
         return card;
 
 
+    }
+
+    private boolean toggleWishlist(Produit p) {
+        int userId = SessionManager.getCurrentAcheteurId();
+        if (userId <= 0) {
+            Alert err = new Alert(Alert.AlertType.ERROR);
+            err.setTitle("Non connecte");
+            err.setHeaderText(null);
+            err.setContentText("Aucun acheteur connecte.");
+            err.showAndWait();
+            return wishlistProductIds.contains(p.getIdProduit());
+        }
+
+        int produitId = p.getIdProduit();
+        boolean alreadyIn = wishlistProductIds.contains(produitId);
+        boolean ok;
+        if (alreadyIn) {
+            ok = wishlistService.remove(userId, produitId);
+            if (ok) wishlistProductIds.remove(produitId);
+        } else {
+            ok = wishlistService.add(userId, produitId);
+            if (ok || wishlistService.isInWishlist(userId, produitId)) {
+                wishlistProductIds.add(produitId);
+                ok = true;
+            }
+        }
+
+        if (!ok) {
+            Alert err = new Alert(Alert.AlertType.ERROR);
+            err.setTitle("Erreur favoris");
+            err.setHeaderText(null);
+            err.setContentText("Impossible de mettre a jour vos favoris.");
+            err.showAndWait();
+        }
+        return wishlistProductIds.contains(produitId);
+    }
+
+    private void applyCardHeartState(Button heartBtn, boolean inWishlist) {
+        heartBtn.setText(inWishlist ? "\u2665" : "\u2661");
+        heartBtn.setStyle(
+                "-fx-background-color:" + (inWishlist ? "#CC2222" : "#F5F5F5") + ";" +
+                        "-fx-text-fill:" + (inWishlist ? "white" : "#CC2222") + ";" +
+                        "-fx-font-size:17px;-fx-font-weight:bold;-fx-background-radius:24;" +
+                        "-fx-min-width:48px;-fx-min-height:48px;" +
+                        "-fx-max-width:48px;-fx-max-height:48px;" +
+                        "-fx-cursor:hand;-fx-border-color:transparent;");
+    }
+
+    private void applyDetailHeartState(Button heartBtn, boolean inWishlist) {
+        heartBtn.setText(inWishlist ? "\u2665  Ajoute aux favoris" : "\u2661  Ajouter aux favoris");
+        heartBtn.setStyle(
+                "-fx-background-color:" + (inWishlist ? "#CC2222" : "#FFEEEE") + ";" +
+                        "-fx-text-fill:" + (inWishlist ? "white" : "#CC2222") + ";" +
+                        "-fx-font-size:12px;-fx-background-radius:8;" +
+                        "-fx-padding:10 14;-fx-cursor:hand;-fx-border-color:transparent;");
     }
 
     //  Image helpers 
